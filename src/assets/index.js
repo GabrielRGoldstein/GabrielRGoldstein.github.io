@@ -5,6 +5,7 @@ import worldmap from './backgrounds/world-map.png';
 
 import logo from './logo/logo-black.png';
 import logotext from './logo/logo-text-black.png';
+import gglogo from './logo/gglogo.png';
 
 import shaq from './personal/shaq.png';
 
@@ -94,5 +95,5 @@ export {
   space,
   gm,
   clu,
-  
+  gglogo,
 };

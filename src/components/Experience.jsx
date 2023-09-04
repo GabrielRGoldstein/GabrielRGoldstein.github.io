@@ -23,7 +23,7 @@ const ExperienceCard = ({ experience }) => (
     }}
     date={
       <div>
-        <h3 className="text-dim text-[18px] font-bold font-beckman">
+        <h3 className="text-white text-[18px] font-bold font-beckman">
           {experience.date}
         </h3>
       </div>
@@ -57,7 +57,7 @@ const Experience = () => {
       <motion.div variants={textVariant()}>
         <p className={`${styles.sectionSubText} sm:pl-16 pl-[2rem]`}>
         </p>
-        <h2 className={`${styles.sectionHeadText} sm:pl-16 pl-[2rem]`}>
+        <h2 className={`${styles.sectionHeadTextLight} sm:pl-16 pl-[2rem]`}>
           WORK EXPERIENCE
         </h2>
       </motion.div>

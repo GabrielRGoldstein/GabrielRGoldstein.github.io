@@ -32,6 +32,13 @@ export default {
         neonBlack: '#101B37',
         darkPink: '#AA0E57',
         darkBlue: '#0198B7',
+        darkBlack: '#0e172f',
+        darkerPink: '#71093A',
+        darkerBlue: '#01667A',
+        darkerBlack: '#090f1f',
+        darkestPink: '#4b0626',
+        darkestBlue: '#014250',
+
 
       },
       boxShadow: {
@@ -58,7 +65,7 @@ export default {
         hero: 'linear-gradient(135deg, rgba(244,244,246,0.8) 60%, rgba(10,10,10,0.95) 60%)',
         'hero-mobile':
           'linear-gradient(137deg, rgba(244,244,246,0.8) 60%, rgba(10,10,10,1) 60%)',
-        tech: "linear-gradient(165deg, rgba(20,20,20,0.8) 100%, rgba(109,109,116,0.8) 100%), url('/src/assets/backgrounds/nairobi.png')",
+        tech: "linear-gradient(165deg, rgba(20,20,20,0.8) 100%, rgba(109,109,116,0.8) 100%), url('/src/assets/backgrounds/cyberpunk.jpg')",
       },
       fontFamily: {
         arenq: ['Arenq'],
