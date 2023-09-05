@@ -25,6 +25,7 @@ import {
   gm,
   clu,
   ai,
+  gglogo,
 } from '../assets';
 
 export const navLinks = [
@@ -127,7 +128,7 @@ const experiences = [
   {
     title: 'Front-End Engineer',
     company_name: 'Freelance',
-    icon: gm,
+    icon: gglogo,
     iconBg: '#333333',
     date: 'Dec 2020 - Jun 2022',
   },

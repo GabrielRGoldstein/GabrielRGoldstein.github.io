@@ -101,7 +101,7 @@ const Experience = () => {
               ease-in-out"
               onClick={() =>
                 window.open(
-                  'src/assets/personal/Goldstein_SWE.pdf', //paste the link to your resume here
+                  'public/Goldstein_SWE.pdf', //paste the link to your resume here
                   
                   '_blank'
                 )
