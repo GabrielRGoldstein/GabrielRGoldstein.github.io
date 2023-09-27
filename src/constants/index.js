@@ -17,8 +17,7 @@ import {
   postgresql,
   rubyrails,
   graphql,
-  komikult,
-  leaderboard,
+  discordclone,
   math,
   movie,
   space,
@@ -26,6 +25,7 @@ import {
   clu,
   ai,
   gglogo,
+  netflixclone,
 } from '../assets';
 
 export const navLinks = [
@@ -144,8 +144,8 @@ const experiences = [
 const projects = [
   {
     id: 'project-1',
-    name: 'React Netflix Clone',
-    description: 'React app that imitates Netflix, previously hosted using Firebase, but no longer online. Functioning components: search, log-in, sign-up, video player UI, back-end to import a fake library. ',
+    name: 'Discord Clone',
+    description: 'End-to-end fullstack and real-time discord clone, all with servers, channels, video calls, audio calls, editing and deleting messages as well as member roles',
     tags: [
       {
         name: 'react',
@@ -160,15 +160,15 @@ const projects = [
         color: 'pink-text-gradient',
       },
     ],
-    image: komikult,
-    repo: 'https://github.com/GabrielRGoldstein/netflix-react-clone/tree/master',
-    demo: 'https://github.com/GabrielRGoldstein/netflix-react-clone/tree/master',
+    image: discordclone,
+    repo: 'https://github.com/GabrielRGoldstein/DiscordClone',
+    demo: 'https://discordclone-production-5eb1.up.railway.app',
   },
   {
     id: 'project-2',
-    name: 'Godot Action RPG',
+    name: 'React Netflix Clone',
     description:
-      '2D action RPG demo created in Godot game engine. Fully animated character, small game world, character states, enemies with: AI, functioning attacks, and a wander state, player has stats that is represented in the UI. Player Camera + custom sounds  ',
+      'React app that imitates Netflix, previously hosted using Firebase, but no longer online. Functioning components: search, log-in, sign-up, video player UI, back-end to import a fake library.',
     tags: [
       {
         name: 'react',
@@ -183,14 +183,14 @@ const projects = [
         color: 'pink-text-gradient',
       },
     ],
-    image: leaderboard,
-    repo: 'https://github.com/GabrielRGoldstein/Godot-Action-RPG-Test',
-    demo: 'https://github.com/GabrielRGoldstein/Godot-Action-RPG-Test',
+    image: netflixclone,
+    repo: 'https://github.com/GabrielRGoldstein/netflix-react-clone/tree/master',
+    demo: 'https://github.com/GabrielRGoldstein/netflix-react-clone/tree/master',
   },
   {
     id: 'project-3',
-    name: 'Unreal Engine 5',
-    description: 'Full 3D demo world created in Unreal Engine 5. Utilizes Nanite and Lumen. Modular castle in a custom 3D environment - hillside, with a river and customized terrain details.',
+    name: 'Godot Action RPG',
+    description: '2D action RPG demo created in Godot game engine. Fully animated character, small game world, character states, enemies with: AI, functioning attacks, and a wander state, player has stats that is represented in the UI. Player Camera + custom sounds.',
     tags: [
       {
         name: 'nextjs',
@@ -206,8 +206,8 @@ const projects = [
       },
     ],
     image: math,
-    repo: '',
-    demo: '',
+    repo: 'https://github.com/GabrielRGoldstein/Godot-Action-RPG-Test',
+    demo: 'https://github.com/GabrielRGoldstein/Godot-Action-RPG-Test',
   },
   {
     id: 'project-4',

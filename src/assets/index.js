@@ -43,8 +43,8 @@ import rubyrails from './tech/rubyrails.png';
 import gm from "./company/gm.png";
 import clu from "./company/clu.png";
 
-import komikult from './projects/komikult.png';
-import leaderboard from './projects/leaderboard.png';
+import discordclone from "./projects/discord-clone.png"
+import netflixclone from './projects/netflix-clone.png';
 import math from './projects/math-magicians.png';
 import movie from './projects/movie-metro.png';
 import nyeusi from './projects/nyeusi.png';
@@ -87,8 +87,8 @@ export {
   redux,
   tailwind,
   typescript,
-  komikult,
-  leaderboard,
+  discordclone,
+  netflixclone,
   math,
   movie,
   nyeusi,
