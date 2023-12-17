@@ -8,7 +8,7 @@ Make sure you have node `16.0.0` or higher and npm `9.0.0` or higher installed.
 - [Download the ZIP file from this location](https://github.com/shaqdeff/Portfolio-Template/archive/refs/heads/main.zip) or run the following [git](https://git-scm.com/) command to clone the files to your machine:
 
 ```
-git clone https://github.com/shaqdeff/Portfolio-Template.git
+git clone https://github.com/GabrielRGoldstein/GabrielRGoldstein.github.io
 ```
 
 - Once the files are on your machine, open the **Portfolio-Template** folder in [Visual Studio Code](https://code.visualstudio.com/download).
