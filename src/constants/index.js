@@ -1,7 +1,6 @@
 import {
   frontend,
   backend,
-  ux,
   prototyping,
   javascript,
   typescript,
@@ -15,12 +14,10 @@ import {
   figma,
   docker,
   postgresql,
-  rubyrails,
   graphql,
   discordclone,
   math,
   movie,
-  space,
   gm,
   clu,
   ai,
@@ -137,7 +134,7 @@ const experiences = [
     company_name: 'General Motors',
     icon: gm,
     iconBg: '#333333',
-    date: 'Jun 2022 - Present',
+    date: 'Jun 2022 - Nov 2023',
   },
 ];
 

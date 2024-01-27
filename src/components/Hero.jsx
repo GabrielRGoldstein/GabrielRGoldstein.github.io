@@ -1,8 +1,6 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { styles } from '../styles';
-import { navLinks } from '../constants';
-import { shaq, bwmap, worldmap } from '../assets';
 import React, { useState, useEffect, useRef } from 'react';
 import BIRDS from 'vanta/dist/vanta.birds.min'
 
@@ -19,8 +17,8 @@ const Hero = () => {
         gyroControls: false,
         minHeight: 200.00,
         minWidth: 200.00,
-        scale: 1.00,
-        scaleMobile: 1.00,
+        scale: 0.7,
+        scaleMobile: 0.7,
         backgroundColor: 0x101B37,
         color1: 0xAA0E57,
         color2: 0xE41376,
@@ -47,7 +45,7 @@ const Hero = () => {
       </p>
     </div>
   </div>
-  <div className="absolute xs:bottom-10 bottom-32 w-full flex justify-center items-center">
+  {/* <div className="absolute xs:bottom-10 bottom-32 w-full flex justify-center items-center">
     <a href="#about">
       <div className="w-[35px] h-[64px] rounded-3xl border-4 border-neonBlue flex justify-center items-start p-2">
         <motion.div
@@ -63,7 +61,7 @@ const Hero = () => {
         />
       </div>
     </a>
-  </div>
+  </div> */}
 </section>
     </>
   );
