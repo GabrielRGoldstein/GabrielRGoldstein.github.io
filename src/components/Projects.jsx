@@ -13,9 +13,10 @@ const ProjectCard = ({
   image,
   repo,
   demo,
+  hasDemo,
   index,
   active,
-  handleClick,
+  handleClick
 }) => {
   return (
     <motion.div
@@ -58,28 +59,30 @@ const ProjectCard = ({
       {description}
     </p>
     <div className="flex justify-between items-end">
-        <button
-          className="flex justify-between text-sm sm:text-base text-timberWolf font-bold font-beckman 
-          items-center py-1 pl-2 pr-3 whitespace-nowrap gap-1 rounded-10 glassmorphism hover:bg-battleGray
-          hover:text-eerieBlack transition duration-200 ease-in-out"
-          onClick={() => window.open(demo, '_blank')}
-          onMouseOver={() => {
-            document
-              .querySelector('.btn-icon')
-              .setAttribute('src', pineappleHover);
-          }}
-          onMouseOut={() => {
-            document
-              .querySelector('.btn-icon')
-              .setAttribute('src', pineapple);
-          }}>
-          <img
-            src={pineapple}
-            alt="pineapple"
-            className="btn-icon w-10 h-10 sm:w-12 sm:h-12 object-contain"
-          />
-          LIVE DEMO
-        </button>
+          {hasDemo && (
+              <button
+                className="flex justify-between text-sm sm:text-base text-timberWolf font-bold font-beckman 
+                  items-center py-1 pl-2 pr-3 whitespace-nowrap gap-1 rounded-10 glassmorphism hover:bg-battleGray
+                  hover:text-eerieBlack transition duration-200 ease-in-out"
+                onClick={() => window.open(demo, '_blank')}
+                onMouseOver={() => {
+                  document
+                    .querySelector('.btn-icon')
+                    .setAttribute('src', pineappleHover);
+                }}
+                onMouseOut={() => {
+                  document
+                    .querySelector('.btn-icon')
+                    .setAttribute('src', pineapple);
+                }}>
+                <img
+                  src={pineapple}
+                  alt="pineapple"
+                  className="btn-icon w-10 h-10 sm:w-12 sm:h-12 object-contain"
+                />
+                LIVE DEMO
+              </button>
+            )}
 
         <div
           onClick={() => window.open(repo, '_blank')}

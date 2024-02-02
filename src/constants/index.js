@@ -23,6 +23,10 @@ import {
   ai,
   gglogo,
   netflixclone,
+  gglogo_pink,
+  clu_pink,
+  gm_pink,
+  mltrader,
 } from '../assets';
 
 export const navLinks = [
@@ -118,21 +122,21 @@ const experiences = [
   {
     title: 'Research Assistant',
     company_name: 'California Lutheran University',
-    icon: clu,
+    icon: clu_pink,
     iconBg: '#333333',
     date: 'October 2019 - Jan 2021',
   },
   {
     title: 'Front-End Engineer',
     company_name: 'Freelance',
-    icon: gglogo,
+    icon: gglogo_pink,
     iconBg: '#333333',
     date: 'Dec 2020 - Jun 2022',
   },
   {
     title: 'Software Engineer',
     company_name: 'General Motors',
-    icon: gm,
+    icon: gm_pink,
     iconBg: '#333333',
     date: 'Jun 2022 - Nov 2023',
   },
@@ -142,7 +146,7 @@ const projects = [
   {
     id: 'project-1',
     name: 'Discord Clone',
-    description: 'End-to-end fullstack and real-time discord clone, all with servers, channels, video calls, audio calls, editing and deleting messages as well as member roles',
+    description: 'End-to-end fullstack and real-time discord clone, incorporating servers, channels, video calls, audio calls, editing and deleting messages, member roles, and auth.',
     tags: [
       {
         name: 'react',
@@ -160,6 +164,7 @@ const projects = [
     image: discordclone,
     repo: 'https://github.com/GabrielRGoldstein/DiscordClone',
     demo: 'https://discordclone-production-5eb1.up.railway.app',
+    hasDemo: true,
   },
   {
     id: 'project-2',
@@ -183,11 +188,12 @@ const projects = [
     image: netflixclone,
     repo: 'https://github.com/GabrielRGoldstein/netflix-react-clone/tree/master',
     demo: 'https://github.com/GabrielRGoldstein/netflix-react-clone/tree/master',
+    hasDemo: false,
   },
   {
     id: 'project-3',
-    name: 'Godot Action RPG',
-    description: '2D action RPG demo created in Godot game engine. Fully animated character, small game world, character states, enemies with: AI, functioning attacks, and a wander state, player has stats that is represented in the UI. Player Camera + custom sounds.',
+    name: 'ML Trading Bot',
+    description: 'This project features an algorithmic trading strategy using sentiment analysis, implemented in Python with the Alpaca API. The MLTrader class employs FinBERT for sentiment analysis, making buy/sell decisions based on news sentiment and incorporating risk management through bracket orders.',
     tags: [
       {
         name: 'nextjs',
@@ -202,9 +208,10 @@ const projects = [
         color: 'pink-text-gradient',
       },
     ],
-    image: math,
-    repo: 'https://github.com/GabrielRGoldstein/Godot-Action-RPG-Test',
-    demo: 'https://github.com/GabrielRGoldstein/Godot-Action-RPG-Test',
+    image: mltrader,
+    repo: 'https://github.com/GabrielRGoldstein/Python-Trading-Bot',
+    demo: 'https://github.com/GabrielRGoldstein/Python-Trading-Bot',
+    hasDemo: false,
   },
   {
     id: 'project-4',
@@ -227,6 +234,7 @@ const projects = [
     image: movie,
     repo: '',
     demo: '',
+    hasDemo: false,
   },
   {
     id: 'project-5',
@@ -249,6 +257,7 @@ const projects = [
     image: movie,
     repo: '',
     demo: '',
+    hasDemo: false,
   },
   
 ];
