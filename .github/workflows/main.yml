@@ -26,4 +26,4 @@ jobs:
 
     - name: Deploy to GitHub Pages
       run: |
-        git subtree push --prefix dist origin gh-pages
+        git subtree push --prefix dist origin gh-pages --squash
