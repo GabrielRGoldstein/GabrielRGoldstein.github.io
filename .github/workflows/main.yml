@@ -26,5 +26,4 @@ jobs:
 
     - name: Deploy to GitHub Pages
       run: |
-        git push origin `git subtree split --prefix dist main`:gh-pages --force
-        
+        git subtree push --prefix dist origin gh-pages
