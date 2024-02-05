@@ -22,8 +22,15 @@ jobs:
       run: npm install
 
     - name: Build
-      run: npm run build  # Adjust the build command as needed
+      run: npm run build
 
     - name: Deploy to GitHub Pages
+      id: deploy
       run: |
-        git subtree push --prefix dist origin gh-pages --squash
+        if ! git subtree push --prefix dist origin gh-pages; then
+          git push origin `git subtree split --prefix dist main`:gh-pages --force
+        fi
+
+    - name: Handle Deployment Failure
+      if: failure()
+      run: echo "Deployment to GitHub Pages failed."
