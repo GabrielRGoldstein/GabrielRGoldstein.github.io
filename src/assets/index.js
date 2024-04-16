@@ -37,6 +37,8 @@ import clu from "./company/clu.png";
 import discordclone from "./projects/discord-clone.png"
 import netflixclone from './projects/netflix-clone.png';
 import mltrader from "./projects/ml-trading-bot.png";
+import figmaClone from "./projects/figma-clone.png";
+
 import math from './projects/math-magicians.png';
 import movie from './projects/movie-metro.png';
 import nyeusi from './projects/nyeusi.png';
@@ -88,5 +90,6 @@ export {
   gglogo_pink,
   gm_pink,
   clu_pink,
-  mltrader
+  mltrader,
+  figmaClone
 };

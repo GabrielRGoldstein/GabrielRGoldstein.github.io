@@ -27,6 +27,7 @@ import {
   clu_pink,
   gm_pink,
   mltrader,
+  figmaClone
 } from '../assets';
 
 export const navLinks = [
@@ -215,8 +216,8 @@ const projects = [
   },
   {
     id: 'project-4',
-    name: 'More Incoming',
-    description: `Stand by for more projects with links to demos and repos.`,
+    name: 'Figma Clone',
+    description: `A minimalistic Figma clone adding real-world features like live collaboration with live cursors, chat, comments, reactions, and drawing designs (shapes, image upload) on the canvas using fabric.js.`,
     tags: [
       {
         name: 'nextjs',
@@ -231,10 +232,10 @@ const projects = [
         color: 'pink-text-gradient',
       },
     ],
-    image: movie,
-    repo: '',
-    demo: '',
-    hasDemo: false,
+    image: figmaClone,
+    repo: 'https://github.com/GabrielRGoldstein/FigmaClone',
+    demo: 'https://figmaclone-production.up.railway.app/',
+    hasDemo: true,
   },
   {
     id: 'project-5',
