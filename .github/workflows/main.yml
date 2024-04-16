@@ -24,6 +24,14 @@ jobs:
     - name: Build
       run: npm run build  # Adjust the build command as needed
 
-    - name: Deploy to GitHub Pages
+    - name: Split subtree to a temporary branch
       run: |
-        git push origin `git subtree split --prefix dist master`:gh-pages --force
+        git subtree split --prefix dist -b temp-for-push
+    
+    - name: Force push the temporary branch to gh-pages
+      run: |
+        git push --force origin temp-for-push:gh-pages
+    
+    - name: Remove the temporary branch
+      run: |
+        git branch -D temp-for-push
