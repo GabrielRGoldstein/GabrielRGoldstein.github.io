@@ -2,32 +2,200 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+.embla {
+  overflow: hidden;
+  max-width: 90%;
+  margin: auto;
+  --slide-height: 19rem;
+  --slide-spacing: 1rem;
+  --slide-spacing-sm: 1.6rem;
+  --slide-spacing-lg: 2rem;
+  --slide-size: 100%;
+  --slide-size-sm: calc(50% - var(--slide-spacing-sm));
+  --slide-size-lg: calc((100% / 3) - var(--slide-spacing-lg));
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+.embla__container {
+  backface-visibility: hidden;
+  display: flex;
+  touch-action: pan-y pinch-zoom;
+  gap: var(--slide-spacing);
+}
+
+.embla__slide {
+  min-width: 0;
+  flex: 0 0 var(--slide-size);
+  display: flex;
+  flex-direction: column;
+}
+
+.embla__slide img {
+  border: 2px solid white;
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.embla__slide Image {
+  border: 2px solid white;
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* .embla__slide p {
+  padding-top: 1rem;
+
+} */
+
+@media (min-width: 750px) {
+  .embla__slide {
+    flex: 0 0 var(--slide-size-sm);
   }
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+@media (min-width: 1200px) {
+  .embla__slide {
+    flex: 0 0 var(--slide-size-lg);
+  }
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+@media (max-width: 750px){
+  #heroImg{
+    object-fit:cover
   }
+}
+
+/* @media (min-aspect-ratio: 21/9) {
+  #heroImg {
+    object-fit: contain; 
+  }
+} */
+
+/* Stop Animation on Ultra-Wide Monitors */
+@media (min-aspect-ratio: 21/9) {
+  .animate-hero {
+    animation: none !important;
+  }
+}
+
+.is_square {
+  display: inline-block;
+  cursor: pointer;
+  border: 2px solid #fffde5;
+  border-radius: 3px;
+  box-shadow: 0px 4px 0px rgba(0, 0, 0, 0.4);
+  background: #0c0c0d;
+  color: #fffde5;
+  padding: 1rem;
+  font-size: 15px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+@font-face {
+  font-family: 'MOOD';
+  src: url('/fonts/MOOD.ttf'); 
+ }
+
+/* In your css file where you want to use the font */
+.MOOD { 
+ font-family: 'MOOD';
+}
+
+@font-face {
+  font-family: 'MiniMOOD';
+  src: url('/fonts/MiniMOOD.ttf'); 
+ }
+
+/* In your css file where you want to use the font */
+.MiniMOOD { 
+ font-family: 'MiniMOOD';
+}
+
+@font-face {
+  font-family: 'MOOD_MK2';
+  src: url('/fonts/MOOD MKII.ttf'); 
+ }
+
+/* In your css file where you want to use the font */
+.MOOD_MK2 { 
+ font-family: 'MOOD_MK2';
+}
+
+/* .content_padding {
+  
+} */
+
+.w-90percent {
+  width: 90%;
+}
+
+.embla__slide {
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.embla__slide:hover {
+  transform: translateY(10px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.embla__slide:hover .overlay {
+  opacity: 1;
+}
+
+.embla__slide:focus {
+  transform: translateY(10px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.embla__slide:focus .overlay {
+  opacity: 1;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.overlay svg {
+  width: 40px;
+  height: 40px;
+  fill: #fff;
+}
+.embla__prev,
+.embla__next {
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.embla__prev:hover,
+.embla__next:hover {
+  background-color: #74246d;
+  border-color: #74246d;
+}
+
+.embla__prev:focus,
+.embla__next:focus {
+  background-color: #74246d;
+  border-color: #74246d;
+}
+
+.resume {
+  transition: color 0.3s ease
+}
+
+.resume:hover{
+  color: #0ce6f2
 }
