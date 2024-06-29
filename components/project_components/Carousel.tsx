@@ -131,7 +131,7 @@ const Carousel = () => {
                   </div>
                   <div className="mt-4">
                     <Button
-                      className="inline-flex justify-center px-4 py-2 text-sm font-medium text-pixel_blue bg-pixel_bg_darker border border-transparent rounded-md hover:bg-pixel_bg_darkest"
+                      className="inline-flex justify-center px-4 py-2 text-sm font-medium text-pixel_blue border border-transparent rounded-md hover:bg-pixel_bg_darkest"
                       onClick={closeModal}
                     >
                       Close

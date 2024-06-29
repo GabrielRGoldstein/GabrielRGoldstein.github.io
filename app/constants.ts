@@ -135,10 +135,9 @@ const technologies = [
     },
     {
       id: 'project-4',
-      title: 'Figma Clone',
-      description: `A minimalistic Figma clone adding real-world features like live collaboration with live cursors, chat, comments, 
-      reactions, and drawing designs (shapes, image upload) on the canvas using fabric.js.`,
-      image: figmaclone,
+      title: 'Placeholder',
+      description: `Placeholder to show that the carousel works. I'm currently working on a Virtual Tabletop that I'll showcase here.`,
+      image: gglogo,
       repo: 'https://github.com/GabrielRGoldstein/FigmaClone',
       demo: 'https://figmaclone-production.up.railway.app/',
       hasDemo: true,

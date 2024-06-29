@@ -19,7 +19,7 @@ const Hero = () => {
                 zIndex: -1,
                 position: 'absolute',
                 width: "100%",
-                height: "100%",
+                height: "100vh",
                 overflow:'hidden'
             }}>
                 <Image id='heroImg' src={"/images/hero_background.webp"} alt="pixelart portal background" fill={true} unoptimized={true}/>
@@ -28,7 +28,7 @@ const Hero = () => {
             <main 
             className="MOOD text-center text-white text-2xl md:text-4xl pt-5 
             drop-shadow uppercase">
-                <h1 className='pt-2 l:pt-0 md:mt-4 lg:mt-7 text-pixel_blue'>Gabriel<span className='block lg:pt-2'>Goldstein</span></h1>
+                <h1 className='pt-4 l:pt-0 md:mt-4 lg:mt-7 text-pixel_blue'>Gabriel<span className='block lg:pt-2'>Goldstein</span></h1>
                 <h2 className='md:mt-2 text-white-500 MiniMOOD'>Software Engineer</h2>
             </main>
                 

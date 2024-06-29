@@ -4,7 +4,7 @@ import BallCanvas from './canvas/Ball' // Ensure you have this component or impo
 
 const About = () => {
   return (
-    <div className='bg-pixel_bg text-white pt-20 pb-10' id='about'>
+    <div className='bg-pixel_bg text-white pt-20 pb-10 ' id='about'>
       <h1 className="text-center text-2xl md:text-4xl text-white MOOD drop-shadow uppercase">About</h1>
       <div className='mt-5 lg:mt-16 lg:flex lg:justify-center lg:gap-6 w-90percent mx-auto'>
         <div className='lg:w-1/2'>
@@ -27,7 +27,7 @@ const About = () => {
           </p>
         </div>
         <div className='lg:w-1/2'>
-          <div className="flex flex-wrap justify-center gap-10 py-5">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 justify-items-center gap-10 py-5">
             {technologies.map((technology) => (
               <div key={technology.name} className="text-center">
                 <p className="font-medium capitalize">{technology.name}</p>
