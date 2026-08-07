@@ -1,0 +1,2 @@
+# Keep production documents out of text diff and line-ending normalization pipelines.
+*.pdf binary

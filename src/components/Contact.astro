@@ -1,0 +1,69 @@
+---
+import type { Site } from "../schemas/content";
+
+interface Props {
+  site: Site;
+}
+
+const { site } = Astro.props;
+
+if (site.resumeUrl === null) {
+  throw new Error("Contact requires a validated production PDF résumé URL.");
+}
+
+const resumeUrl = site.resumeUrl;
+---
+
+<section class="contact-footer" id="contact" aria-labelledby="contact-title">
+  <h2 id="contact-title">{site.contact.heading}</h2>
+
+  <div class="contact-footer__actions">
+    <p class="contact-footer__label mono-label">{site.contact.label}</p>
+
+    <a class="contact-action contact-action--primary" href={`mailto:${site.email}`}>
+      <span>
+        {site.contact.emailCta}
+        <small>{site.email}</small>
+      </span>
+      <span aria-hidden="true">↗</span>
+    </a>
+
+    <div class="contact-footer__secondary">
+      <a
+        class="contact-action contact-action--secondary"
+        href={site.github.profileUrl}
+        target="_blank"
+        rel="me noreferrer"
+      >
+        GitHub ↗
+      </a>
+
+      {
+        site.linkedinUrl ? (
+          <a
+            class="contact-action contact-action--secondary"
+            href={site.linkedinUrl}
+            target="_blank"
+            rel="noreferrer"
+          >
+            LinkedIn ↗
+          </a>
+        ) : (
+          <span class="contact-action contact-action--pending">
+            <span aria-hidden="true">LinkedIn ↗</span>
+            <span class="visually-hidden">LinkedIn — profile link pending confirmation</span>
+          </span>
+        )
+      }
+
+      <a
+        class="contact-action contact-action--secondary"
+        href={resumeUrl}
+        download="Gabriel-Goldstein-Resume.pdf"
+        type="application/pdf"
+      >
+        Résumé ↓
+      </a>
+    </div>
+  </div>
+</section>

@@ -20,7 +20,12 @@ const lastName = remainingName.join(" ");
     <a class="site-nav__experience" href="#experience">Experience</a>
     {
       site.resumeUrl ? (
-        <a class="site-nav__resume" href={site.resumeUrl}>Résumé ↗</a>
+        <a
+          class="site-nav__resume"
+          href={site.resumeUrl}
+          target="_blank"
+          rel="noreferrer"
+        >Résumé ↗</a>
       ) : (
         <span class="site-nav__resume site-nav__pending">
           <span aria-hidden="true">Résumé ↗</span>

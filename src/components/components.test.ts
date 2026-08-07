@@ -19,7 +19,10 @@ describe("SiteHeader", () => {
     expect(html).toContain("Gabriel Goldstein, back to top");
     expect(html).toContain('href="#work"');
     expect(html).toContain('href="#experience"');
-    expect(html).toContain("Résumé — link pending");
+    expect(portfolioContent.site.resumeUrl).toBe("/documents/gabriel-goldstein-resume.pdf");
+    expect(html).toContain('href="/documents/gabriel-goldstein-resume.pdf"');
+    expect(html).toContain('target="_blank"');
+    expect(html).not.toContain("Résumé — link pending");
     expect(html).toContain('href="#contact"');
     expect(html).not.toContain("About");
 
@@ -135,6 +138,121 @@ describe("ProjectGrid", () => {
   });
 });
 
+describe("Contact", () => {
+  it("renders all confirmed production contact actions", async () => {
+    const { default: Contact } = await import("../components/Contact.astro");
+    const container = await AstroContainer.create();
+    const html = await container.renderToString(Contact, {
+      props: { site: portfolioContent.site },
+    });
+
+    expect(html).toContain('id="contact"');
+    expect(html).toContain('aria-labelledby="contact-title"');
+    expect(html).toContain(portfolioContent.site.contact.heading);
+    expect(html).toContain(portfolioContent.site.contact.label);
+    expect(html).toContain(`href="mailto:${portfolioContent.site.email}"`);
+    expect(html).toContain(`href="${portfolioContent.site.github.profileUrl}"`);
+    expect(html).toContain('rel="me noreferrer"');
+    expect(html).toContain(`href="${portfolioContent.site.resumeUrl}"`);
+    expect(html).toContain('download="Gabriel-Goldstein-Resume.pdf"');
+    expect(portfolioContent.site.linkedinUrl).toBe(
+      "https://www.linkedin.com/in/gabriel-g-b77158121/",
+    );
+    expect(html).toContain(
+      `href="${portfolioContent.site.linkedinUrl}" target="_blank" rel="noreferrer"`,
+    );
+    expect(html).not.toContain("LinkedIn — profile link pending confirmation");
+    expect(html.match(/<a /g)).toHaveLength(4);
+    expect(html).not.toContain('href="#"');
+  });
+
+  it("renders an unconfigured LinkedIn destination as non-interactive pending text", async () => {
+    const { default: Contact } = await import("../components/Contact.astro");
+    const site = {
+      ...portfolioContent.site,
+      linkedinUrl: null,
+    };
+    const container = await AstroContainer.create();
+    const html = await container.renderToString(Contact, { props: { site } });
+
+    expect(html).toContain("LinkedIn — profile link pending confirmation");
+    expect(html).not.toContain("https://www.linkedin.com");
+    expect(html.match(/target="_blank"/g)).toHaveLength(1);
+    expect(html.match(/<a /g)).toHaveLength(3);
+  });
+});
+
+describe("SiteFooter", () => {
+  it("renders the validated identity and location with the current year", async () => {
+    const { default: SiteFooter } = await import("../components/SiteFooter.astro");
+    const container = await AstroContainer.create();
+    const html = await container.renderToString(SiteFooter, {
+      props: { site: portfolioContent.site },
+    });
+
+    expect(html).toContain("<footer");
+    expect(html).toContain(`© ${new Date().getUTCFullYear()} ${portfolioContent.site.name}`);
+    expect(html).toContain(portfolioContent.site.location);
+    expect(html).not.toContain(portfolioContent.site.email);
+  });
+});
+
+describe("ExperienceList", () => {
+  it("renders every validated experience role as complete static content", async () => {
+    const { default: ExperienceList } = await import("../components/ExperienceList.astro");
+    const container = await AstroContainer.create();
+    const html = await container.renderToString(ExperienceList, {
+      props: { experience: portfolioContent.experience },
+    });
+
+    expect(html).toContain('id="experience"');
+    expect(html).toContain('aria-labelledby="experience-title"');
+    expect(html.match(/data-experience-id=/g)).toHaveLength(portfolioContent.experience.length);
+    expect(html).not.toContain("<script");
+
+    for (const entry of portfolioContent.experience) {
+      expect(html).toContain(`data-experience-id="${entry.id}"`);
+      expect(html).toContain(entry.role);
+      expect(html).toContain(entry.company);
+      expect(html).toContain(entry.location);
+      expect(html).toContain(entry.publicSummary);
+
+      for (const period of entry.periods) {
+        expect(html).toContain(`datetime="${period.start}"`);
+        if (period.end === null) {
+          expect(html).toContain("Present");
+        } else {
+          expect(html).toContain(`datetime="${period.end}"`);
+        }
+      }
+
+      for (const skill of entry.skills) {
+        expect(html).toContain(`>${skill}</li>`);
+      }
+
+      for (const highlight of entry.highlights) {
+        expect(html).toContain(`>${highlight}</li>`);
+      }
+    }
+  });
+
+  it("formats every experience period for people and machines", async () => {
+    const { default: ExperienceList } = await import("../components/ExperienceList.astro");
+    const container = await AstroContainer.create();
+    const html = await container.renderToString(ExperienceList, {
+      props: { experience: portfolioContent.experience },
+    });
+
+    expect(html).toContain('<time datetime="2026-06">Jun 2026</time>');
+    expect(html).toContain("Present");
+    expect(html).toContain('<time datetime="2023-12">Dec 2023</time>');
+    expect(html).toContain('<time datetime="2024-10">Oct 2024</time>');
+    expect(html).toContain('<time datetime="2020-12">Dec 2020</time>');
+    expect(html).toContain('<time datetime="2022-06">Jun 2022</time>');
+    expect(html).not.toContain('>2026-06</time>');
+  });
+});
+
 describe("index page", () => {
   it("renders the validated top half without project-shell placeholders", async () => {
     const container = await AstroContainer.create();
@@ -150,5 +268,31 @@ describe("index page", () => {
       expect(html).toContain(`data-project-id="${project.id}"`);
       expect(html).toContain(project.title);
     }
+  });
+
+  it("renders the complete validated lower page without shell placeholders", async () => {
+    const container = await AstroContainer.create();
+    const html = await container.renderToString(IndexPage);
+
+    for (const entry of portfolioContent.experience) {
+      expect(html).toContain(`data-experience-id="${entry.id}"`);
+      expect(html).toContain(entry.publicSummary);
+    }
+
+    expect(html).toContain(portfolioContent.site.contact.heading);
+    expect(html).toContain('href="/documents/gabriel-goldstein-resume.pdf"');
+    expect(html).toContain(`© ${new Date().getUTCFullYear()} ${portfolioContent.site.name}`);
+    expect(html).not.toContain("Compact role rows will become accessible disclosures");
+    expect(html).not.toContain("Software engineering role");
+    expect(html).not.toContain('id="about"');
+    expect(html).not.toContain("<script");
+
+    const work = html.indexOf('id="work"');
+    const experience = html.indexOf('id="experience"');
+    const contact = html.indexOf('id="contact"');
+    const footer = html.indexOf('<footer class="site-footer">');
+    expect(work).toBeLessThan(experience);
+    expect(experience).toBeLessThan(contact);
+    expect(contact).toBeLessThan(footer);
   });
 });

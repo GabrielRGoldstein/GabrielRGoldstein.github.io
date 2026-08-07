@@ -1,0 +1,15 @@
+---
+import type { Site } from "../schemas/content";
+
+interface Props {
+  site: Site;
+}
+
+const { site } = Astro.props;
+const currentYear = new Date().getUTCFullYear();
+---
+
+<footer class="site-footer">
+  <span>© {currentYear} {site.name}</span>
+  <span>{site.location}</span>
+</footer>

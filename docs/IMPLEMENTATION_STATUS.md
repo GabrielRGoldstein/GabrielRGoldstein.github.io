@@ -1,6 +1,6 @@
 # Portfolio Implementation Status
 
-Last updated: 2026-08-06 22:42 MDT
+Last updated: 2026-08-07 11:52 MDT
 
 ## Locked design decisions
 
@@ -16,9 +16,9 @@ Last updated: 2026-08-06 22:42 MDT
 
 ## Current batch
 
-Batch 3 — Header, Hero, GitHub Identity, and Project Gallery — **complete and independently approved**
+Batch 4 — Experience, Contact, Résumé, and Footer — **complete and independently approved**
 
-Next batch: Batch 4 — Experience, Contact, Résumé, and Footer
+Next batch: Batch 5 — Minimal Interaction and Progressive Enhancement
 
 ## Completed batches
 
@@ -74,6 +74,20 @@ Next batch: Batch 4 — Experience, Contact, Résumé, and Footer
 - Browser verification found that the skip link scrolled correctly but left focus on the body; added a failing integration regression and made `#main-content` programmatically focusable with `tabindex="-1"`.
 - The first fail-closed review rejected the avatar alt text because it described the photorealistic wolf image as illustrated; added a failing-then-passing regression and changed the authored text to the neutral, accurate “Wolf GitHub avatar for GabrielRGoldstein.”
 
+### Batch 4 — Experience, Contact, Résumé, and Footer
+
+- Added tested `ExperienceList`, `ExperienceRow`, `Contact`, and `SiteFooter` Astro components.
+- Added six component/integration regressions through RED-GREEN cycles, bringing the complete suite to 68 tests.
+- Replaced the Batch 1 lower-page shell with validated experience, Contact Footer Study 2, and site-footer content; the standalone About section remains intentionally absent.
+- Rendered every validated role, public summary, impact highlight, skill, location, and multi-period employment date as semantic static HTML. Human-readable month labels retain machine-readable `<time datetime="YYYY-MM">` values.
+- Kept every experience detail readable without JavaScript so Batch 5 can add an optional progressive-enhancement accordion without making content dependent on scripting.
+- Produced `public/documents/gabriel-goldstein-resume.pdf`, a two-page, selectable-text, browser-native public résumé with working email, GitHub, and portfolio annotations.
+- Added a repository-local `.gitattributes` binary rule for PDFs so machine-global text-diff and line-ending settings cannot rewrite production document bytes.
+- Constructed the production PDF from validated public content and non-sensitive education/certification facts. It deliberately excludes the source résumé's phone number, clearance, internal program names, customer identities, and other private operational details.
+- Activated the résumé in the sticky header as a protected new-tab link and in Contact as an explicit PDF download.
+- Published the user-confirmed LinkedIn destination `https://www.linkedin.com/in/gabriel-g-b77158121/` as a protected external Contact action while retaining a tested non-interactive fallback for future null content.
+- Preserved the filled email-primary / three-bordered-secondary Contact hierarchy and added responsive Experience layout rules without introducing a client framework or runtime script.
+
 ## Batch 2 verification evidence
 
 ```text
@@ -123,26 +137,62 @@ Final fresh fail-closed re-review:
 - Confirmed the corrected wolf-avatar alt text is accurate and the regression test fails the former misleading text
 ```
 
+## Batch 4 verification evidence
+
+```text
+Automated:
+- npm test -- --run: 68 tests passed across 2 test files
+- npm run check: 19 files, 0 errors, 0 warnings, 0 hints
+- npm run build: static output, 1 page generated
+- npm audit --audit-level=high: 0 vulnerabilities
+- git diff --check: passed
+
+Résumé:
+- Two-page PDF, 7,140 bytes, selectable text, no script or form dependency
+- SHA-256: ba84de2fb99dfe86e753bfa3848b50f552c13672632cc054557f2683e882be6b
+- Public and built PDF bytes are identical
+- Working and staged PDF bytes are identical after the repository-local binary attribute is applied
+- Chromium's native PDF viewer opened both pages and exposed working download/print controls
+- Extracted-text audit found every required public section and no clearance, internal-program, phone-like, or customer-specific disclosures
+
+Browser, responsive, and accessibility:
+- Desktop: final Experience, active LinkedIn, résumé, Contact, and Footer layout passed visual inspection with no console errors
+- CDP-emulated 390 px: inner width and scroll width both 390 px; Experience and Contact widths 350 px; no overflow offenders
+- CDP-emulated 768 px: inner width and scroll width both 768 px; Experience and Contact widths 712 px; no overflow offenders
+- Work, Experience, and Contact anchors resolve below the sticky header; the PDF endpoint returns HTTP 200 with application/pdf
+- Generated HTML contains zero scripts, duplicate IDs, unsafe target-blank links, or standalone About section
+- Self-hosted Geist and Geist Mono loaded at both responsive widths with no third-party font requests
+- The null LinkedIn fallback remains non-focusable; its opacity-composited text contrast is 4.53:1
+- Final active LinkedIn action is 52 px high and uses the exact confirmed URL, target="_blank", and rel="noreferrer"
+
+Privacy and security:
+- Text-diff scan found no private keys, secret assignments, credentials, or executable markup
+- Built HTML and extracted PDF text contain no clearance, named internal-program, or phone-like values
+
+Independent fail-closed review:
+- Comprehensive review of staged tree `aa73bd9e02b8d98ea99919b113c0e55b3ef0bad4` found zero product, security, privacy, accessibility, logic, content-integrity, documentation, or scope blockers.
+- The comprehensive reviewer recorded two optional test-strengthening suggestions but correctly returned fail-closed when its tool budget expired before the final repository-state observation.
+- A separate narrow integrity review then certified the same exact tree, branch, HEAD, 12-path staged set, passing cached diff check, and zero unstaged or untracked files, closing the sole procedural blocker.
+```
+
 ## Intentional placeholders and pending content
 
-- The Batch 1 experience shell remains visible; Batch 4 replaces it with validated experience components.
 - Project covers are intentional conceptual illustrations, not screenshots. Replace them only if audited real project imagery becomes available later.
 - Project repository and live-demo destinations remain `null` until each public-safe URL is audited.
-- LinkedIn remains `null` until the final profile URL is confirmed.
-- Résumé remains `null` until a final production PDF is available; the source DOCX is not a deployable asset.
+- Experience details are fully visible in static HTML; Batch 5 may progressively enhance them with accordions while preserving the no-JavaScript fallback.
 
 ## Known blockers and deferred inputs
 
-- Final PDF résumé and LinkedIn profile URL are required before Batch 4 acceptance.
+- No Batch 4 blocker remains; the exact substantive staged tree passed comprehensive review plus independent end-state certification.
 - GitHub repository name, final deployment URL, and custom-domain decision are deferred to Batch 8.
 - Analytics provider is deferred to Batch 9.
 
 ## Exact continuation command
 
-Run this from `site/` at the start of Batch 4:
+Run this from `site/` at the start of Batch 5 after Batch 4 is approved and committed:
 
 ```bash
 git log -1 --oneline && git status --short && npm test -- --run && npm run check && npm run build
 ```
 
-Then read the Batch 4 section of the implementation plan and the later locked product decisions. Build Experience, Contact, Résumé, and Footer from validated content; do not reintroduce a standalone About section. Obtain a production PDF résumé and confirmed LinkedIn URL before closing Batch 4.
+Then read the Batch 5 section of the implementation plan and the later locked product decisions. Add only minimal progressive enhancement for experience disclosure behavior, keep all details available without JavaScript, respect reduced motion, and do not add framework hydration.

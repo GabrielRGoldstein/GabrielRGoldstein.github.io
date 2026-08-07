@@ -20,8 +20,8 @@
     "avatarFallback": "/images/avatar.webp",
     "avatarAlt": "Wolf GitHub avatar for GabrielRGoldstein"
   },
-  "linkedinUrl": null,
-  "resumeUrl": null,
+  "linkedinUrl": "https://www.linkedin.com/in/gabriel-g-b77158121/",
+  "resumeUrl": "/documents/gabriel-goldstein-resume.pdf",
   "contact": {
     "heading": "Have a role or project in mind?",
     "label": "Choose a next step",

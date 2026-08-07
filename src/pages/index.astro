@@ -1,17 +1,14 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import Contact from '../components/Contact.astro';
+import ExperienceList from '../components/ExperienceList.astro';
 import Hero from '../components/Hero.astro';
 import ProjectGrid from '../components/ProjectGrid.astro';
+import SiteFooter from '../components/SiteFooter.astro';
 import SiteHeader from '../components/SiteHeader.astro';
 import { portfolioContent } from '../lib/content';
 
-const { projects, site } = portfolioContent;
-
-const shellRoles = [
-  { period: 'Current', role: 'Software engineering role', company: 'Experience content' },
-  { period: 'Previous', role: 'Software engineering role', company: 'Experience content' },
-  { period: 'Earlier', role: 'Software engineering role', company: 'Experience content' },
-];
+const { experience, projects, site } = portfolioContent;
 ---
 
 <BaseLayout title={site.meta.title} description={site.meta.description}>
@@ -21,66 +18,10 @@ const shellRoles = [
     <main id="main-content" tabindex="-1">
       <Hero site={site} />
       <ProjectGrid projects={projects} />
-
-      <section class="content-section experience" id="experience" aria-labelledby="experience-title">
-        <header class="section-header">
-          <h2 id="experience-title">Experience</h2>
-          <p>Compact role rows will become accessible disclosures after content validation.</p>
-        </header>
-
-        <div class="experience-list">
-          {
-            shellRoles.map((role) => (
-              <article class="experience-row">
-                <span class="experience-row__period">{role.period}</span>
-                <div class="experience-row__content">
-                  <h3>{role.role}</h3>
-                  <p class="experience-row__company">{role.company}</p>
-                </div>
-                <span class="experience-row__indicator" aria-hidden="true">+</span>
-              </article>
-            ))
-          }
-        </div>
-      </section>
+      <ExperienceList experience={experience} />
     </main>
 
-    <section class="contact-footer" id="contact" aria-labelledby="contact-title">
-      <h2 id="contact-title">Have a role or project in mind?</h2>
-
-      <div class="contact-footer__actions">
-        <p class="contact-footer__label mono-label">Choose a next step</p>
-        <a class="contact-action contact-action--primary" href="mailto:ggoldstein771@gmail.com">
-          <span>
-            Email me
-            <small>ggoldstein771@gmail.com</small>
-          </span>
-          <span aria-hidden="true">↗</span>
-        </a>
-
-        <div class="contact-footer__secondary">
-          <a
-            class="contact-action contact-action--secondary"
-            href="https://github.com/GabrielRGoldstein"
-            rel="me noreferrer"
-          >
-            GitHub ↗
-          </a>
-          <span class="contact-action contact-action--pending">
-            <span aria-hidden="true">LinkedIn ↗</span><span class="visually-hidden">
-              LinkedIn — profile link pending confirmation</span
-            >
-          </span>
-          <span class="contact-action contact-action--pending">
-            <span aria-hidden="true">Résumé ↓</span><span class="visually-hidden">Résumé — PDF link pending</span>
-          </span>
-        </div>
-      </div>
-    </section>
-
-    <footer class="site-footer">
-      <span>© Gabriel Goldstein</span>
-      <span>Colorado Springs, Colorado</span>
-    </footer>
+    <Contact site={site} />
+    <SiteFooter site={site} />
   </div>
 </BaseLayout>

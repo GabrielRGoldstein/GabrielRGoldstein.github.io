@@ -1,0 +1,58 @@
+---
+import type { Experience } from "../schemas/content";
+
+interface Props {
+  experience: Experience;
+}
+
+const { experience } = Astro.props;
+
+function formatMonth(value: string): string {
+  const [year, month] = value.split("-").map(Number);
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(new Date(Date.UTC(year, month - 1, 1)));
+}
+---
+
+<article
+  class="experience-row"
+  data-experience-id={experience.id}
+  aria-labelledby={`${experience.id}-role`}
+>
+  <div class="experience-row__periods" aria-label="Employment periods">
+    {
+      experience.periods.map((period) => (
+        <span class="experience-row__period">
+          <time datetime={period.start}>{formatMonth(period.start)}</time>
+          <span>–</span>
+          {period.end === null ? (
+            <span>Present</span>
+          ) : (
+            <time datetime={period.end}>{formatMonth(period.end)}</time>
+          )}
+        </span>
+      ))
+    }
+  </div>
+
+  <div class="experience-row__content">
+    <header class="experience-row__heading">
+      <p class="experience-row__company">{experience.company}</p>
+      <h3 id={`${experience.id}-role`}>{experience.role}</h3>
+      <p class="experience-row__location">{experience.location}</p>
+    </header>
+
+    <p class="experience-row__summary">{experience.publicSummary}</p>
+
+    <ul class="experience-row__highlights" aria-label={`Highlights from ${experience.company}`}>
+      {experience.highlights.map((highlight) => <li>{highlight}</li>)}
+    </ul>
+
+    <ul class="experience-row__skills" aria-label={`Skills used at ${experience.company}`}>
+      {experience.skills.map((skill) => <li>{skill}</li>)}
+    </ul>
+  </div>
+</article>

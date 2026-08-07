@@ -1,0 +1,21 @@
+---
+import type { Experience } from "../schemas/content";
+import ExperienceRow from "./ExperienceRow.astro";
+
+interface Props {
+  experience: Experience[];
+}
+
+const { experience } = Astro.props;
+---
+
+<section class="content-section experience" id="experience" aria-labelledby="experience-title">
+  <header class="section-header">
+    <h2 id="experience-title">Experience</h2>
+    <p>Public-safe impact across systems integration, security automation, data engineering, and product work.</p>
+  </header>
+
+  <div class="experience-list">
+    {experience.map((entry) => <ExperienceRow experience={entry} />)}
+  </div>
+</section>
