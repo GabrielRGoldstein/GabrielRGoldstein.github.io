@@ -1,0 +1,66 @@
+[
+  {
+    "id": "discord-clone",
+    "slug": "discord-clone",
+    "featured": true,
+    "order": 1,
+    "title": "Discord Clone",
+    "category": "fullstack",
+    "summary": "A real-time full-stack application with servers, channels, live messaging, and video and audio calls.",
+    "stack": ["Next.js", "React", "Prisma", "SQL", "Tailwind CSS"],
+    "cover": {
+      "src": "/images/projects/discord-clone.webp",
+      "alt": "Discord Clone interface with servers, channels, and live messaging"
+    },
+    "repositoryUrl": null,
+    "liveUrl": null
+  },
+  {
+    "id": "ml-stock-trading-bot",
+    "slug": "ml-stock-trading-bot",
+    "featured": true,
+    "order": 2,
+    "title": "ML Stock Trading Bot",
+    "category": "data-ai",
+    "summary": "A sentiment-informed paper-trading system with automated buy and sell decisions and bracket-order risk controls.",
+    "stack": ["Python", "FinBERT", "Alpaca API", "NLP"],
+    "cover": {
+      "src": "/images/projects/ml-stock-trading-bot.webp",
+      "alt": "ML Stock Trading Bot dashboard with sentiment and paper-trading signals"
+    },
+    "repositoryUrl": null,
+    "liveUrl": null
+  },
+  {
+    "id": "ai-livestream",
+    "slug": "ai-livestream",
+    "featured": true,
+    "order": 3,
+    "title": "24/7 AI Livestream",
+    "category": "systems",
+    "summary": "A high-availability microservice pipeline that eliminated full-pipeline downtime during service failures and increased voice throughput by roughly four times.",
+    "stack": ["Docker", "Kubernetes", "Unity", "MongoDB"],
+    "cover": {
+      "src": "/images/projects/ai-livestream.webp",
+      "alt": "24/7 AI Livestream service pipeline from Discord prompts to a Unity scene"
+    },
+    "repositoryUrl": null,
+    "liveUrl": null
+  },
+  {
+    "id": "ceiling-sam",
+    "slug": "ceiling-sam",
+    "featured": true,
+    "order": 4,
+    "title": "Ceiling Sam",
+    "category": "client",
+    "summary": "A custom Shopify storefront developed around a client’s visual direction and associated with an approximately 50% sales lift.",
+    "stack": ["Shopify", "JavaScript", "HTML", "CSS"],
+    "cover": {
+      "src": "/images/projects/ceiling-sam.webp",
+      "alt": "Ceiling Sam custom Shopify storefront"
+    },
+    "repositoryUrl": null,
+    "liveUrl": null
+  }
+]

@@ -1,0 +1,57 @@
+[
+  {
+    "id": "l3harris-test-integration-specialist",
+    "company": "L3Harris",
+    "role": "Test and Integration Specialist",
+    "location": "Colorado Springs, CO",
+    "periods": [{ "start": "2026-06", "end": null }],
+    "publicSummary": "Systems integration, hardware verification, and delivery-process improvements for mission-critical programs.",
+    "skills": ["Systems Integration", "Hardware Testing", "Kanban", "Technical Documentation"],
+    "highlights": [
+      "Established a shared Kanban workflow that clarified task status and ownership and helped return the project to schedule.",
+      "Authored onboarding documentation and supported system integration and verification through hardware testing."
+    ]
+  },
+  {
+    "id": "nlogic-cyber-security-test-engineer",
+    "company": "nLogic",
+    "role": "Cyber Security Test Engineer",
+    "location": "Colorado Springs, CO",
+    "periods": [{ "start": "2024-11", "end": "2026-06" }],
+    "publicSummary": "Automated security testing and translated cyber and functional requirements into repeatable procedures.",
+    "skills": ["PowerShell", "STIG", "RMF", "Kubernetes"],
+    "highlights": [
+      "Raised test-process automation from roughly 40% to 92.6%.",
+      "Built reporting automation and evaluated modern security and infrastructure tooling."
+    ]
+  },
+  {
+    "id": "freelance-front-end-engineer",
+    "company": "Freelance",
+    "role": "Front-End Engineer",
+    "location": "Los Angeles, CA",
+    "periods": [
+      { "start": "2023-12", "end": "2024-10" },
+      { "start": "2020-12", "end": "2022-06" }
+    ],
+    "publicSummary": "Owned client relationships and shipped ecommerce sites, landing pages, and full-stack applications.",
+    "skills": ["React", "Next.js", "JavaScript", "AWS"],
+    "highlights": [
+      "Worked with more than 15 clients and built or maintained eight or more websites.",
+      "Improved site traffic by an average of 40% within six months across engagements."
+    ]
+  },
+  {
+    "id": "general-motors-software-engineer",
+    "company": "General Motors",
+    "role": "Software Engineer",
+    "location": "Chandler, AZ",
+    "periods": [{ "start": "2022-06", "end": "2023-11" }],
+    "publicSummary": "Delivered data products and ETL improvements for global production and supply-chain planning.",
+    "skills": ["Python", "SQL", "ETL", "Azure", "Power BI"],
+    "highlights": [
+      "Contributed to an initiative associated with approximately $10 million in reduced expenses.",
+      "Delivered more than 20 Power BI reports and helped cut combined project delivery time by 30%."
+    ]
+  }
+]

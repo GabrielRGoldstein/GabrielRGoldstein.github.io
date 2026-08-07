@@ -1,0 +1,30 @@
+{
+  "name": "Gabriel Goldstein",
+  "professionalTitle": "Software Engineer",
+  "location": "Colorado Springs, Colorado",
+  "email": "ggoldstein771@gmail.com",
+  "meta": {
+    "title": "Gabriel Goldstein — Software Engineer",
+    "description": "Software engineer building dependable tools across systems integration, security automation, data engineering, and full-stack development."
+  },
+  "hero": {
+    "eyebrow": "Software engineer · Colorado Springs",
+    "lead": "Complicated systems.",
+    "accent": "Dependable tools.",
+    "summary": "Software engineer turning complicated workflows into dependable tools across systems integration, security automation, data engineering, and full-stack development."
+  },
+  "practiceAreas": ["Systems", "Security", "Data", "Product"],
+  "github": {
+    "username": "GabrielRGoldstein",
+    "profileUrl": "https://github.com/GabrielRGoldstein",
+    "avatarFallback": "/images/github-avatar.jpg",
+    "avatarAlt": "Illustrated wolf GitHub avatar for GabrielRGoldstein"
+  },
+  "linkedinUrl": null,
+  "resumeUrl": null,
+  "contact": {
+    "heading": "Have a role or project in mind?",
+    "label": "Choose a next step",
+    "emailCta": "Email me"
+  }
+}

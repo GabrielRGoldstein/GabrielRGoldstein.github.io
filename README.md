@@ -28,8 +28,21 @@ Run commands from this `site/` directory.
 | `npm install` | Install locked dependencies |
 | `npm run dev` | Start the Astro development server |
 | `npm run check` | Run Astro and TypeScript diagnostics |
+| `npm test -- --run` | Run the content-contract test suite once |
 | `npm run build` | Generate the static production site in `dist/` |
 | `npm run preview` | Preview the generated production build |
+
+## Content model
+
+Version-controlled JSON under `src/data/` is the portfolio's content database:
+
+- `site.json` — identity, hero, GitHub fallback, contact, and metadata
+- `projects.json` — manually curated projects and authored display order
+- `experience.json` — public-safe professional experience and date ranges
+
+Zod contracts live in `src/schemas/content.ts`. `src/lib/content.ts` validates all three sources, rejects duplicate stable IDs/slugs/order values, and exposes typed, ordered data to Astro. The index route imports the validated content, so malformed authored JSON fails both tests and the production build.
+
+Unknown external destinations remain explicit `null` values until verified. Project links must use HTTP(S), local assets must be root-relative, and a future résumé path must reference a PDF.
 
 ## Fonts
 

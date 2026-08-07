@@ -1,5 +1,8 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { portfolioContent } from '../lib/content';
+
+const { site } = portfolioContent;
 
 const shellProjects = [
   { index: '01', title: 'Selected project', category: 'Systems integration' },
@@ -15,7 +18,7 @@ const shellRoles = [
 ];
 ---
 
-<BaseLayout>
+<BaseLayout title={site.meta.title} description={site.meta.description}>
   <div class="page-shell" id="top">
     <header class="site-header">
       <a class="site-mark" href="#top" aria-label="Gabriel Goldstein, back to top">
