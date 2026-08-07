@@ -1,0 +1,64 @@
+:root {
+  color-scheme: dark;
+
+  --color-bg: #07170d;
+  --color-surface: #14331f;
+  --color-surface-raised: #22472b;
+  --color-text: #edf7bb;
+  --color-muted: #a9bd78;
+  --color-border: #3f673e;
+  --color-accent: #b7dd58;
+  --color-accent-strong: #84b547;
+  --color-accent-text: #10200e;
+  --color-nav: rgb(7 23 13 / 92%);
+  --color-shadow: rgb(0 0 0 / 22%);
+  --color-dot: rgb(183 221 88 / 4%);
+  --color-focus: #d8f27f;
+
+  --font-sans: "Geist", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-mono: "Geist Mono", "Cascadia Mono", "SFMono-Regular", Consolas, monospace;
+
+  --font-size-xs: 0.6875rem;
+  --font-size-sm: 0.8125rem;
+  --font-size-base: 0.9375rem;
+  --font-size-md: 1.125rem;
+  --font-size-lg: 1.3125rem;
+  --font-size-display: clamp(3rem, 7.4vw, 6.25rem);
+  --font-size-section-display: clamp(2.375rem, 6vw, 4.375rem);
+
+  --line-height-tight: 0.9;
+  --line-height-heading: 1.05;
+  --line-height-body: 1.55;
+
+  --tracking-tight: -0.065em;
+  --tracking-heading: -0.035em;
+  --tracking-label: 0.115em;
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-15: 3.75rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-26: 6.5rem;
+
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 0.875rem;
+  --radius-xl: 1rem;
+  --radius-pill: 999px;
+
+  --content-width: 77.5rem;
+  --page-gutter: clamp(1.25rem, 4vw, 1.75rem);
+  --header-height: 4.75rem;
+  --anchor-offset: calc(var(--header-height) + var(--space-6));
+
+  --transition-fast: 140ms ease;
+  --transition-base: 220ms ease;
+}

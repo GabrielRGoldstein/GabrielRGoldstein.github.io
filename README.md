@@ -31,6 +31,19 @@ Run commands from this `site/` directory.
 | `npm run build` | Generate the static production site in `dist/` |
 | `npm run preview` | Preview the generated production build |
 
+## Fonts
+
+Geist and Geist Mono are self-hosted from Vercel's official [`geist` package](https://www.npmjs.com/package/geist), version 1.7.2. The package source is [`vercel/geist-font`](https://github.com/vercel/geist-font) and the fonts are distributed under the SIL Open Font License.
+
+Only the production weights are stored in `public/fonts/`:
+
+- Geist Regular 400
+- Geist Medium 500–600
+- Geist Bold 700–900
+- Geist Mono Medium 500–700
+
+The package's license text is preserved at [`public/fonts/LICENSE-Geist.txt`](public/fonts/LICENSE-Geist.txt). The production page makes no runtime request to Google Fonts or another font CDN.
+
 ## Project state
 
 Implementation is organized into small, independently verified batches. See [`docs/IMPLEMENTATION_STATUS.md`](docs/IMPLEMENTATION_STATUS.md) for the current checkpoint and exact continuation command.

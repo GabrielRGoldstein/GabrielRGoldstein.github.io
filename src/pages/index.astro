@@ -1,19 +1,150 @@
 ---
-const pageTitle = 'Gabriel Goldstein — Portfolio';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const shellProjects = [
+  { index: '01', title: 'Selected project', category: 'Systems integration' },
+  { index: '02', title: 'Selected project', category: 'Security automation' },
+  { index: '03', title: 'Selected project', category: 'Data engineering' },
+  { index: '04', title: 'Selected project', category: 'Full-stack product' },
+];
+
+const shellRoles = [
+  { period: 'Current', role: 'Software engineering role', company: 'Experience content' },
+  { period: 'Previous', role: 'Software engineering role', company: 'Experience content' },
+  { period: 'Earlier', role: 'Software engineering role', company: 'Experience content' },
+];
 ---
 
-<!doctype html>
-<html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>{pageTitle}</title>
-	</head>
-	<body>
-		<main>
-			<h1>Gabriel Goldstein</h1>
-			<p>Production portfolio foundation established. Visual implementation begins in Batch 1.</p>
-		</main>
-	</body>
-</html>
+<BaseLayout>
+  <div class="page-shell" id="top">
+    <header class="site-header">
+      <a class="site-mark" href="#top" aria-label="Gabriel Goldstein, back to top">
+        GABRIEL <span class="site-mark__slash">/</span> GOLDSTEIN
+      </a>
+
+      <nav class="site-nav" aria-label="Primary navigation">
+        <a class="site-nav__work" href="#work">Work</a>
+        <a class="site-nav__experience" href="#experience">Experience</a>
+        <span class="site-nav__resume site-nav__pending">
+          <span aria-hidden="true">Résumé ↗</span><span class="visually-hidden">Résumé — link pending</span>
+        </span>
+        <a href="#contact">Contact ↓</a>
+      </nav>
+    </header>
+
+    <main id="main-content">
+      <section class="hero" aria-labelledby="hero-title">
+        <div>
+          <p class="mono-label">Software engineer · Colorado Springs</p>
+          <h1 class="hero__title" id="hero-title">
+            Complicated systems.<br /><span>Dependable tools.</span>
+          </h1>
+        </div>
+
+        <div>
+          <p class="hero__summary">
+            Software engineer turning complicated workflows into dependable tools across systems
+            integration, security automation, data engineering, and full-stack development.
+          </p>
+          <ul class="hero__proof" aria-label="Areas of practice">
+            <li>Systems</li>
+            <li>Security</li>
+            <li>Data</li>
+            <li>Product</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="content-section" id="work" aria-labelledby="work-title">
+        <header class="section-header">
+          <h2 id="work-title">Selected projects</h2>
+          <p>Curated project content and filtering arrive in Batches 2 and 3.</p>
+        </header>
+
+        <div class="project-grid">
+          {
+            shellProjects.map((project) => (
+              <article class="project-card">
+                <div class="project-card__visual" aria-label="Project media placeholder">
+                  Project cover
+                </div>
+                <div class="project-card__body">
+                  <span class="project-card__index">{project.index} / Featured</span>
+                  <h3>{project.title}</h3>
+                  <p>
+                    Structural placeholder establishing final card proportions before validated project
+                    content is connected.
+                  </p>
+                  <div class="placeholder-tags" aria-label="Placeholder project category">
+                    <span>{project.category}</span>
+                    <span>Case study</span>
+                  </div>
+                </div>
+              </article>
+            ))
+          }
+        </div>
+      </section>
+
+      <section class="content-section experience" id="experience" aria-labelledby="experience-title">
+        <header class="section-header">
+          <h2 id="experience-title">Experience</h2>
+          <p>Compact role rows will become accessible disclosures after content validation.</p>
+        </header>
+
+        <div class="experience-list">
+          {
+            shellRoles.map((role) => (
+              <article class="experience-row">
+                <span class="experience-row__period">{role.period}</span>
+                <div class="experience-row__content">
+                  <h3>{role.role}</h3>
+                  <p class="experience-row__company">{role.company}</p>
+                </div>
+                <span class="experience-row__indicator" aria-hidden="true">+</span>
+              </article>
+            ))
+          }
+        </div>
+      </section>
+    </main>
+
+    <section class="contact-footer" id="contact" aria-labelledby="contact-title">
+      <h2 id="contact-title">Have a role or project in mind?</h2>
+
+      <div class="contact-footer__actions">
+        <p class="contact-footer__label mono-label">Choose a next step</p>
+        <a class="contact-action contact-action--primary" href="mailto:ggoldstein771@gmail.com">
+          <span>
+            Email me
+            <small>ggoldstein771@gmail.com</small>
+          </span>
+          <span aria-hidden="true">↗</span>
+        </a>
+
+        <div class="contact-footer__secondary">
+          <a
+            class="contact-action contact-action--secondary"
+            href="https://github.com/GabrielRGoldstein"
+            rel="me noreferrer"
+          >
+            GitHub ↗
+          </a>
+          <span class="contact-action contact-action--pending">
+            <span aria-hidden="true">LinkedIn ↗</span><span class="visually-hidden">
+              LinkedIn — profile link pending confirmation</span
+            >
+          </span>
+          <span class="contact-action contact-action--pending">
+            <span aria-hidden="true">Résumé ↓</span><span class="visually-hidden">Résumé — PDF link pending</span>
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <footer class="site-footer">
+      <span>© Gabriel Goldstein</span>
+      <span>Colorado Springs, Colorado</span>
+    </footer>
+  </div>
+</BaseLayout>
