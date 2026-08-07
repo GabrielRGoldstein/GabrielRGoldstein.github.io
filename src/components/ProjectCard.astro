@@ -1,0 +1,59 @@
+---
+import type { Project } from "../schemas/content";
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+const projectNumber = String(project.order).padStart(2, "0");
+const hasLinks = project.repositoryUrl !== null || project.liveUrl !== null;
+---
+
+<article
+  class="project-card"
+  data-project-id={project.id}
+  aria-labelledby={`project-${project.slug}-title`}
+>
+  <div class="project-card__visual">
+    <img
+      src={project.cover.src}
+      alt={project.cover.alt}
+      width="1600"
+      height="1000"
+      loading="lazy"
+      decoding="async"
+    />
+  </div>
+
+  <div class="project-card__body">
+    <div class="project-card__meta">
+      <span class="project-card__index">{projectNumber} / {project.featured ? "Featured" : "Project"}</span>
+      <span class="project-card__category">{project.category}</span>
+    </div>
+    <h3 id={`project-${project.slug}-title`}>{project.title}</h3>
+    <p>{project.summary}</p>
+
+    <ul class="project-card__stack" aria-label={`${project.title} technologies`}>
+      {project.stack.map((technology) => <li>{technology}</li>)}
+    </ul>
+
+    {
+      hasLinks ? (
+        <div class="project-card__links" aria-label={`${project.title} links`}>
+          {project.repositoryUrl && (
+            <a href={project.repositoryUrl} target="_blank" rel="noreferrer">Repository ↗</a>
+          )}
+          {project.liveUrl && (
+            <a href={project.liveUrl} target="_blank" rel="noreferrer">Live demo ↗</a>
+          )}
+        </div>
+      ) : (
+        <p class="project-card__pending">
+          <span aria-hidden="true">Project links pending</span>
+          <span class="visually-hidden">{project.title} — public project links pending review</span>
+        </p>
+      )
+    }
+  </div>
+</article>

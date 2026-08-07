@@ -10,7 +10,7 @@
     "stack": ["Next.js", "React", "Prisma", "SQL", "Tailwind CSS"],
     "cover": {
       "src": "/images/projects/discord-clone.webp",
-      "alt": "Discord Clone interface with servers, channels, and live messaging"
+      "alt": "Designed project cover illustrating Discord Clone servers, channels, and live messaging"
     },
     "repositoryUrl": null,
     "liveUrl": null
@@ -26,7 +26,7 @@
     "stack": ["Python", "FinBERT", "Alpaca API", "NLP"],
     "cover": {
       "src": "/images/projects/ml-stock-trading-bot.webp",
-      "alt": "ML Stock Trading Bot dashboard with sentiment and paper-trading signals"
+      "alt": "Designed project cover illustrating ML Stock Trading Bot sentiment and paper-trading signals"
     },
     "repositoryUrl": null,
     "liveUrl": null
@@ -42,7 +42,7 @@
     "stack": ["Docker", "Kubernetes", "Unity", "MongoDB"],
     "cover": {
       "src": "/images/projects/ai-livestream.webp",
-      "alt": "24/7 AI Livestream service pipeline from Discord prompts to a Unity scene"
+      "alt": "Designed project cover illustrating the AI Livestream pipeline from Discord prompts to a Unity scene"
     },
     "repositoryUrl": null,
     "liveUrl": null
@@ -58,7 +58,7 @@
     "stack": ["Shopify", "JavaScript", "HTML", "CSS"],
     "cover": {
       "src": "/images/projects/ceiling-sam.webp",
-      "alt": "Ceiling Sam custom Shopify storefront"
+      "alt": "Designed project cover illustrating the Ceiling Sam Shopify storefront"
     },
     "repositoryUrl": null,
     "liveUrl": null

@@ -1,0 +1,33 @@
+---
+import type { Site } from "../schemas/content";
+
+interface Props {
+  site: Site;
+}
+
+const { site } = Astro.props;
+const [firstName, ...remainingName] = site.name.toUpperCase().split(" ");
+const lastName = remainingName.join(" ");
+---
+
+<header class="site-header">
+  <a class="site-mark" href="#top" aria-label={`${site.name}, back to top`}>
+    {firstName} <span class="site-mark__slash">/</span> {lastName}
+  </a>
+
+  <nav class="site-nav" aria-label="Primary navigation">
+    <a class="site-nav__work" href="#work">Work</a>
+    <a class="site-nav__experience" href="#experience">Experience</a>
+    {
+      site.resumeUrl ? (
+        <a class="site-nav__resume" href={site.resumeUrl}>Résumé ↗</a>
+      ) : (
+        <span class="site-nav__resume site-nav__pending">
+          <span aria-hidden="true">Résumé ↗</span>
+          <span class="visually-hidden">Résumé — link pending</span>
+        </span>
+      )
+    }
+    <a href="#contact">Contact ↓</a>
+  </nav>
+</header>

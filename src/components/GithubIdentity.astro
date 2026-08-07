@@ -1,0 +1,33 @@
+---
+import type { Site } from "../schemas/content";
+
+interface Props {
+  github: Site["github"];
+}
+
+const { github } = Astro.props;
+---
+
+<a
+  class="github-identity"
+  href={github.profileUrl}
+  target="_blank"
+  rel="me noreferrer"
+  aria-label={`Open @${github.username} on GitHub in a new tab`}
+>
+  <img
+    class="github-identity__avatar"
+    src={github.avatarFallback}
+    alt={github.avatarAlt}
+    width="56"
+    height="56"
+    loading="eager"
+    decoding="async"
+  />
+  <span class="github-identity__copy">
+    <span class="github-identity__label">GitHub profile</span>
+    <strong>@{github.username}</strong>
+    <span class="github-identity__hint">View code and repositories</span>
+  </span>
+  <span class="github-identity__arrow" aria-hidden="true">↗</span>
+</a>

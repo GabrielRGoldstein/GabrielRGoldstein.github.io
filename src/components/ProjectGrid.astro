@@ -1,0 +1,21 @@
+---
+import ProjectCard from "./ProjectCard.astro";
+import type { Project } from "../schemas/content";
+
+interface Props {
+  projects: Project[];
+}
+
+const { projects } = Astro.props;
+---
+
+<section class="content-section" id="work" aria-labelledby="work-title">
+  <header class="section-header">
+    <h2 id="work-title">Selected projects</h2>
+    <p>{projects.length} projects, intentionally curated.</p>
+  </header>
+
+  <div class="project-grid">
+    {projects.map((project) => <ProjectCard project={project} />)}
+  </div>
+</section>

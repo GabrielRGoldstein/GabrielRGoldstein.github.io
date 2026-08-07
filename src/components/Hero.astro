@@ -1,0 +1,27 @@
+---
+import GithubIdentity from "./GithubIdentity.astro";
+import type { Site } from "../schemas/content";
+
+interface Props {
+  site: Site;
+}
+
+const { site } = Astro.props;
+---
+
+<section class="hero" aria-labelledby="hero-title">
+  <div>
+    <p class="mono-label">{site.hero.eyebrow}</p>
+    <h1 class="hero__title" id="hero-title">
+      {site.hero.lead}<br /><span>{site.hero.accent}</span>
+    </h1>
+  </div>
+
+  <div class="hero__details">
+    <p class="hero__summary">{site.hero.summary}</p>
+    <GithubIdentity github={site.github} />
+    <ul class="hero__proof" aria-label="Areas of practice">
+      {site.practiceAreas.map((practiceArea) => <li>{practiceArea}</li>)}
+    </ul>
+  </div>
+</section>
