@@ -1,6 +1,6 @@
 # Portfolio Implementation Status
 
-Last updated: 2026-08-07 11:52 MDT
+Last updated: 2026-08-12 16:49 MDT
 
 ## Locked design decisions
 
@@ -16,9 +16,33 @@ Last updated: 2026-08-07 11:52 MDT
 
 ## Current batch
 
-Batch 4 — Experience, Contact, Résumé, and Footer — **complete and independently approved**
+Batch 5 — Minimal Interaction and Progressive Enhancement — **complete and independently approved**
 
-Next batch: Batch 5 — Minimal Interaction and Progressive Enhancement
+Next batch after approval: Batch 6 — Verification, Accessibility, Performance, and Security
+
+## Batch 5 candidate
+
+- Added one 1.5 KB source TypeScript module that progressively enhances Experience rows into a single-open disclosure group; no framework hydration or client-side content fetch was introduced.
+- Keeps the current role expanded initially, collapses older roles, updates visible labels plus `aria-expanded`, and preserves focus on native buttons for mouse, Enter, and Space activation.
+- Fails open for content: every summary, highlight, skill, date, employer, and location remains present and visible when JavaScript is unavailable; enhancement controls remain hidden until valid control/panel pairs initialize.
+- Added Refined-DMG disclosure styling with explicit 44 px minimum targets, global focus behavior, and no essential animation.
+- Added Playwright browser tooling and six end-to-end interaction regressions covering initial state, exact ARIA relationships, single-open keyboard behavior, focus retention, 390 px target size/overflow, no-JavaScript fallback, reduced motion, clean runtime console, and skip-link focus behavior.
+- Added a unit-level test-runner contract requiring Playwright to serve the generated production output rather than Astro's development server.
+- Superseded the original broader interaction proposal: project filters and dialogs remain intentionally excluded while public repository/demo destinations and audited case-study content are unavailable.
+
+Verification:
+- `npm test -- --run`: 70 tests passed across 2 test files
+- `npm run check`: 22 files, 0 errors, 0 warnings, 0 hints
+- `npm run test:e2e`: production build passed and 6 Chromium tests passed against `astro preview`
+- `npm run build`: static output, 1 page generated
+- `npm audit --audit-level=high`: 0 vulnerabilities
+- `git diff --check`: passed
+- Visual review passed at 1440 × 900, 768 × 1024, and 390 × 844 with no disclosure clipping, overlap, misleading state, or horizontal overflow
+- Generated artifact contains one 747-byte inline script, no external runtime scripts, no hydration markers, no network/storage/eval primitives, zero duplicate IDs, four exact control/panel pairs, four initially hidden controls, and zero hidden static panels
+- First independent exact-tree review passed with zero product, security, privacy, logic, content-integrity, scope, or accessibility blockers and independently reproduced all verification gates from an exported staged tree.
+- A second independent audit found one blocking test-validity defect: Playwright built `dist/` but exercised Astro's development server. Its false-pass probe replaced the exported `dist/index.html` with a broken 27-byte file while all six tests still passed.
+- Added a failing-then-passing configuration regression and changed Playwright's owned server from `astro dev` to `astro preview`; the focused regression and all six production-preview tests now pass.
+- Fresh independent review passed corrected staged tree `538016428e66f2f88cb1480f6a6aa19cd6e1a217` with no blockers or suggestions. It independently reproduced all gates from an isolated export, proved all six browser tests fail against a broken generated page, proved the configuration regression rejects `astro dev`, and certified the exact 11-path tree plus clean repository state.
 
 ## Completed batches
 
@@ -179,20 +203,21 @@ Independent fail-closed review:
 
 - Project covers are intentional conceptual illustrations, not screenshots. Replace them only if audited real project imagery becomes available later.
 - Project repository and live-demo destinations remain `null` until each public-safe URL is audited.
-- Experience details are fully visible in static HTML; Batch 5 may progressively enhance them with accordions while preserving the no-JavaScript fallback.
+- Experience details remain fully visible in static HTML and are progressively enhanced into optional disclosures only after JavaScript validates each control/panel pair.
 
 ## Known blockers and deferred inputs
 
 - No Batch 4 blocker remains; the exact substantive staged tree passed comprehensive review plus independent end-state certification.
+- No Batch 5 blocker remains; corrected staged tree `538016428e66f2f88cb1480f6a6aa19cd6e1a217` passed fresh independent fail-closed review and exact-state certification.
 - GitHub repository name, final deployment URL, and custom-domain decision are deferred to Batch 8.
 - Analytics provider is deferred to Batch 9.
 
 ## Exact continuation command
 
-Run this from `site/` at the start of Batch 5 after Batch 4 is approved and committed:
+After Batch 5's exact staged tree is approved and committed, run this from `site/` at the start of Batch 6:
 
 ```bash
-git log -1 --oneline && git status --short && npm test -- --run && npm run check && npm run build
+git log -1 --oneline && git status --short && npm test -- --run && npm run check && npm run test:e2e
 ```
 
-Then read the Batch 5 section of the implementation plan and the later locked product decisions. Add only minimal progressive enhancement for experience disclosure behavior, keep all details available without JavaScript, respect reduced motion, and do not add framework hydration.
+Then recover the exact Batch 6 acceptance criteria from the implementation plan and later locked decisions before changing source. Do not infer deployment or analytics scope from the batch number.
