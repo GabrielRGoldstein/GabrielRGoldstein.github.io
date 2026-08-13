@@ -2,16 +2,20 @@
 import '../styles/tokens.css';
 import '../styles/global.css';
 import '../styles/portfolio.css';
+import SeoHead from '../components/SeoHead.astro';
 
 interface Props {
   title?: string;
   description?: string;
+  robots?: string;
 }
 
 const {
   title = 'Gabriel Goldstein — Software Engineer',
   description = 'Software engineer building dependable tools across systems integration, security automation, data engineering, and full-stack development.',
+  robots,
 } = Astro.props;
+const canonicalUrl = Astro.site ? new URL(Astro.url.pathname, Astro.site) : undefined;
 ---
 
 <!doctype html>
@@ -19,12 +23,12 @@ const {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
-    <meta name="description" content={description} />
     <meta name="generator" content={Astro.generator} />
     <meta name="theme-color" content="#07170d" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" href="/favicon.ico" sizes="any" />
-    <title>{title}</title>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <SeoHead title={title} description={description} canonicalUrl={canonicalUrl} />
+    {robots && <meta name="robots" content={robots} />}
   </head>
   <body>
     <a class="skip-link" href="#main-content">Skip to content</a>

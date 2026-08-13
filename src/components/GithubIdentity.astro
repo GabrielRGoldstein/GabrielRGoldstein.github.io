@@ -13,11 +13,12 @@ const { github } = Astro.props;
   href={github.profileUrl}
   target="_blank"
   rel="me noreferrer"
-  aria-label={`Open @${github.username} on GitHub in a new tab`}
 >
   <img
     class="github-identity__avatar"
     src={github.avatarFallback}
+    srcset="/images/avatar-96.webp 96w, /images/avatar-128.webp 128w, /images/avatar.webp 256w"
+    sizes="56px"
     alt={github.avatarAlt}
     width="56"
     height="56"

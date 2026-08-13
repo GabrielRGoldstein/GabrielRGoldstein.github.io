@@ -1,8 +1,216 @@
+import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
 const experienceRows = "[data-experience-id]";
 const toggles = "[data-experience-toggle]";
 const panels = "[data-experience-panel]";
+
+test("has no automatically detectable accessibility violations", async ({ page }) => {
+  await page.goto("/");
+
+  const standardResults = await new AxeBuilder({ page }).analyze();
+  const visibleLabelResults = await new AxeBuilder({ page })
+    .withRules(["label-content-name-mismatch"])
+    .analyze();
+
+  expect([...standardResults.violations, ...visibleLabelResults.violations]).toEqual([]);
+
+  await page.goto("/missing-page-for-batch-6");
+  const notFoundResults = await new AxeBuilder({ page }).analyze();
+  expect(notFoundResults.violations).toEqual([]);
+});
+
+test("serves portfolio discovery, sharing, and not-found assets", async ({ page, request }) => {
+  await page.goto("/");
+
+  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
+    "content",
+    "/og/portfolio-card.png",
+  );
+  await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute(
+    "content",
+    "summary_large_image",
+  );
+
+  const robots = await request.get("/robots.txt");
+  expect(robots.status()).toBe(200);
+  expect((await robots.text()).replaceAll("\r\n", "\n").trim()).toBe(
+    "User-agent: *\nAllow: /",
+  );
+
+  const socialCard = await request.get("/og/portfolio-card.png");
+  expect(socialCard.status()).toBe(200);
+  expect(socialCard.headers()["content-type"]).toContain("image/png");
+  const socialCardBytes = await socialCard.body();
+  expect(Array.from(socialCardBytes.subarray(0, 8))).toEqual([
+    137, 80, 78, 71, 13, 10, 26, 10,
+  ]);
+  expect(socialCardBytes.readUInt32BE(16)).toBe(1200);
+  expect(socialCardBytes.readUInt32BE(20)).toBe(630);
+  const decodedSocialCard = await page.evaluate(async () => {
+    const response = await fetch("/og/portfolio-card.png");
+    const bitmap = await createImageBitmap(await response.blob());
+    const dimensions = { width: bitmap.width, height: bitmap.height };
+    bitmap.close();
+    return dimensions;
+  });
+  expect(decodedSocialCard).toEqual({ width: 1200, height: 630 });
+
+  const favicon = await request.get("/favicon.svg");
+  expect(favicon.status()).toBe(200);
+  const faviconSvg = (await favicon.text()).replaceAll("\r\n", "\n").trim();
+  expect(faviconSvg).toBe(
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Gabriel Goldstein portfolio mark">\n' +
+      '  <rect width="64" height="64" rx="12" fill="#07170d" />\n' +
+      '  <path d="M14 18h16v7H21v14h9v-4h-5v-7h12v18H14V18Z" fill="#edf7bb" />\n' +
+      '  <path d="M43 14h7L31 50h-7L43 14Z" fill="#b6e448" />\n' +
+      "</svg>",
+  );
+  const decodedSvgFavicon = await page.evaluate(async () => {
+    const image = new Image();
+    image.src = "/favicon.svg";
+    await image.decode();
+    return { width: image.naturalWidth, height: image.naturalHeight };
+  });
+  expect(decodedSvgFavicon.width).toBeGreaterThan(0);
+  expect(decodedSvgFavicon.height).toBeGreaterThan(0);
+
+  const pngFavicon = await request.get("/favicon.png");
+  expect(pngFavicon.status()).toBe(200);
+  expect(pngFavicon.headers()["content-type"]).toContain("image/png");
+  const faviconBytes = await pngFavicon.body();
+  expect(Array.from(faviconBytes.subarray(0, 8))).toEqual([
+    137, 80, 78, 71, 13, 10, 26, 10,
+  ]);
+  expect(faviconBytes.readUInt32BE(16)).toBe(64);
+  expect(faviconBytes.readUInt32BE(20)).toBe(64);
+  const decodedFavicon = await page.evaluate(async () => {
+    const response = await fetch("/favicon.png");
+    const bitmap = await createImageBitmap(await response.blob());
+    const dimensions = { width: bitmap.width, height: bitmap.height };
+    bitmap.close();
+    return dimensions;
+  });
+  expect(decodedFavicon).toEqual({ width: 64, height: 64 });
+
+  const notFound = await request.get("/missing-page-for-batch-6");
+  expect(notFound.status()).toBe(404);
+  const notFoundHtml = await notFound.text();
+  expect(notFoundHtml).toContain("Page not found");
+  expect(notFoundHtml).toContain('href="/"');
+  expect(notFoundHtml).toContain('name="robots" content="noindex, nofollow"');
+});
+
+test("keeps the custom 404 page readable and inside the mobile gutter", async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.goto("/missing-page-for-batch-6");
+
+  const content = page.locator("main.not-found");
+  const heading = content.getByRole("heading", { level: 1 });
+  const returnLink = content.getByRole("link", { name: "Return to the portfolio" });
+  const contentBox = await content.boundingBox();
+  const linkBox = await returnLink.boundingBox();
+  const headingSize = await heading.evaluate((element) =>
+    Number.parseFloat(getComputedStyle(element).fontSize),
+  );
+
+  expect(contentBox).not.toBeNull();
+  expect(contentBox!.x).toBeGreaterThanOrEqual(20);
+  expect(contentBox!.width).toBeLessThanOrEqual(335);
+  expect(headingSize).toBeGreaterThanOrEqual(38);
+  expect(linkBox).not.toBeNull();
+  expect(linkBox!.height).toBeGreaterThanOrEqual(44);
+});
+
+for (const width of [375, 768, 1280, 1600]) {
+  test(`renders cleanly with local assets at ${width}px`, async ({ browser }) => {
+    const context = await browser.newContext({ viewport: { width, height: 900 } });
+    const page = await context.newPage();
+    const runtimeErrors: string[] = [];
+
+    page.on("console", (message) => {
+      if (message.type() === "error") runtimeErrors.push(message.text());
+    });
+    page.on("pageerror", (error) => runtimeErrors.push(error.message));
+
+    await page.goto("/", { waitUntil: "networkidle" });
+    await page.evaluate(async () => {
+      await Promise.all([
+        document.fonts.load("400 16px Geist"),
+        document.fonts.load("500 16px Geist"),
+        document.fonts.load("700 16px Geist"),
+        document.fonts.load('500 16px "Geist Mono"'),
+      ]);
+    });
+
+    const metrics = await page.evaluate(() => ({
+      viewportWidth: window.innerWidth,
+      documentWidth: document.documentElement.scrollWidth,
+      bodyWidth: document.body.scrollWidth,
+      fonts: {
+        regular: document.fonts.check("400 16px Geist"),
+        medium: document.fonts.check("500 16px Geist"),
+        bold: document.fonts.check("700 16px Geist"),
+        mono: document.fonts.check('500 16px "Geist Mono"'),
+      },
+      thirdPartyResources: performance
+        .getEntriesByType("resource")
+        .map((entry) => entry.name)
+        .filter((url) => !url.startsWith(window.location.origin)),
+    }));
+
+    expect(metrics.documentWidth).toBe(metrics.viewportWidth);
+    expect(metrics.bodyWidth).toBe(metrics.viewportWidth);
+    expect(Object.values(metrics.fonts).every(Boolean)).toBe(true);
+    expect(metrics.thirdPartyResources).toEqual([]);
+    expect(runtimeErrors).toEqual([]);
+
+    const externalTabs = page.locator('a[target="_blank"]');
+    for (let index = 0; index < (await externalTabs.count()); index += 1) {
+      await expect(externalTabs.nth(index)).toHaveAttribute("rel", /noreferrer/);
+    }
+
+    await context.close();
+  });
+}
+
+test("selects right-sized responsive portfolio images", async ({ browser }) => {
+  const context = await browser.newContext({
+    viewport: { width: 375, height: 900 },
+    deviceScaleFactor: 1.75,
+  });
+  const page = await context.newPage();
+  await page.goto("/");
+
+  const avatarSource = await page.locator(".github-identity__avatar").evaluate(
+    (image: HTMLImageElement) => image.currentSrc,
+  );
+  expect(avatarSource).toMatch(/avatar-128\.webp$/);
+  const avatarDimensions = await page.evaluate(async (url) => {
+    const response = await fetch(url);
+    const bitmap = await createImageBitmap(await response.blob());
+    const dimensions = { width: bitmap.width, height: bitmap.height };
+    bitmap.close();
+    return dimensions;
+  }, avatarSource);
+  expect(avatarDimensions).toEqual({ width: 128, height: 128 });
+
+  for (const image of await page.locator(".project-card__visual img").all()) {
+    await image.scrollIntoViewIfNeeded();
+    const currentSource = await image.evaluate((element: HTMLImageElement) => element.currentSrc);
+    expect(currentSource).toMatch(/-640\.webp$/);
+    const dimensions = await page.evaluate(async (url) => {
+      const response = await fetch(url);
+      const bitmap = await createImageBitmap(await response.blob());
+      const size = { width: bitmap.width, height: bitmap.height };
+      bitmap.close();
+      return size;
+    }, currentSource);
+    expect(dimensions).toEqual({ width: 640, height: 400 });
+  }
+
+  await context.close();
+});
 
 test("enhances the current role as the only initially expanded experience", async ({ page }) => {
   const runtimeErrors: string[] = [];

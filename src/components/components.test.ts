@@ -48,6 +48,8 @@ describe("GithubIdentity", () => {
     expect(html).toContain('rel="me noreferrer"');
     expect(html).toContain('target="_blank"');
     expect(html).toContain(`src="${portfolioContent.site.github.avatarFallback}"`);
+    expect(html).toContain('/images/avatar-96.webp 96w');
+    expect(html).toContain('/images/avatar-128.webp 128w');
     expect(html).toContain(`alt="${portfolioContent.site.github.avatarAlt}"`);
     expect(portfolioContent.site.github.avatarAlt).toContain("GitHub avatar");
     expect(portfolioContent.site.github.avatarAlt).not.toMatch(/illustrat/i);
@@ -88,6 +90,10 @@ describe("ProjectCard", () => {
 
     expect(html).toContain(`data-project-id="${project.id}"`);
     expect(html).toContain(`src="${project.cover.src}"`);
+    expect(html).toContain(
+      `srcset="/images/projects/${project.slug}-640.webp 640w, /images/projects/${project.slug}-800.webp 800w, ${project.cover.src} 1600w"`,
+    );
+    expect(html).toContain('sizes="(max-width: 48rem) calc(100vw - 2.5rem), (max-width: 95rem) calc((100vw - 5.5rem) / 2), 590px"');
     expect(html).toContain(`alt="${project.cover.alt}"`);
     expect(html).toContain('width="1600"');
     expect(html).toContain('height="1000"');
@@ -303,7 +309,62 @@ describe("Playwright configuration", () => {
   });
 });
 
+describe("SeoHead", () => {
+  it("renders complete share metadata when a canonical deployment URL is available", async () => {
+    const { default: SeoHead } = await import("../components/SeoHead.astro");
+    const container = await AstroContainer.create();
+    const canonicalUrl = new URL("https://portfolio.example/work");
+    const html = await container.renderToString(SeoHead, {
+      props: {
+        title: portfolioContent.site.meta.title,
+        description: portfolioContent.site.meta.description,
+        canonicalUrl,
+      },
+    });
+
+    expect(html).toContain(`<title>${portfolioContent.site.meta.title}</title>`);
+    expect(html).toContain(`name="description" content="${portfolioContent.site.meta.description}"`);
+    expect(html).toContain(`rel="canonical" href="${canonicalUrl.href}"`);
+    expect(html).toContain('property="og:type" content="website"');
+    expect(html).toContain(`property="og:url" content="${canonicalUrl.href}"`);
+    expect(html).toContain('property="og:image" content="https://portfolio.example/og/portfolio-card.png"');
+    expect(html).toContain('property="og:image:width" content="1200"');
+    expect(html).toContain('property="og:image:height" content="630"');
+    expect(html).toContain('name="twitter:card" content="summary_large_image"');
+    expect(html).toContain('name="twitter:image" content="https://portfolio.example/og/portfolio-card.png"');
+  });
+
+  it("does not fabricate a canonical deployment origin", async () => {
+    const { default: SeoHead } = await import("../components/SeoHead.astro");
+    const container = await AstroContainer.create();
+    const html = await container.renderToString(SeoHead, {
+      props: {
+        title: portfolioContent.site.meta.title,
+        description: portfolioContent.site.meta.description,
+      },
+    });
+
+    expect(html).not.toContain('rel="canonical"');
+    expect(html).not.toContain('property="og:url"');
+    expect(html).not.toMatch(/https?:\/\/localhost/);
+    expect(html).toContain('property="og:image" content="/og/portfolio-card.png"');
+  });
+});
+
 describe("index page", () => {
+  it("renders share metadata without inventing the deferred deployment URL", async () => {
+    const container = await AstroContainer.create();
+    const html = await container.renderToString(IndexPage);
+
+    expect(html).toContain(`<title>${portfolioContent.site.meta.title}</title>`);
+    expect(html).toContain(`property="og:title" content="${portfolioContent.site.meta.title}"`);
+    expect(html).toContain('property="og:image" content="/og/portfolio-card.png"');
+    expect(html).toContain('name="twitter:card" content="summary_large_image"');
+    expect(html).not.toContain('rel="canonical"');
+    expect(html).not.toContain('property="og:url"');
+    expect(html).not.toMatch(/https?:\/\/localhost/);
+  });
+
   it("renders the validated top half without project-shell placeholders", async () => {
     const container = await AstroContainer.create();
     const html = await container.renderToString(IndexPage);

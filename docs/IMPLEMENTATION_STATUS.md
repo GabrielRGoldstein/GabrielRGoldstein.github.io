@@ -1,6 +1,6 @@
 # Portfolio Implementation Status
 
-Last updated: 2026-08-12 16:49 MDT
+Last updated: 2026-08-12 18:46 MDT
 
 ## Locked design decisions
 
@@ -16,9 +16,37 @@ Last updated: 2026-08-12 16:49 MDT
 
 ## Current batch
 
-Batch 5 — Minimal Interaction and Progressive Enhancement — **complete and independently approved**
+Batch 6 — Responsive Polish, SEO, and Performance — **approved; ready to commit**
 
-Next batch after approval: Batch 6 — Verification, Accessibility, Performance, and Security
+Next batch after approval: Batch 7 — Automated Quality and DevSecOps
+
+## Batch 6 candidate
+
+- Added reusable `SeoHead.astro` metadata for title, description, Open Graph, and Twitter large-image previews. Canonical and `og:url` values are emitted only when Astro has a configured production `site`; Batch 8 still owns the real deployment origin, so no localhost or fabricated domain is published.
+- Added a 1200 × 630 Refined DMG social card, portfolio-specific SVG/PNG favicons, and permissive `robots.txt`. The default Astro favicon was removed. Sitemap generation is intentionally deferred because the static MVP has one indexable route and no confirmed production origin.
+- Added a generated static 404 page with `noindex, nofollow`, consistent Refined DMG styling, a clear home action, and explicit mobile gutter/type/target geometry tests.
+- Added responsive project-cover candidates at 640 px and 800 px plus 96 px and 128 px avatar candidates. Original assets remain high-density fallbacks, and explicit dimensions still reserve layout space.
+- Added `@axe-core/playwright` and production-browser accessibility scans for the home and 404 pages, including the experimental visible-label/accessibility-name rule that exposed the GitHub identity defect.
+- Removed the GitHub identity's overriding `aria-label`; its visible “GitHub profile”, username, and hint now form the accessible name and satisfy WCAG 2.5.3 label-in-name behavior.
+- Expanded production-browser coverage to 14 tests: standard plus visible-label axe scans, discovery/share/404 endpoints, 404 geometry, exact-width checks at 375/768/1280/1600 px, local fonts, zero third-party runtime resources, safe external tabs, high-density responsive image selection, and all prior interaction/no-JavaScript/reduced-motion/skip-link contracts.
+
+Performance budgets and results:
+- Local mobile Lighthouse budget: Performance ≥ 95; Accessibility, Best Practices, and SEO = 100; total blocking time ≤ 50 ms; cumulative layout shift ≤ 0.05; largest contentful paint ≤ 2.5 s.
+- Final local production-preview Lighthouse: Performance 98, Accessibility 100, Best Practices 100, SEO 100; FCP 1.81 s, LCP 2.04 s, TBT 0 ms, CLS 0.0101, Speed Index 1.81 s.
+- Lighthouse-estimated mobile image waste fell from approximately 157 KB at baseline to approximately 12 KiB after responsive-source work. The remaining advisory is one lazily loaded, below-the-fold project cover and does not breach the page budget.
+
+Verification:
+- `npm test -- --run`: 73 tests passed across 2 test files
+- `npm run check`: 24 files, 0 errors, 0 warnings, 0 hints
+- `npm run test:e2e`: production build passed and 14 Chromium tests passed against `astro preview`
+- Review hardening verifies the exact permissive `robots.txt` policy, exact branded SVG favicon source plus successful browser rendering, PNG signatures and IHDR dimensions for the 1200 × 630 social card and 64 × 64 favicon, and full browser decoding of both PNGs plus every selected responsive WebP candidate. This prevents altered policy/branding and corrupt or mislabeled image artifacts from passing on substrings, URL selection, HTTP status, or headers alone.
+- `npm run build`: static output, 2 pages generated (`index.html` and `404.html`)
+- `npm audit --audit-level=high`: 0 vulnerabilities
+- `git diff --check`: passed
+- Visual review passed at 375, 768, and 1600 px with no home-page clipping, overflow, image-fidelity, hierarchy, Experience, Contact, or footer blocker. The review found an invalid-token 404 spacing/type defect; a failing geometry regression reproduced it before the token correction passed.
+- Social card and favicon visual inspection found no clipping, low-contrast text, or identity mismatch; both use the Refined DMG palette and portfolio wordmark language.
+- Generated `index.html` has one repository-owned progressive-enhancement script, zero duplicate IDs, zero unsafe `target="_blank"` links, and only the confirmed GitHub and LinkedIn absolute destinations. Generated `404.html` has zero scripts and zero absolute destinations.
+- Independent fail-closed review certified corrected exact tree `7c0b11a9becd41b7bc44f5a0e690a5c9c8852358` with zero blockers. A comprehensive replacement reviewer exported the exact tree, reproduced clean install, 73 unit tests, the 24-file zero-finding Astro check, 14 production-preview browser tests, the two-page static build, zero-vulnerability audit, exact robots/SVG semantic mutation failures with byte restoration, generated-output sanity, and matching opening/closing repository state. A separate narrow blocker-resolution review independently certified the same tree and the corrected approximately 12 KiB Lighthouse evidence; its only non-blocking suggestion was to retain Lighthouse JSON durably when Batch 7 introduces automated Lighthouse CI.
 
 ## Batch 5 candidate
 
@@ -209,15 +237,16 @@ Independent fail-closed review:
 
 - No Batch 4 blocker remains; the exact substantive staged tree passed comprehensive review plus independent end-state certification.
 - No Batch 5 blocker remains; corrected staged tree `538016428e66f2f88cb1480f6a6aa19cd6e1a217` passed fresh independent fail-closed review and exact-state certification.
+- No Batch 6 blocker remains; corrected exact tree `7c0b11a9becd41b7bc44f5a0e690a5c9c8852358` passed comprehensive and narrow fail-closed reviews and is ready for its focused commit.
 - GitHub repository name, final deployment URL, and custom-domain decision are deferred to Batch 8.
 - Analytics provider is deferred to Batch 9.
 
 ## Exact continuation command
 
-After Batch 5's exact staged tree is approved and committed, run this from `site/` at the start of Batch 6:
+After Batch 6's exact staged tree is approved and committed, run this from `site/` at the start of Batch 7:
 
 ```bash
-git log -1 --oneline && git status --short && npm test -- --run && npm run check && npm run test:e2e
+git log -1 --oneline && git status --short && npm ci && npm test -- --run && npm run check && npm run test:e2e
 ```
 
-Then recover the exact Batch 6 acceptance criteria from the implementation plan and later locked decisions before changing source. Do not infer deployment or analytics scope from the batch number.
+Then recover the exact Batch 7 acceptance criteria from the implementation plan before adding CI, CodeQL, Dependabot, scheduled security checks, a security policy, or Lighthouse CI budgets. Do not infer deployment or analytics scope from the batch number.
