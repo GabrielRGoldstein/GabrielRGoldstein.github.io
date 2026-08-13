@@ -1,6 +1,6 @@
 # Portfolio Implementation Status
 
-Last updated: 2026-08-12 18:46 MDT
+Last updated: 2026-08-12 19:54 MDT
 
 ## Locked design decisions
 
@@ -16,9 +16,32 @@ Last updated: 2026-08-12 18:46 MDT
 
 ## Current batch
 
-Batch 6 — Responsive Polish, SEO, and Performance — **approved; ready to commit**
+Batch 6.1 — Sketch 11 Fidelity and Project Scalability — **verified candidate**
 
 Next batch after approval: Batch 7 — Automated Quality and DevSecOps
+
+## Batch 6.1 candidate
+
+- Restored Sketch 11's asymmetric selected-project hierarchy with a production-adjusted 7/5 desktop split. The moderated ratio preserves clear emphasis while keeping both 16:10 covers readable and avoiding the 8/4 variant's accidental dead space. Every later project uses a repeatable half-width card, and all cards reset to one column below the gallery breakpoint.
+- Replaced the count-only project header with Sketch 11's descriptive framing plus a dynamically derived selected-project count.
+- Replaced the misleading `featured` content flag with `selected`. The complete JSON array is validated and sorted before the homepage filters selected records, so malformed or duplicate unselected projects still fail the build.
+- Replaced slug-derived responsive-image filenames and fixed 1600 × 1000 markup with authored `cover.width`, `cover.height`, and optional explicit `cover.sources`. Projects without responsive derivatives render their base image without a fabricated `srcset`.
+- Added a seven-project component contract proving arbitrary selected-project counts render once in order with exactly one wide/narrow pair and repeatable standard cards.
+- Removed the exact `[1, 2, 3, 4]` content-test assumption and documented the JSON project-authoring workflow in `README.md`.
+- Kept the current hero copy and practice-area chips. Project filters and project-summary modals remain intentionally deferred because the current collection and available case-study content do not justify the interaction cost.
+
+Final candidate verification:
+- `npm test -- --run`: 79 tests passed across 2 files
+- `npm run check`: 24 files, 0 errors, 0 warnings, 0 hints
+- `npm run test:e2e`: static production build passed and 18 Chromium tests passed against `astro preview`
+- `npm run build`: 2 static pages generated (`index.html` and `404.html`) as part of the E2E command
+- `npm audit --audit-level=high`: 0 vulnerabilities
+- `git diff --check`: passed
+- Browser geometry at 1280 px confirmed the first selected pair uses the moderated 7/5 hierarchy, remains top-aligned without stretched card bodies, and selects 800/640 px authored cover sources. At 390 px, all four cards measured 350 px wide, stacked in authored order, selected 640 px sources, and produced no horizontal overflow.
+- The first independent review correctly found that responsive-image `sizes` switched at 48rem while the gallery remained stacked through 53.125rem. A failing 800 px / DPR 2 browser regression reproduced 640/800 px sources serving 742 px slots; aligning `sizes` to 53.125rem made all four covers select their 1600 px authored base image and closed the blocker.
+- The replacement review found two related gaps: the regression did not exercise the exact 850 px stacking boundary, and viewport-relative desktop formulas continued beyond the page shell's 81rem cap, forcing 1600 px originals into capped DPR 1 slots. The regression now asserts exactly four full-width covers at 850 px for both DPR 1 and DPR 2, including adequate sharpness and no DPR 1 original-image over-fetch, plus adequate derivatives at 1520 px / DPR 1. The stacked formula accounts for clamped page gutters and card borders; cap-aware formulas track the 7/5 and 6/6 grid through 81rem and settle at the exact 715/505/610 px slots. All three boundary tests pass.
+- Side-by-side 8/4, 7/5, and 6/6 production-cover comparison selected 7/5: it retains meaningful hierarchy while avoiding 8/4's compressed secondary card and accidental dead space; 6/6 was rejected because it erased the intended Sketch 11 emphasis.
+- No Lighthouse rerun or mutation-probe fan-out was performed because this batch did not change the established performance architecture and the final unit/check/build/E2E/audit gate already covered the changed behavior.
 
 ## Batch 6 candidate
 

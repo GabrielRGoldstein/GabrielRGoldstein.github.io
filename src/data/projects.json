@@ -2,7 +2,7 @@
   {
     "id": "discord-clone",
     "slug": "discord-clone",
-    "featured": true,
+    "selected": true,
     "order": 1,
     "title": "Discord Clone",
     "category": "fullstack",
@@ -10,7 +10,13 @@
     "stack": ["Next.js", "React", "Prisma", "SQL", "Tailwind CSS"],
     "cover": {
       "src": "/images/projects/discord-clone.webp",
-      "alt": "Designed project cover illustrating Discord Clone servers, channels, and live messaging"
+      "alt": "Designed project cover illustrating Discord Clone servers, channels, and live messaging",
+      "width": 1600,
+      "height": 1000,
+      "sources": [
+        { "src": "/images/projects/discord-clone-640.webp", "width": 640 },
+        { "src": "/images/projects/discord-clone-800.webp", "width": 800 }
+      ]
     },
     "repositoryUrl": null,
     "liveUrl": null
@@ -18,7 +24,7 @@
   {
     "id": "ml-stock-trading-bot",
     "slug": "ml-stock-trading-bot",
-    "featured": true,
+    "selected": true,
     "order": 2,
     "title": "ML Stock Trading Bot",
     "category": "data-ai",
@@ -26,7 +32,13 @@
     "stack": ["Python", "FinBERT", "Alpaca API", "NLP"],
     "cover": {
       "src": "/images/projects/ml-stock-trading-bot.webp",
-      "alt": "Designed project cover illustrating ML Stock Trading Bot sentiment and paper-trading signals"
+      "alt": "Designed project cover illustrating ML Stock Trading Bot sentiment and paper-trading signals",
+      "width": 1600,
+      "height": 1000,
+      "sources": [
+        { "src": "/images/projects/ml-stock-trading-bot-640.webp", "width": 640 },
+        { "src": "/images/projects/ml-stock-trading-bot-800.webp", "width": 800 }
+      ]
     },
     "repositoryUrl": null,
     "liveUrl": null
@@ -34,7 +46,7 @@
   {
     "id": "ai-livestream",
     "slug": "ai-livestream",
-    "featured": true,
+    "selected": true,
     "order": 3,
     "title": "24/7 AI Livestream",
     "category": "systems",
@@ -42,7 +54,13 @@
     "stack": ["Docker", "Kubernetes", "Unity", "MongoDB"],
     "cover": {
       "src": "/images/projects/ai-livestream.webp",
-      "alt": "Designed project cover illustrating the AI Livestream pipeline from Discord prompts to a Unity scene"
+      "alt": "Designed project cover illustrating the AI Livestream pipeline from Discord prompts to a Unity scene",
+      "width": 1600,
+      "height": 1000,
+      "sources": [
+        { "src": "/images/projects/ai-livestream-640.webp", "width": 640 },
+        { "src": "/images/projects/ai-livestream-800.webp", "width": 800 }
+      ]
     },
     "repositoryUrl": null,
     "liveUrl": null
@@ -50,7 +68,7 @@
   {
     "id": "ceiling-sam",
     "slug": "ceiling-sam",
-    "featured": true,
+    "selected": true,
     "order": 4,
     "title": "Ceiling Sam",
     "category": "client",
@@ -58,7 +76,13 @@
     "stack": ["Shopify", "JavaScript", "HTML", "CSS"],
     "cover": {
       "src": "/images/projects/ceiling-sam.webp",
-      "alt": "Designed project cover illustrating the Ceiling Sam Shopify storefront"
+      "alt": "Designed project cover illustrating the Ceiling Sam Shopify storefront",
+      "width": 1600,
+      "height": 1000,
+      "sources": [
+        { "src": "/images/projects/ceiling-sam-640.webp", "width": 640 },
+        { "src": "/images/projects/ceiling-sam-800.webp", "width": 800 }
+      ]
     },
     "repositoryUrl": null,
     "liveUrl": null

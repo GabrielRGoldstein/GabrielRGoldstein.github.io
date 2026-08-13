@@ -21,9 +21,11 @@ export function validatePortfolioContent(input: {
   projects: unknown;
   experience: unknown;
 }): PortfolioContent {
+  const projects = validateProjects(input.projects);
+
   return {
     site: validateSite(input.site),
-    projects: validateProjects(input.projects),
+    projects: projects.filter(({ selected }) => selected),
     experience: validateExperience(input.experience),
   };
 }

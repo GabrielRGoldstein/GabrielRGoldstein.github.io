@@ -174,6 +174,40 @@ for (const width of [375, 768, 1280, 1600]) {
   });
 }
 
+test("uses a balanced 7/5 project hierarchy that stacks cleanly on mobile", async ({ browser }) => {
+  const desktop = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const desktopPage = await desktop.newPage();
+  await desktopPage.goto("/");
+
+  const desktopCards = desktopPage.locator(".project-card");
+  const wideBox = await desktopCards.nth(0).boundingBox();
+  const narrowBox = await desktopCards.nth(1).boundingBox();
+
+  expect(wideBox).not.toBeNull();
+  expect(narrowBox).not.toBeNull();
+  expect(wideBox!.y).toBe(narrowBox!.y);
+  expect(wideBox!.width / narrowBox!.width).toBeGreaterThan(1.35);
+  expect(wideBox!.width / narrowBox!.width).toBeLessThan(1.5);
+  expect(wideBox!.height).toBeGreaterThan(narrowBox!.height);
+  await desktop.close();
+
+  const mobile = await browser.newContext({ viewport: { width: 390, height: 900 } });
+  const mobilePage = await mobile.newPage();
+  await mobilePage.goto("/");
+
+  const mobileCards = mobilePage.locator(".project-card");
+  const firstMobileBox = await mobileCards.nth(0).boundingBox();
+  const secondMobileBox = await mobileCards.nth(1).boundingBox();
+  const mobileWidth = await mobilePage.evaluate(() => document.documentElement.scrollWidth);
+
+  expect(firstMobileBox).not.toBeNull();
+  expect(secondMobileBox).not.toBeNull();
+  expect(firstMobileBox!.width).toBe(secondMobileBox!.width);
+  expect(secondMobileBox!.y).toBeGreaterThan(firstMobileBox!.y + firstMobileBox!.height);
+  expect(mobileWidth).toBe(390);
+  await mobile.close();
+});
+
 test("selects right-sized responsive portfolio images", async ({ browser }) => {
   const context = await browser.newContext({
     viewport: { width: 375, height: 900 },
@@ -207,6 +241,73 @@ test("selects right-sized responsive portfolio images", async ({ browser }) => {
       return size;
     }, currentSource);
     expect(dimensions).toEqual({ width: 640, height: 400 });
+  }
+
+  await context.close();
+});
+
+for (const deviceScaleFactor of [1, 2]) {
+  test(`selects appropriate project covers at the stacked-card boundary at DPR ${deviceScaleFactor}`, async ({ browser }) => {
+    const context = await browser.newContext({
+      viewport: { width: 850, height: 900 },
+      deviceScaleFactor,
+    });
+    const page = await context.newPage();
+    await page.goto("/");
+
+    const images = await page.locator(".project-card__visual img").all();
+    expect(images).toHaveLength(4);
+
+    for (const image of images) {
+      await image.scrollIntoViewIfNeeded();
+      const renderedWidth = await image.evaluate(
+        (element: HTMLImageElement) => element.getBoundingClientRect().width,
+      );
+      const currentSource = await image.evaluate((element: HTMLImageElement) => element.currentSrc);
+      const sourceWidth = await page.evaluate(async (url) => {
+        const response = await fetch(url);
+        const bitmap = await createImageBitmap(await response.blob());
+        const width = bitmap.width;
+        bitmap.close();
+        return width;
+      }, currentSource);
+
+      expect(renderedWidth).toBeGreaterThan(780);
+      expect(sourceWidth).toBeGreaterThanOrEqual(Math.ceil(renderedWidth * deviceScaleFactor));
+      if (deviceScaleFactor === 1) expect(sourceWidth).toBeLessThanOrEqual(800);
+    }
+
+    await context.close();
+  });
+}
+
+test("avoids original-size covers after the project grid reaches its content cap", async ({ browser }) => {
+  const context = await browser.newContext({
+    viewport: { width: 1520, height: 900 },
+    deviceScaleFactor: 1,
+  });
+  const page = await context.newPage();
+  await page.goto("/");
+
+  const images = await page.locator(".project-card__visual img").all();
+  expect(images).toHaveLength(4);
+
+  for (const image of images) {
+    await image.scrollIntoViewIfNeeded();
+    const renderedWidth = await image.evaluate(
+      (element: HTMLImageElement) => element.getBoundingClientRect().width,
+    );
+    const currentSource = await image.evaluate((element: HTMLImageElement) => element.currentSrc);
+    const sourceWidth = await page.evaluate(async (url) => {
+      const response = await fetch(url);
+      const bitmap = await createImageBitmap(await response.blob());
+      const width = bitmap.width;
+      bitmap.close();
+      return width;
+    }, currentSource);
+
+    expect(sourceWidth).toBeGreaterThanOrEqual(Math.ceil(renderedWidth));
+    expect(sourceWidth).toBeLessThanOrEqual(800);
   }
 
   await context.close();

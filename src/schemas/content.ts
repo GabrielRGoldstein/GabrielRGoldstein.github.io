@@ -52,7 +52,7 @@ const experiencePeriodSchema = z
 export const projectSchema = z.object({
   id: nonEmptyString,
   slug: nonEmptyString,
-  featured: z.boolean(),
+  selected: z.boolean(),
   order: z.number().int().positive(),
   title: nonEmptyString,
   category: nonEmptyString,
@@ -61,6 +61,16 @@ export const projectSchema = z.object({
   cover: z.object({
     src: rootRelativePathSchema,
     alt: nonEmptyString,
+    width: z.number().int().positive(),
+    height: z.number().int().positive(),
+    sources: z
+      .array(
+        z.object({
+          src: rootRelativePathSchema,
+          width: z.number().int().positive(),
+        }),
+      )
+      .optional(),
   }),
   repositoryUrl: httpUrlSchema.nullable(),
   liveUrl: httpUrlSchema.nullable(),

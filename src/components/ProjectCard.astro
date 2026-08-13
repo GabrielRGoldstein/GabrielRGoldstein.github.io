@@ -3,28 +3,39 @@ import type { Project } from "../schemas/content";
 
 interface Props {
   project: Project;
+  layout?: "wide" | "narrow" | "standard";
 }
 
-const { project } = Astro.props;
+const { project, layout = "standard" } = Astro.props;
 const projectNumber = String(project.order).padStart(2, "0");
 const hasLinks = project.repositoryUrl !== null || project.liveUrl !== null;
-const mobileCover = `/images/projects/${project.slug}-640.webp`;
-const responsiveCover = `/images/projects/${project.slug}-800.webp`;
+const responsiveSizes = {
+  wide: "(max-width: 53.125rem) calc(100vw - clamp(2.5rem, 8vw, 3.5rem) - 2px), (max-width: 81rem) calc((100vw - 4.375rem) * 0.583), 715px",
+  narrow: "(max-width: 53.125rem) calc(100vw - clamp(2.5rem, 8vw, 3.5rem) - 2px), (max-width: 81rem) calc((100vw - 5.25rem) * 0.417), 505px",
+  standard: "(max-width: 53.125rem) calc(100vw - clamp(2.5rem, 8vw, 3.5rem) - 2px), (max-width: 81rem) calc((100vw - 4.75rem) / 2), 610px",
+};
+const srcset = project.cover.sources
+  ? [
+      ...project.cover.sources.map(({ src, width }) => `${src} ${width}w`),
+      `${project.cover.src} ${project.cover.width}w`,
+    ].join(", ")
+  : undefined;
 ---
 
 <article
-  class="project-card"
+  class:list={["project-card", `project-card--${layout}`]}
   data-project-id={project.id}
+  data-project-layout={layout}
   aria-labelledby={`project-${project.slug}-title`}
 >
   <div class="project-card__visual">
     <img
       src={project.cover.src}
-      srcset={`${mobileCover} 640w, ${responsiveCover} 800w, ${project.cover.src} 1600w`}
-      sizes="(max-width: 48rem) calc(100vw - 2.5rem), (max-width: 95rem) calc((100vw - 5.5rem) / 2), 590px"
+      srcset={srcset}
+      sizes={srcset ? responsiveSizes[layout] : undefined}
       alt={project.cover.alt}
-      width="1600"
-      height="1000"
+      width={project.cover.width}
+      height={project.cover.height}
       loading="lazy"
       decoding="async"
     />
@@ -32,7 +43,7 @@ const responsiveCover = `/images/projects/${project.slug}-800.webp`;
 
   <div class="project-card__body">
     <div class="project-card__meta">
-      <span class="project-card__index">{projectNumber} / {project.featured ? "Featured" : "Project"}</span>
+      <span class="project-card__index">{projectNumber} / Featured</span>
       <span class="project-card__category">{project.category}</span>
     </div>
     <h3 id={`project-${project.slug}-title`}>{project.title}</h3>

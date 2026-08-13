@@ -7,15 +7,19 @@ interface Props {
 }
 
 const { projects } = Astro.props;
+const layoutFor = (index: number) => (index === 0 ? "wide" : index === 1 ? "narrow" : "standard");
 ---
 
 <section class="content-section" id="work" aria-labelledby="work-title">
   <header class="section-header">
     <h2 id="work-title">Selected projects</h2>
-    <p>{projects.length} projects, intentionally curated.</p>
+    <div class="section-header__summary">
+      <p>Production-minded work spanning real-time systems, AI, commerce, and data.</p>
+      <span>{projects.length} selected {projects.length === 1 ? "project" : "projects"}</span>
+    </div>
   </header>
 
   <div class="project-grid">
-    {projects.map((project) => <ProjectCard project={project} />)}
+    {projects.map((project, index) => <ProjectCard project={project} layout={layoutFor(index)} />)}
   </div>
 </section>

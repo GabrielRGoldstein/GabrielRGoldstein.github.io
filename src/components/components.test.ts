@@ -90,13 +90,17 @@ describe("ProjectCard", () => {
 
     expect(html).toContain(`data-project-id="${project.id}"`);
     expect(html).toContain(`src="${project.cover.src}"`);
+    const responsiveCandidates = project.cover.sources
+      ?.map(({ src, width }) => `${src} ${width}w`)
+      .concat(`${project.cover.src} ${project.cover.width}w`)
+      .join(", ");
     expect(html).toContain(
-      `srcset="/images/projects/${project.slug}-640.webp 640w, /images/projects/${project.slug}-800.webp 800w, ${project.cover.src} 1600w"`,
+      `srcset="${responsiveCandidates}"`,
     );
-    expect(html).toContain('sizes="(max-width: 48rem) calc(100vw - 2.5rem), (max-width: 95rem) calc((100vw - 5.5rem) / 2), 590px"');
+    expect(html).toContain('sizes="(max-width: 53.125rem) calc(100vw - clamp(2.5rem, 8vw, 3.5rem) - 2px), (max-width: 81rem) calc((100vw - 4.75rem) / 2), 610px"');
     expect(html).toContain(`alt="${project.cover.alt}"`);
-    expect(html).toContain('width="1600"');
-    expect(html).toContain('height="1000"');
+    expect(html).toContain(`width="${project.cover.width}"`);
+    expect(html).toContain(`height="${project.cover.height}"`);
     expect(html).toContain(project.title);
     expect(html).toContain(project.summary);
     expect(html).toContain("01 / Featured");
@@ -125,6 +129,47 @@ describe("ProjectCard", () => {
     expect(html.match(/rel="noreferrer"/g)).toHaveLength(2);
     expect(html).not.toContain("Project links pending");
   });
+
+  it("uses only authored responsive image sources and dimensions", async () => {
+    const project = {
+      ...portfolioContent.projects[0],
+      cover: {
+        src: "/images/projects/custom-original.webp",
+        alt: "Custom project cover",
+        width: 1200,
+        height: 750,
+        sources: [{ src: "/images/projects/custom-small.webp", width: 500 }],
+      },
+    };
+    const container = await AstroContainer.create();
+    const html = await container.renderToString(ProjectCard, { props: { project } });
+
+    expect(html).toContain(
+      'srcset="/images/projects/custom-small.webp 500w, /images/projects/custom-original.webp 1200w"',
+    );
+    expect(html).toContain('width="1200"');
+    expect(html).toContain('height="750"');
+    expect(html).not.toContain(`${project.slug}-640.webp`);
+  });
+
+  it("renders a base cover without inventing responsive sources", async () => {
+    const project = {
+      ...portfolioContent.projects[0],
+      cover: {
+        src: "/images/projects/base-only.webp",
+        alt: "Base-only project cover",
+        width: 900,
+        height: 600,
+      },
+    };
+    const container = await AstroContainer.create();
+    const html = await container.renderToString(ProjectCard, { props: { project } });
+
+    expect(html).toContain('src="/images/projects/base-only.webp"');
+    expect(html).not.toContain("srcset=");
+    expect(html).toContain('width="900"');
+    expect(html).toContain('height="600"');
+  });
 });
 
 describe("ProjectGrid", () => {
@@ -142,6 +187,29 @@ describe("ProjectGrid", () => {
     expect(titleOffsets.every((offset) => offset >= 0)).toBe(true);
     expect(titleOffsets).toEqual([...titleOffsets].sort((a, b) => a - b));
   });
+
+  it("renders seven selected projects with one Sketch 11 asymmetric pair", async () => {
+    const projects = Array.from({ length: 7 }, (_, index) => ({
+      ...portfolioContent.projects[index % portfolioContent.projects.length],
+      id: `project-${index + 1}`,
+      slug: `project-${index + 1}`,
+      order: index + 1,
+      title: `Project ${index + 1}`,
+    }));
+    const container = await AstroContainer.create();
+    const html = await container.renderToString(ProjectGrid, { props: { projects } });
+
+    expect(html.match(/data-project-id=/g)).toHaveLength(7);
+    expect(html).toContain("7 selected projects");
+    expect(html).toContain("Production-minded work spanning real-time systems, AI, commerce, and data.");
+    expect(html.match(/data-project-layout="wide"/g)).toHaveLength(1);
+    expect(html.match(/data-project-layout="narrow"/g)).toHaveLength(1);
+    expect(html.match(/data-project-layout="standard"/g)).toHaveLength(5);
+
+    const titleOffsets = projects.map((project) => html.indexOf(project.title));
+    expect(titleOffsets).toEqual([...titleOffsets].sort((a, b) => a - b));
+  });
+
 });
 
 describe("Contact", () => {

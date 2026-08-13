@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   portfolioContent,
   validateExperience,
+  validatePortfolioContent,
   validateProjects,
   validateSite,
 } from "./content";
@@ -10,7 +11,7 @@ import {
 const project = (overrides: Record<string, unknown> = {}) => ({
   id: "discord-clone",
   slug: "discord-clone",
-  featured: true,
+  selected: true,
   order: 1,
   title: "Discord Clone",
   category: "fullstack",
@@ -19,6 +20,8 @@ const project = (overrides: Record<string, unknown> = {}) => ({
   cover: {
     src: "/images/projects/discord-clone.webp",
     alt: "Discord-style application interface",
+    width: 1600,
+    height: 1000,
   },
   repositoryUrl: null,
   liveUrl: null,
@@ -118,17 +121,55 @@ describe("validateProjects", () => {
     expect(() =>
       validateProjects([
         project({
-          cover: { src: "/images/projects/discord-clone.webp", alt: "   " },
+          cover: {
+            src: "/images/projects/discord-clone.webp",
+            alt: "   ",
+            width: 1600,
+            height: 1000,
+          },
         }),
       ]),
     ).toThrow(/alt/i);
+  });
+
+  it("preserves explicit cover dimensions and optional responsive sources", () => {
+    const [validated] = validateProjects([
+      project({
+        cover: {
+          src: "/images/projects/discord-clone.webp",
+          alt: "Discord-style application interface",
+          width: 1600,
+          height: 1000,
+          sources: [
+            { src: "/images/projects/discord-clone-640.webp", width: 640 },
+            { src: "/images/projects/discord-clone-800.webp", width: 800 },
+          ],
+        },
+      }),
+    ]);
+
+    expect(validated.cover).toEqual({
+      src: "/images/projects/discord-clone.webp",
+      alt: "Discord-style application interface",
+      width: 1600,
+      height: 1000,
+      sources: [
+        { src: "/images/projects/discord-clone-640.webp", width: 640 },
+        { src: "/images/projects/discord-clone-800.webp", width: 800 },
+      ],
+    });
   });
 
   it("rejects a non-root-relative project cover path", () => {
     expect(() =>
       validateProjects([
         project({
-          cover: { src: "discord-clone.webp", alt: "Discord-style application interface" },
+          cover: {
+            src: "discord-clone.webp",
+            alt: "Discord-style application interface",
+            width: 1600,
+            height: 1000,
+          },
         }),
       ]),
     ).toThrow(/src/i);
@@ -140,7 +181,12 @@ describe("validateProjects", () => {
       expect(() =>
         validateProjects([
           project({
-            cover: { src, alt: "Discord-style application interface" },
+            cover: {
+              src,
+              alt: "Discord-style application interface",
+              width: 1600,
+              height: 1000,
+            },
           }),
         ]),
       ).toThrow(/src/i);
@@ -153,7 +199,12 @@ describe("validateProjects", () => {
       expect(() =>
         validateProjects([
           project({
-            cover: { src, alt: "Discord-style application interface" },
+            cover: {
+              src,
+              alt: "Discord-style application interface",
+              width: 1600,
+              height: 1000,
+            },
           }),
         ]),
       ).toThrow(/src/i);
@@ -182,6 +233,27 @@ describe("validateProjects", () => {
     ]);
 
     expect(projects.map(({ id }) => id)).toEqual(["discord-clone", "second"]);
+  });
+
+  it("preserves whether each authored project is selected for the homepage", () => {
+    const [validated] = validateProjects([project({ selected: false })]);
+
+    expect(validated.selected).toBe(false);
+  });
+});
+
+describe("validatePortfolioContent", () => {
+  it("exposes only selected projects to the homepage after validating the full collection", () => {
+    const content = validatePortfolioContent({
+      site: site(),
+      projects: [
+        project({ selected: false }),
+        project({ id: "selected", slug: "selected", selected: true, order: 2 }),
+      ],
+      experience: [experience()],
+    });
+
+    expect(content.projects.map(({ id }) => id)).toEqual(["selected"]);
   });
 });
 
@@ -367,7 +439,10 @@ describe("validateSite", () => {
 describe("portfolioContent", () => {
   it("loads and validates the authored JSON sources", () => {
     expect(portfolioContent.site.github.username).toBe("GabrielRGoldstein");
-    expect(portfolioContent.projects.map(({ order }) => order)).toEqual([1, 2, 3, 4]);
+    expect(portfolioContent.projects.length).toBeGreaterThan(0);
+    expect(portfolioContent.projects.every(({ selected }) => selected)).toBe(true);
+    const orders = portfolioContent.projects.map(({ order }) => order);
+    expect(orders).toEqual([...orders].sort((left, right) => left - right));
     expect(portfolioContent.experience).toHaveLength(4);
   });
 });

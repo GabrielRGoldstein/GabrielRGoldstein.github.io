@@ -44,6 +44,36 @@ Zod contracts live in `src/schemas/content.ts`. `src/lib/content.ts` validates a
 
 Unknown external destinations remain explicit `null` values until verified. Project links must use HTTP(S), local assets must be root-relative, and a future résumé path must reference a PDF.
 
+### Adding portfolio projects
+
+`src/data/projects.json` may contain any practical number of authored projects. The homepage renders every record with `"selected": true`, sorted by its unique positive `order`; records with `"selected": false` remain validated but do not appear in the selected-project gallery.
+
+To add a project:
+
+1. Add one JSON object with a unique `id`, `slug`, and `order`.
+2. Set `selected` to control homepage inclusion.
+3. Add a public-safe summary, category, stack, and honest `null` or confirmed HTTP(S) project links.
+4. Add a repository-owned base cover under `public/images/projects/` and author its root-relative `src`, `alt`, `width`, and `height`.
+5. Optionally add a `cover.sources` array of responsive image paths and intrinsic widths. If it is omitted, the base cover renders by itself; the component never guesses filenames.
+6. Run `npm test -- --run`, `npm run check`, and `npm run build`.
+
+Example cover configuration:
+
+```json
+"cover": {
+  "src": "/images/projects/example-project.webp",
+  "alt": "Designed project cover illustrating Example Project",
+  "width": 1600,
+  "height": 1000,
+  "sources": [
+    { "src": "/images/projects/example-project-640.webp", "width": 640 },
+    { "src": "/images/projects/example-project-800.webp", "width": 800 }
+  ]
+}
+```
+
+The first two selected projects receive a 7/5 wide/narrow desktop emphasis adapted from Sketch 11. This moderated split preserves a clear featured hierarchy without compressing the secondary cover or creating the excessive dead space produced by the sketch's stronger 8/4 ratio. Every later selected project uses the repeatable half-width card treatment, and all cards stack in one column below the gallery breakpoint. Filters, pagination, and project modals remain intentionally absent until the collection or case-study content creates a real need.
+
 ## Fonts
 
 Geist and Geist Mono are self-hosted from Vercel's official [`geist` package](https://www.npmjs.com/package/geist), version 1.7.2. The package source is [`vercel/geist-font`](https://github.com/vercel/geist-font) and the fonts are distributed under the SIL Open Font License.
