@@ -4,7 +4,7 @@ export default defineConfig({
   testDir: "./tests/e2e",
   fullyParallel: false,
   workers: 1,
-  reporter: "list",
+  reporter: process.env.CI ? [["list"], ["html", { open: "never" }]] : "list",
   use: {
     baseURL: "http://127.0.0.1:4325",
     screenshot: "only-on-failure",

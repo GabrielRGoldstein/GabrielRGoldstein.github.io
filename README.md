@@ -10,7 +10,7 @@ The site is being built as a static Astro project. Design studies and portable w
 - Refined DMG color system
 - Geist + Geist Mono typography
 - Inline GitHub identity
-- Featured projects above expandable professional experience
+- Selected projects above expandable professional experience
 - No standalone About section
 - Contact footer with a primary email CTA and secondary GitHub, LinkedIn, and résumé actions
 
@@ -25,12 +25,33 @@ Run commands from this `site/` directory.
 
 | Command | Purpose |
 | --- | --- |
-| `npm install` | Install locked dependencies |
+| `npm ci` | Reproduce the exact locked dependency tree |
 | `npm run dev` | Start the Astro development server |
 | `npm run check` | Run Astro and TypeScript diagnostics |
 | `npm test -- --run` | Run the content-contract test suite once |
+| `npm run test:e2e` | Build and test generated output through `astro preview` |
 | `npm run build` | Generate the static production site in `dist/` |
+| `npm run check:built` | Validate generated internal routes, fragments, and assets |
+| `npm run check:workflows` | Parse workflow YAML and enforce immutable action SHAs |
+| `npm run lighthouse` | Build, run two Lighthouse audits, enforce budgets, and write ignored reports |
+| `npm run quality` | Run unit, type/static, production-browser, built-output, workflow, and dependency gates |
 | `npm run preview` | Preview the generated production build |
+
+`npm run quality` is the canonical local CI equivalent. Its Playwright command owns `127.0.0.1:4325` with `reuseExistingServer: false`, builds first, and tests production output rather than Astro's development server. `npm run lighthouse` starts Astro's programmatic production preview on a kernel-assigned `127.0.0.1` port, verifies the served root exactly matches `dist/index.html`, requires each report to identify that URL, and verifies server shutdown. Generated JSON reports live under ignored `.lighthouseci/`.
+
+## Automated quality and security
+
+Repository-contained automation is ready for activation when this local repository is pushed to GitHub:
+
+- `.github/workflows/quality.yml` runs on pull requests, pushes to `main`, and manual dispatch. It uses least-privilege read permissions, an exact Node 22.23.2 runtime, `npm ci`, the canonical quality gate, and Lighthouse budgets. Playwright failure evidence and Lighthouse JSON are retained as short-lived workflow artifacts instead of being committed.
+- `.github/workflows/security.yml` runs CodeQL for JavaScript/TypeScript and Gitleaks secret scanning on pull requests, pushes to `main`, a weekly schedule, and manual dispatch. Only the CodeQL job receives `security-events: write`.
+- `.github/dependabot.yml` schedules bounded weekly npm and GitHub Actions updates.
+- Every third-party action is pinned to a full commit SHA. Dependabot maintains those immutable references, and `npm run check:workflows` rejects floating action tags.
+- [`SECURITY.md`](SECURITY.md) defines the current private email reporting channel and records that GitHub private vulnerability reporting must wait until Batch 8 creates a repository where it can be enabled and verified.
+
+The committed Lighthouse budgets are Performance ≥ 90, Accessibility/Best Practices/SEO = 100, FCP ≤ 2.5 s, LCP ≤ 3.0 s, TBT ≤ 100 ms, and CLS ≤ 0.05. A local desktop production-preview gate passed two runs at 100/100/100/100 with median FCP about 408 ms, LCP about 438 ms, TBT 0 ms, and CLS about 0.00028. These measurements are local evidence, not claims about an unidentified production host.
+
+The workflow files have been parsed and exercised through their local command equivalents, but they have not executed on GitHub because this repository still has no remote. Batch 8 owns repository creation, branch protection, required-check configuration, hosting, production origin, and deployed response validation.
 
 ## Content model
 
@@ -99,4 +120,4 @@ The full implementation plan lives in the parent workspace at:
 
 ## Deployment
 
-Deployment is intentionally deferred until Batch 8. No remote GitHub repository or production environment is configured in Batch 0.
+Deployment is intentionally deferred until Batch 8. Batch 7 does not configure a remote GitHub repository, hosting platform, production domain, analytics provider, branch protection, secrets, or deployment workflow.

@@ -9,10 +9,14 @@
   "scripts": {
     "dev": "astro dev",
     "check": "astro check",
+    "check:built": "node scripts/check-built-site.mjs dist",
+    "check:workflows": "node scripts/validate-workflows.mjs",
     "test": "vitest",
     "test:e2e": "npm run build && playwright test",
     "build": "astro build",
+    "lighthouse": "npm run build && node scripts/run-lighthouse.mjs",
     "preview": "astro preview",
+    "quality": "npm test -- --run && npm run check && npm run test:e2e && npm run check:built && npm run check:workflows && npm audit --audit-level=high",
     "astro": "astro"
   },
   "dependencies": {
@@ -23,7 +27,9 @@
     "@astrojs/check": "^0.9.10",
     "@axe-core/playwright": "^4.13.0",
     "@playwright/test": "^1.62.1",
+    "lighthouse": "13.4.1",
     "typescript": "^6.0.3",
-    "vitest": "^4.1.10"
+    "vitest": "^4.1.10",
+    "yaml": "2.9.0"
   }
 }

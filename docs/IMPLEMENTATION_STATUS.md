@@ -1,6 +1,6 @@
 # Portfolio Implementation Status
 
-Last updated: 2026-08-12 19:54 MDT
+Last updated: 2026-08-13 20:08 MDT
 
 ## Locked design decisions
 
@@ -16,9 +16,32 @@ Last updated: 2026-08-12 19:54 MDT
 
 ## Current batch
 
-Batch 6.1 — Sketch 11 Fidelity and Project Scalability — **verified candidate**
+Batch 7 — Automated Quality and DevSecOps — **independently approved; commit pending**
 
-Next batch after approval: Batch 7 — Automated Quality and DevSecOps
+Next batch after approval: Batch 8 — Repository and Production Deployment
+
+## Batch 7 candidate
+
+- Added one canonical local `npm run quality` gate covering the Vitest suite, Astro/TypeScript diagnostics, the production-preview Playwright suite, generated internal-reference validation, workflow validation, and the high-severity npm audit. Lighthouse remains a separate explicit command because it is slower and retains performance reports while still failing closed on committed budgets.
+- Added a dependency-free generated-site checker that walks built HTML and CSS, resolves local `href`, `src`, `srcset`, and CSS `url(...)` references, verifies route files and fragments, rejects path traversal, and fails with source-scoped diagnostics. Focused fixtures prove valid references pass while missing assets and fragments fail; the real two-page build validates 39 internal references.
+- Added a parser-backed workflow validator using `yaml` 2.9.0. It rejects malformed/duplicate-key YAML, empty workflows, and every remote action reference that is not pinned to an immutable 40-character commit SHA.
+- Added `.github/workflows/quality.yml` for pull requests, pushes to `main`, and manual dispatch. It uses top-level `contents: read`, pinned checkout/setup/upload actions, exact Node 22.23.2, `npm ci`, Playwright's Chromium/system dependencies, the canonical quality gate, two-run Lighthouse budgets, failure-only Playwright evidence, and short-lived Lighthouse JSON artifacts.
+- Added `.github/workflows/security.yml` for pull requests, pushes to `main`, a bounded weekly schedule, and manual dispatch. It runs JavaScript/TypeScript CodeQL plus full-history Gitleaks scanning; only the CodeQL job receives `security-events: write`, and Gitleaks needs no license secret for Gabriel's personal-account repository.
+- Added bounded weekly Dependabot updates for npm and GitHub Actions. Immutable action pins remain compatible with automated action-reference updates.
+- Added `SECURITY.md` with the validated public email as the current private reporting channel, a no-public-disclosure request, static-site scope, and an explicit Batch 8 boundary for GitHub private vulnerability reporting.
+- Updated Playwright to emit an HTML report only in CI while preserving the existing list reporter locally. The workflow uploads the HTML report and retained traces/screenshots only when a quality step fails.
+- The fresh baseline exposed `GHSA-2v37-7h3g-55p8` in locked transitive `nanoid` 3.3.17. A range-compatible lockfile-only update to 3.3.18 closed the high-severity audit without adding a direct dependency or changing application behavior.
+- Rejected `@lhci/cli` 0.15.1 after installation proved it introduced ten advisories, including seven high-severity path-traversal findings through `extract-zip` and `tmp`. Replaced it with exact development dependency `lighthouse` 13.4.1 and a repository-owned runner; the resulting dependency graph has zero known vulnerabilities.
+- Committed desktop budgets are Performance ≥ 90, Accessibility/Best Practices/SEO = 100, FCP ≤ 2.5 s, LCP ≤ 3.0 s, TBT ≤ 100 ms, and CLS ≤ 0.05. A local gate's two production-preview runs passed at 100/100/100/100 with median FCP approximately 408 ms, LCP approximately 438 ms, TBT 0 ms, and CLS approximately 0.00028; reports are generated under ignored `.lighthouseci/`.
+- No GitHub repository, branch protection, required checks, secret settings, hosting provider, production domain, analytics provider, or deployment workflow was invented. Workflow YAML and every local equivalent can be verified now, but remote execution evidence belongs to Batch 8 after a repository destination exists.
+- The first exact-tree review rejected tree `5ad2a4eb2b5fd1db2853d92cf9469751e6967112`: a server already listening on fixed port 4327 could be mistaken for the spawned preview, allowing Lighthouse to audit unrelated content. The corrected runner uses Astro's programmatic preview API with a kernel-assigned loopback port, byte-validates the served root against `dist/index.html`, validates every report URL, waits for the owned server's close event, and probes that the port is closed.
+- Four regressions now keep an incumbent server on 4327 while proving the runner chooses another owned port, reject mismatched artifact/report identity, fail a deliberately breached budget, verify normal port closure, and force-close an owned listener when graceful cleanup stalls. The CodeQL steps also use the peeled immutable commit for the documented release rather than its annotated-tag object.
+
+Final local candidate verification:
+- `npm run quality`: 90 unit/component/config tests across 5 files; 31 Astro/TypeScript/JavaScript files with zero diagnostics; two-page static build; 18 production-preview Playwright tests; 39 internal references; two parsed workflows; zero high-severity dependency findings
+- `npm run lighthouse`: two budgeted production-preview runs with exact served-artifact/report-URL identity and retained JSON evidence
+- `git diff --check`: clean
+- Replacement fail-closed review passed exact tree `8bb467120e41f495e85a658daf305cb1797f7018` with no security, logic, accessibility/regression, documentation, or test-validity blockers. It independently reproduced the 90-test quality gate, the two-run exact-URL Lighthouse gate while an incumbent remained untouched on 4327, deliberate budget failure, artifact/report identity, bounded cleanup fallback, path-traversal rejection, immutable action pins, and matching opening/closing repository state. Its three suggestions—an injected port-zero spy, broader reusable-workflow/container-reference validation, and per-child/fetch timeouts—are non-blocking future hardening rather than Batch 7 requirements.
 
 ## Batch 6.1 candidate
 
@@ -260,16 +283,17 @@ Independent fail-closed review:
 
 - No Batch 4 blocker remains; the exact substantive staged tree passed comprehensive review plus independent end-state certification.
 - No Batch 5 blocker remains; corrected staged tree `538016428e66f2f88cb1480f6a6aa19cd6e1a217` passed fresh independent fail-closed review and exact-state certification.
-- No Batch 6 blocker remains; corrected exact tree `7c0b11a9becd41b7bc44f5a0e690a5c9c8852358` passed comprehensive and narrow fail-closed reviews and is ready for its focused commit.
+- No Batch 6 or 6.1 blocker remains; Batch 6.1 was committed as `cc7c83dbb133e88364e9e44dea98a7cda309060a` from the exact independently approved tree.
+- Batch 7's first exact tree was rejected for false Lighthouse server ownership. Corrected tree `8bb467120e41f495e85a658daf305cb1797f7018` passed replacement fail-closed review with no blockers; only the focused Batch 7 commit remains. GitHub-hosted execution cannot occur until Batch 8 creates and pushes a remote repository.
 - GitHub repository name, final deployment URL, and custom-domain decision are deferred to Batch 8.
 - Analytics provider is deferred to Batch 9.
 
 ## Exact continuation command
 
-After Batch 6's exact staged tree is approved and committed, run this from `site/` at the start of Batch 7:
+After Batch 7's exact staged tree is approved and committed, run this from `site/` at the start of Batch 8:
 
 ```bash
-git log -1 --oneline && git status --short && npm ci && npm test -- --run && npm run check && npm run test:e2e
+git log -1 --oneline && git status --short && git remote -v
 ```
 
-Then recover the exact Batch 7 acceptance criteria from the implementation plan before adding CI, CodeQL, Dependabot, scheduled security checks, a security policy, or Lighthouse CI budgets. Do not infer deployment or analytics scope from the batch number.
+Then confirm the GitHub repository destination, hosting platform, production origin, and branch-protection policy with Gabriel before creating remotes, pushing code, configuring required checks/secrets, or adding deployment automation. Keep analytics deferred to Batch 9.
