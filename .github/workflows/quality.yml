@@ -37,6 +37,7 @@ jobs:
       - name: Run repository quality gate
         run: npm run quality
       - name: Run Lighthouse budgets
+        id: lighthouse
         run: npm run lighthouse
       - name: Configure GitHub Pages
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -57,12 +58,13 @@ jobs:
           if-no-files-found: ignore
           retention-days: 7
       - name: Upload Lighthouse reports
-        if: always()
+        if: always() && steps.lighthouse.outcome != 'skipped'
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: lighthouse-${{ github.run_id }}
           path: .lighthouseci/
-          if-no-files-found: ignore
+          include-hidden-files: true
+          if-no-files-found: error
           retention-days: 7
 
   deploy:

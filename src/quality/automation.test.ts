@@ -38,6 +38,19 @@ describe("GitHub automation policy", () => {
     expect(workflow).toContain("npm run lighthouse");
     expect(workflow).toContain(".lighthouseci/");
 
+    const parsedWorkflow = parse(workflow);
+    const verifySteps = parsedWorkflow.jobs.verify.steps;
+    const lighthouseStep = verifySteps.find((step: { name?: string }) => step.name === "Run Lighthouse budgets");
+    const lighthouseUpload = verifySteps.find((step: { name?: string }) => step.name === "Upload Lighthouse reports");
+    expect(lighthouseStep).toMatchObject({ id: "lighthouse", run: "npm run lighthouse" });
+    expect(lighthouseUpload.if).toBe("always() && steps.lighthouse.outcome != 'skipped'");
+    expect(lighthouseUpload.with).toMatchObject({
+      path: ".lighthouseci/",
+      "include-hidden-files": true,
+      "if-no-files-found": "error",
+      "retention-days": 7,
+    });
+
     const playwrightConfig = await readRepositoryFile("playwright.config.ts");
     expect(playwrightConfig).toContain('process.env.CI ? [["list"], ["html", { open: "never" }]] : "list"');
   });
