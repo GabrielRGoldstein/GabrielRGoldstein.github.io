@@ -24,6 +24,7 @@ describe("SiteHeader", () => {
     expect(portfolioContent.site.resumeUrl).toBe("/documents/gabriel-goldstein-resume.pdf");
     expect(html).toContain('href="/documents/gabriel-goldstein-resume.pdf"');
     expect(html).toContain('target="_blank"');
+    expect(html).toContain('data-analytics-event="resume_download"');
     expect(html).not.toContain("Résumé — link pending");
     expect(html).toContain('href="#contact"');
     expect(html).not.toContain("About");
@@ -47,6 +48,7 @@ describe("GithubIdentity", () => {
     });
 
     expect(html).toContain(`href="${portfolioContent.site.github.profileUrl}"`);
+    expect(html).toContain('data-analytics-event="github_profile_click"');
     expect(html).toContain('rel="me noreferrer"');
     expect(html).toContain('target="_blank"');
     expect(html).toContain(`src="${portfolioContent.site.github.avatarFallback}"`);
@@ -127,6 +129,9 @@ describe("ProjectCard", () => {
 
     expect(html).toContain(`href="${project.repositoryUrl}"`);
     expect(html).toContain(`href="${project.liveUrl}"`);
+    expect(html.match(/data-analytics-project-id=/g)).toHaveLength(2);
+    expect(html).toContain('data-analytics-event="project_repository_click"');
+    expect(html).toContain('data-analytics-event="project_demo_click"');
     expect(html.match(/target="_blank"/g)).toHaveLength(2);
     expect(html.match(/rel="noreferrer"/g)).toHaveLength(2);
     expect(html).not.toContain("Project links pending");
@@ -227,9 +232,12 @@ describe("Contact", () => {
     expect(html).toContain(portfolioContent.site.contact.heading);
     expect(html).toContain(portfolioContent.site.contact.label);
     expect(html).toContain(`href="mailto:${portfolioContent.site.email}"`);
+    expect(html).toContain('data-analytics-event="email_click"');
     expect(html).toContain(`href="${portfolioContent.site.github.profileUrl}"`);
+    expect(html).toContain('data-analytics-event="github_profile_click"');
     expect(html).toContain('rel="me noreferrer"');
     expect(html).toContain(`href="${portfolioContent.site.resumeUrl}"`);
+    expect(html).toContain('data-analytics-event="resume_download"');
     expect(html).toContain('download="Gabriel-Goldstein-Resume.pdf"');
     expect(portfolioContent.site.linkedinUrl).toBe(
       "https://www.linkedin.com/in/gabriel-g-b77158121/",
@@ -237,6 +245,7 @@ describe("Contact", () => {
     expect(html).toContain(
       `href="${portfolioContent.site.linkedinUrl}" target="_blank" rel="noreferrer"`,
     );
+    expect(html).toContain('data-analytics-event="linkedin_click"');
     expect(html).not.toContain("LinkedIn — profile link pending confirmation");
     expect(html.match(/<a /g)).toHaveLength(4);
     expect(html).not.toContain('href="#"');
@@ -502,7 +511,7 @@ describe("index page", () => {
     expect(html).not.toContain("Compact role rows will become accessible disclosures");
     expect(html).not.toContain("Software engineering role");
     expect(html).not.toContain('id="about"');
-    expect(html.match(/<script/g)).toHaveLength(1);
+    expect(html.match(/<script/g)).toHaveLength(2);
     expect(html).toContain('<script type="module"');
     expect(html).not.toMatch(/<script[^>]+src="https?:/);
     expect(html).not.toContain("client:");

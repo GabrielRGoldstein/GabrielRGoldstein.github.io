@@ -194,6 +194,67 @@ for (const width of [375, 768, 1280, 1600]) {
   });
 }
 
+test("dispatches only allowlisted conversion events through the neutral browser adapter", async ({ page }) => {
+  await page.addInitScript(() => {
+    const events: Array<{ event: string; properties?: Record<string, string> }> = [];
+    Object.assign(window, {
+      __portfolioAnalyticsEvents: events,
+      umami: {
+        track(event: string, properties?: Record<string, string>) {
+          events.push({ event, properties });
+        },
+      },
+    });
+  });
+  await page.goto("/");
+
+  await expect(page.locator('script[src="https://cloud.umami.is/script.js"]')).toHaveCount(0);
+  const authoredEvents = await page
+    .locator("[data-analytics-event]")
+    .evaluateAll((elements) => elements.map((element) => element.getAttribute("data-analytics-event")));
+  expect(authoredEvents.sort()).toEqual([
+    "email_click",
+    "github_profile_click",
+    "github_profile_click",
+    "linkedin_click",
+    "resume_download",
+    "resume_download",
+  ]);
+
+  await page.locator('[data-analytics-event="email_click"]').evaluate((element) => {
+    element.addEventListener("click", (event) => event.preventDefault(), { once: true });
+    (element as HTMLElement).click();
+  });
+  await page.evaluate(() => {
+    const button = document.createElement("button");
+    button.dataset.analyticsEvent = "project_repository_click";
+    button.dataset.analyticsProjectId = "dependable-tools";
+    button.dataset.visitorEmail = "must-not-dispatch@example.com";
+    document.body.append(button);
+    button.click();
+    button.remove();
+  });
+
+  const events = await page.evaluate(
+    () =>
+      (
+        window as unknown as {
+          __portfolioAnalyticsEvents: Array<{
+            event: string;
+            properties?: Record<string, string>;
+          }>;
+        }
+      ).__portfolioAnalyticsEvents,
+  );
+  expect(events).toEqual([
+    { event: "email_click", properties: undefined },
+    {
+      event: "project_repository_click",
+      properties: { project_id: "dependable-tools" },
+    },
+  ]);
+});
+
 test("uses a balanced 7/5 project hierarchy that stacks cleanly on mobile", async ({ browser }) => {
   const desktop = await browser.newContext({ viewport: { width: 1280, height: 900 } });
   const desktopPage = await desktop.newPage();

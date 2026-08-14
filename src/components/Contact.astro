@@ -20,7 +20,11 @@ const resumeUrl = site.resumeUrl;
   <div class="contact-footer__actions">
     <p class="contact-footer__label mono-label">{site.contact.label}</p>
 
-    <a class="contact-action contact-action--primary" href={`mailto:${site.email}`}>
+    <a
+      class="contact-action contact-action--primary"
+      href={`mailto:${site.email}`}
+      data-analytics-event="email_click"
+    >
       <span>
         {site.contact.emailCta}
         <small>{site.email}</small>
@@ -34,6 +38,7 @@ const resumeUrl = site.resumeUrl;
         href={site.github.profileUrl}
         target="_blank"
         rel="me noreferrer"
+        data-analytics-event="github_profile_click"
       >
         GitHub ↗
       </a>
@@ -45,6 +50,7 @@ const resumeUrl = site.resumeUrl;
             href={site.linkedinUrl}
             target="_blank"
             rel="noreferrer"
+            data-analytics-event="linkedin_click"
           >
             LinkedIn ↗
           </a>
@@ -61,6 +67,7 @@ const resumeUrl = site.resumeUrl;
         href={resumeUrl}
         download="Gabriel-Goldstein-Resume.pdf"
         type="application/pdf"
+        data-analytics-event="resume_download"
       >
         Résumé ↓
       </a>

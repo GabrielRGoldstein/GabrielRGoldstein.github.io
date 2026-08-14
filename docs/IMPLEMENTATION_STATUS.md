@@ -1,6 +1,6 @@
 # Portfolio Implementation Status
 
-Last updated: 2026-08-13 23:01 MDT
+Last updated: 2026-08-14 09:28 MDT
 
 ## Locked design decisions
 
@@ -16,9 +16,23 @@ Last updated: 2026-08-13 23:01 MDT
 
 ## Current batch
 
-Batch 8 — Repository and Production Deployment — **complete**
+Batch 9 — Privacy-Oriented Analytics — **third repaired implementation successor; replacement exact-tree review pending**
 
-Confirmed target: `GabrielRGoldstein/GabrielRGoldstein.github.io` on GitHub Pages at `https://gabrielrgoldstein.github.io/`; no custom domain; analytics remains deferred.
+Selected provider: hosted Umami Cloud for `https://gabrielrgoldstein.github.io/`. The two public repository variables are configured with the provider and provider-issued website UUID. The deployed site remains the completed Batch 8 artifact until this repaired Batch 9 tree passes replacement review, required checks, merge, and deployment.
+
+## Batch 9 third repaired implementation successor
+
+- Selected Umami Cloud after checking current official event, tracker-configuration, and pricing documentation: the hosted Hobby tier supports this site and custom events; the tracker supports domain restriction, query/hash exclusion, Do Not Track, and JavaScript event dispatch. No self-hosted analytics service or custom dashboard was added.
+- Added a provider-neutral TypeScript adapter with an exact seven-event allowlist: `project_open`, `project_repository_click`, `project_demo_click`, `resume_download`, `github_profile_click`, `linkedin_click`, and `email_click`. `project_open` is reserved but intentionally not emitted because project dialogs remain deferred.
+- Added fail-closed event-property validation. Project events require one bounded lowercase authored `project_id`; every other event permits no properties. Unknown events, malformed identifiers, extra keys, and personal-data-like values are rejected before provider dispatch. Provider absence and provider exceptions return a no-op result without affecting link behavior.
+- Instrumented only meaningful conversion surfaces: header/contact résumé, hero/contact GitHub, contact LinkedIn/email, and configured project repository/demo links. Ordinary page/section navigation is not tracked. Current project links remain `null`, so project conversion markers render only when audited destinations are authored.
+- Added an `Analytics.astro` integration. Disabled builds emit no remote tracker. Enabled builds use only `https://cloud.umami.is/script.js`, the provider-issued public UUID, the exact production domain, automatic pageviews, query/hash exclusion, and Do Not Track. Performance collection and session replay are not enabled.
+- Added strict public configuration parsing for `PUBLIC_ANALYTICS_PROVIDER` and `PUBLIC_UMAMI_WEBSITE_ID`: both absent disables analytics; partial, unknown, or malformed configuration fails the build. No secret or environment-configurable tracker URL is accepted.
+- Added `npm run check:analytics`, a pinned Parse5 7.3.0 development dependency, and fixture tests. The generated-artifact validator uses HTML-standard parsing, requires zero tracker scripts in disabled mode and exactly one fixed, privacy-configured tracker in every enabled HTML page, rejects duplicate attributes before interpretation, forbids executable embedded-document elements, and fails closed on extra attributes, missing controls, or unexpected Umami-like scripts.
+- Updated the Quality workflow so deterministic browser tests remain analytics-disabled. Only a successful protected `main` push rebuilds `dist/` with public repository variables, runs internal-reference plus analytics-artifact validation, audits that same already-final artifact through Lighthouse without rebuilding, and then configures/uploads the identical `dist/`. Pull requests and manual dispatches still cannot deploy.
+- RED/GREEN evidence covers missing adapter, stable event names, runtime rejection of untyped unknown events, positive provider dispatch, personal-data rejection, project-property restriction, provider-exception containment, disabled/partial/valid config, browser dataset projection, delegated click handling, conditional tracker rendering, component instrumentation, generated-artifact validation, and production-rebuild workflow ordering. Parser-differential coverage now includes quoted `>` values, mixed-case tags/attributes, inert comments, valueless identity attributes, duplicate `src`/website-identity attributes, and a browser-executable tracker nested in `iframe[srcdoc]`.
+- Initial exact tree `463b65f6dbdeb1fa4920ec07b218c68be5536090` closed with matching identity but was rejected by independent fail-closed review. Blocking findings were runtime bypass of the event allowlist, duplicate-attribute disagreement between the artifact validator and Chromium, persistence of the review-only test UUID, missing regressions for both bypasses, and stale continuation wording. First repaired successor tree `a5ecd07952cefca3b723ee2ff4d9a9a6fd618a52` fixed every finding and closed with matching identity, but replacement review correctly rejected the remaining regex extractor because `>` inside a quoted attribute could hide a browser-executable tracker. Second repaired successor tree `d06da879b239597e55701721f158ab160d235aff` replaced custom extraction with pinned HTML-standard parsing and fixed the quoted-delimiter case, but review found that `iframe[srcdoc]` creates a separately parsed nested document that could still load the tracker; that review also reached its tool limit before mandatory closing-state certification. The third repaired successor rejects all executable embedded-document elements and adds the exact nested-tracker regression. It remains unapproved until replacement exact-tree review closes with every blocker array empty and matching opening/closing identity.
+- Complete successor verification passes: `npm run quality` with 119/119 Vitest tests across 10 files, zero Astro diagnostics across 42 checked files, 19/19 production-preview Playwright tests, two static pages, 39 internal references, two parsed workflows, and zero dependency vulnerabilities. Disabled output validates with zero trackers. A build using the configured public provider values validates with one exact tracker in each of two HTML pages, and two Lighthouse runs against that same existing enabled `dist/` score 100/100/100/100 with median FCP about 367 ms, LCP about 427 ms, TBT 0 ms, and CLS about 0.00024. Replacement Actionlint, staged-tree Gitleaks, cached diff check, exact-tree review, hosted checks, deployment, and production observation remain pending.
 
 ## Batch 8 implementation and production evidence
 
@@ -323,8 +337,12 @@ Independent fail-closed review:
 - No Batch 6 or 6.1 blocker remains; Batch 6.1 was committed as `cc7c83dbb133e88364e9e44dea98a7cda309060a` from the exact independently approved tree.
 - Batch 7's first exact tree was rejected for false Lighthouse server ownership. Corrected substantive tree `8bb467120e41f495e85a658daf305cb1797f7018` and final documented tree `ec2ee5a1b394aff1ebc9eede05ea038a68386d9e` passed replacement reviews and were committed as `ccf098269467122077f30b38b53f3b18f537cedc`.
 - No Batch 8 blocker remains: the latest reviewed evidence commit is deployed; hosted Quality/Security, retained Lighthouse artifacts, direct production validation, and administrator-enforced repository controls passed.
-- Analytics provider is deferred to Batch 9.
+- Batch 9 selected Umami Cloud, implemented the fail-closed adapter/build/deployment contract, and configured both public repository variables. Production activation still requires an approved merge, successful deployment, and live pageview/custom-event verification.
 
 ## Exact continuation
 
-Batch 8 is complete. Begin Batch 9 only from the protected, clean `main` branch after re-reading this status; analytics remains deferred until that separately scoped batch.
+Batch 9 implementation is in progress on `feat/batch9-privacy-analytics` from protected Batch 8 `main`. After an independent review returns `passed: true` for an identical opening and closing tree, the next exact command commits only those already-reviewed staged bytes without restaging:
+
+```bash
+git commit -m "feat: add privacy-safe conversion analytics"
+```

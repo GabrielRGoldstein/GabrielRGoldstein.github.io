@@ -1,0 +1,31 @@
+---
+import type { AnalyticsConfig } from "../lib/analytics-config";
+
+interface Props {
+  config: AnalyticsConfig | null;
+}
+
+const { config } = Astro.props;
+---
+
+{
+  config && (
+    <script
+      is:inline
+      defer
+      src={config.scriptUrl}
+      data-website-id={config.websiteId}
+      data-domains={config.domain}
+      data-auto-track="true"
+      data-exclude-search="true"
+      data-exclude-hash="true"
+      data-do-not-track="true"
+    />
+  )
+}
+
+<script>
+  import { initializeAnalytics } from "../lib/analytics-browser";
+
+  initializeAnalytics();
+</script>
