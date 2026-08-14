@@ -2,7 +2,7 @@
 
 Production source for Gabriel Goldstein's software-engineering portfolio.
 
-The site is being built as a static Astro project. Design studies and portable wireframes remain outside this repository under the parent `Portfolio Rework/sketches/` workspace.
+The site is a static Astro project. Design studies and portable wireframes remain outside this repository under the parent `Portfolio Rework/sketches/` workspace.
 
 ## Current design direction
 
@@ -30,6 +30,7 @@ Run commands from this `site/` directory.
 | `npm run check` | Run Astro and TypeScript diagnostics |
 | `npm test -- --run` | Run the content-contract test suite once |
 | `npm run test:e2e` | Build and test generated output through `astro preview` |
+| `PRODUCTION_URL=https://gabrielrgoldstein.github.io npm run test:production` | Run the browser suite against the exact deployed HTTPS origin without starting a local server |
 | `npm run build` | Generate the static production site in `dist/` |
 | `npm run check:built` | Validate generated internal routes, fragments, and assets |
 | `npm run check:workflows` | Parse workflow YAML and enforce immutable action SHAs |
@@ -41,17 +42,17 @@ Run commands from this `site/` directory.
 
 ## Automated quality and security
 
-Repository-contained automation is ready for activation when this local repository is pushed to GitHub:
+Repository-contained automation targets the confirmed public repository [`GabrielRGoldstein/GabrielRGoldstein.github.io`](https://github.com/GabrielRGoldstein/GabrielRGoldstein.github.io):
 
-- `.github/workflows/quality.yml` runs on pull requests, pushes to `main`, and manual dispatch. It uses least-privilege read permissions, an exact Node 22.23.2 runtime, `npm ci`, the canonical quality gate, and Lighthouse budgets. Playwright failure evidence and Lighthouse JSON are retained as short-lived workflow artifacts instead of being committed.
+- `.github/workflows/quality.yml` runs on pull requests, pushes to `main`, and manual dispatch. Its verification job has only `contents: read` plus the `pages: read` required to query configured Pages metadata, uses an exact Node 22.23.2 runtime, runs `npm ci`, the canonical quality gate, and Lighthouse budgets. Playwright failure evidence and Lighthouse JSON are retained as short-lived workflow artifacts instead of being committed. A successful `main` push then uploads only `dist/` and deploys it to GitHub Pages from a dedicated job whose only write capabilities are `pages: write` and `id-token: write`.
 - `.github/workflows/security.yml` runs CodeQL for JavaScript/TypeScript and Gitleaks secret scanning on pull requests, pushes to `main`, a weekly schedule, and manual dispatch. Only the CodeQL job receives `security-events: write`.
 - `.github/dependabot.yml` schedules bounded weekly npm and GitHub Actions updates.
 - Every third-party action is pinned to a full commit SHA. Dependabot maintains those immutable references, and `npm run check:workflows` rejects floating action tags.
-- [`SECURITY.md`](SECURITY.md) defines the current private email reporting channel and records that GitHub private vulnerability reporting must wait until Batch 8 creates a repository where it can be enabled and verified.
+- [`SECURITY.md`](SECURITY.md) defines the private email fallback and links to GitHub private vulnerability reporting, which is enabled and API-verified for the confirmed repository.
 
-The committed Lighthouse budgets are Performance ≥ 90, Accessibility/Best Practices/SEO = 100, FCP ≤ 2.5 s, LCP ≤ 3.0 s, TBT ≤ 100 ms, and CLS ≤ 0.05. A local desktop production-preview gate passed two runs at 100/100/100/100 with median FCP about 408 ms, LCP about 438 ms, TBT 0 ms, and CLS about 0.00028. These measurements are local evidence, not claims about an unidentified production host.
+The committed Lighthouse budgets are Performance ≥ 90, Accessibility/Best Practices/SEO = 100, FCP ≤ 2.5 s, LCP ≤ 3.0 s, TBT ≤ 100 ms, and CLS ≤ 0.05. The final Batch 8 local production-preview gate passed two runs at 100/100/100/100 with median FCP about 394 ms, LCP about 434 ms, TBT 0 ms, and CLS about 0.00028. These measurements validate the built candidate but are not claims about the deployed origin; remote Lighthouse evidence is required after push.
 
-The workflow files have been parsed and exercised through their local command equivalents, but they have not executed on GitHub because this repository still has no remote. Batch 8 owns repository creation, branch protection, required-check configuration, hosting, production origin, and deployed response validation.
+The Batch 8 deployment candidate has been parsed and exercised through local equivalents but has not yet been pushed, so this document does not claim that the new GitHub-hosted workflows or Astro deployment have run. Hosted execution, exact deployment identity, branch-protection contexts, and production response evidence must be recorded only after the reviewed candidate is pushed.
 
 ## Content model
 
@@ -120,4 +121,10 @@ The full implementation plan lives in the parent workspace at:
 
 ## Deployment
 
-Deployment is intentionally deferred until Batch 8. Batch 7 does not configure a remote GitHub repository, hosting platform, production domain, analytics provider, branch protection, secrets, or deployment workflow.
+The confirmed deployment target is the existing public root-site repository [`GabrielRGoldstein/GabrielRGoldstein.github.io`](https://github.com/GabrielRGoldstein/GabrielRGoldstein.github.io), hosted by GitHub Pages at <https://gabrielrgoldstein.github.io/>. No custom domain or deployment secret is configured, and analytics remains deferred to Batch 9.
+
+The repository's previous Next.js portfolio history is preserved as the second parent of local merge commit `8e4280f4c40fad33e4a24c56d87f1ed986fa9e18`; replacing the published source therefore requires no force-push. Astro's `site` is the confirmed root origin, so generated canonical, Open Graph, Twitter-image, `robots.txt`, and single-route sitemap URLs are absolute and do not use a project subpath.
+
+On a push to `main`, the quality workflow must pass the complete repository gate and Lighthouse budgets before it uploads `dist/` with `actions/upload-pages-artifact` and a separate least-privilege job deploys that artifact with `actions/deploy-pages`. All remote actions are pinned to immutable commits. Main-push runs are serialized rather than cancelled during deployment; pull-request runs remain cancellable.
+
+GitHub Pages currently reports workflow-based publishing, managed HTTPS enforcement, no custom domain, and a live legacy portfolio. These settings identify the destination but do not prove the new Astro candidate is deployed. After the reviewed candidate is pushed, acceptance requires the GitHub Actions run, Pages deployment URL/SHA, HTTPS redirects and headers, cache behavior, canonical/share metadata, sitemap/robots, internal assets and links, custom 404, production Playwright suite, responsive rendering, and remote Lighthouse budgets to be inspected directly.

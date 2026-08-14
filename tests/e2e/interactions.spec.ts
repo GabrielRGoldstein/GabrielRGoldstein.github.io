@@ -4,6 +4,7 @@ import { expect, test } from "@playwright/test";
 const experienceRows = "[data-experience-id]";
 const toggles = "[data-experience-toggle]";
 const panels = "[data-experience-panel]";
+const productionOrigin = "https://gabrielrgoldstein.github.io";
 
 test("has no automatically detectable accessibility violations", async ({ page }) => {
   await page.goto("/");
@@ -23,9 +24,21 @@ test("has no automatically detectable accessibility violations", async ({ page }
 test("serves portfolio discovery, sharing, and not-found assets", async ({ page, request }) => {
   await page.goto("/");
 
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+    "href",
+    `${productionOrigin}/`,
+  );
+  await expect(page.locator('meta[property="og:url"]')).toHaveAttribute(
+    "content",
+    `${productionOrigin}/`,
+  );
   await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
     "content",
-    "/og/portfolio-card.png",
+    `${productionOrigin}/og/portfolio-card.png`,
+  );
+  await expect(page.locator('meta[name="twitter:image"]')).toHaveAttribute(
+    "content",
+    `${productionOrigin}/og/portfolio-card.png`,
   );
   await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute(
     "content",
@@ -35,8 +48,15 @@ test("serves portfolio discovery, sharing, and not-found assets", async ({ page,
   const robots = await request.get("/robots.txt");
   expect(robots.status()).toBe(200);
   expect((await robots.text()).replaceAll("\r\n", "\n").trim()).toBe(
-    "User-agent: *\nAllow: /",
+    `User-agent: *\nAllow: /\n\nSitemap: ${productionOrigin}/sitemap.xml`,
   );
+
+  const sitemap = await request.get("/sitemap.xml");
+  expect(sitemap.status()).toBe(200);
+  expect(sitemap.headers()["content-type"]).toContain("xml");
+  const sitemapXml = (await sitemap.text()).replaceAll("\r\n", "\n");
+  expect(sitemapXml).toContain(`<loc>${productionOrigin}/</loc>`);
+  expect(sitemapXml.match(/<url>/g)).toHaveLength(1);
 
   const socialCard = await request.get("/og/portfolio-card.png");
   expect(socialCard.status()).toBe(200);

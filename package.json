@@ -13,6 +13,7 @@
     "check:workflows": "node scripts/validate-workflows.mjs",
     "test": "vitest",
     "test:e2e": "npm run build && playwright test",
+    "test:production": "playwright test --config=playwright.production.config.ts",
     "build": "astro build",
     "lighthouse": "npm run build && node scripts/run-lighthouse.mjs",
     "preview": "astro preview",

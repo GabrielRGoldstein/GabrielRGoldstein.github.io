@@ -1,6 +1,6 @@
 # Portfolio Implementation Status
 
-Last updated: 2026-08-13 20:08 MDT
+Last updated: 2026-08-13 21:26 MDT
 
 ## Locked design decisions
 
@@ -16,9 +16,31 @@ Last updated: 2026-08-13 20:08 MDT
 
 ## Current batch
 
-Batch 7 — Automated Quality and DevSecOps — **independently approved; commit pending**
+Batch 8 — Repository and Production Deployment — **implementation candidate; pre-push gate and review pending**
 
-Next batch after approval: Batch 8 — Repository and Production Deployment
+Confirmed target: `GabrielRGoldstein/GabrielRGoldstein.github.io` on GitHub Pages at `https://gabrielrgoldstein.github.io/`; no custom domain; analytics remains deferred.
+
+## Batch 8 candidate
+
+- Confirmed the existing public root-site repository and legacy Next.js portfolio rather than inventing a new destination. Gabriel explicitly approved replacing that site with the new Astro portfolio.
+- Installed GitHub CLI 2.97.0 through Winget's hash-verified package, authenticated through GitHub's device flow as `GabrielRGoldstein`, and verified administrator access plus `repo` and `workflow` capability without storing or printing an unmasked credential.
+- Added `origin` for `https://github.com/GabrielRGoldstein/GabrielRGoldstein.github.io.git`, fetched the existing branches, and preserved remote `main` commit `9c732dd7a824c4eb6fff7a17d305a14f7137d0b2` as the second parent of local merge commit `8e4280f4c40fad33e4a24c56d87f1ed986fa9e18`. The merge used the `ours` strategy and retained Batch 7 tree `ec2ee5a1b394aff1ebc9eede05ea038a68386d9e` byte-for-byte, so replacing the old site needs no force-push.
+- Bound Astro's `site` to the confirmed root origin. Generated canonical, `og:url`, Open Graph image, and Twitter image metadata are now absolute production URLs without a project-site base path.
+- Added an absolute sitemap directive to `robots.txt` plus a one-route `sitemap.xml`; the custom 404 is intentionally excluded.
+- Extended `.github/workflows/quality.yml` so only a successful `main`-push verification uploads `dist/` and a dependent job deploys it to the `github-pages` environment. The verification job has only `contents: read` plus explicit `pages: read` for the pinned `configure-pages` metadata request; `pages: write` and `id-token: write` exist only on the deployment job. The Pages actions use verified immutable release commits. Main deployments are serialized while pull-request verification remains cancellable.
+- Added a separate `playwright.production.config.ts` and `npm run test:production`. It accepts only the exact HTTPS root origin through `PRODUCTION_URL`, starts no local server, and leaves the existing isolated `127.0.0.1:4325` production-preview configuration unchanged.
+- GitHub currently reports workflow-based Pages publishing, HTTPS enforcement, no custom domain, and an already built legacy site. Private vulnerability reporting is enabled and API-verified. `main` is not yet protected; default Actions permissions are currently write; repository SHA-pinning enforcement is currently disabled. Those settings remain to be narrowed only after the new workflow contexts exist.
+- RED/GREEN evidence covered missing Astro origin, missing gated Pages deployment, missing remote Playwright configuration, missing production command, stale relative share metadata, and missing sitemap discovery. The focused browser and workflow contracts pass after the minimal implementations.
+- Exact tree `0c5a732652d69e913c3cdf13da88dbfcdb9d2bf2` passed comprehensive independent review with every blocker array empty and matching opening/closing state, but was intentionally superseded before commit or push. A direct unauthenticated Pages API probe returned 404 and GitHub documents `Pages: read` for that endpoint, so the verification job now declares that read-only permission explicitly. The review's non-blocking URL-hardening suggestion was also adopted: production Playwright now rejects non-empty URL username/password fields, with a failing-then-passing regression. A replacement exact-tree review is required.
+- Replacement tree `c467e08f431def37a7286693e9a38fb94cca1403` passed the independent implementation, deployment-logic, security, test-validity, accessibility/regression, gate-reproduction, and exact opening/closing-state checks, but its verdict remained fail-closed because the status file retained an ambiguous staged-patch byte count from earlier evidence. The byte-size claim is removed below; no commit or push occurred, and the resulting documentation-only successor still requires exact-tree review.
+
+Final local pre-push verification:
+- `npm run quality`: 93 tests across 5 files; 32 Astro/TypeScript/JavaScript files with zero diagnostics; two-page static build; 18/18 production-preview Playwright tests; 39 internal references; two parsed workflows; zero dependency vulnerabilities
+- The generated-output browser suite verifies absolute canonical/share metadata, robots and sitemap discovery, social card/favicons, custom 404, accessibility, responsive geometry and images, interaction behavior, no-JavaScript content, reduced motion, and zero third-party runtime resources.
+- `npm run lighthouse`: two exact-artifact/report-URL runs passed at 100/100/100/100 with median FCP approximately 394 ms, LCP approximately 434 ms, TBT 0 ms, and CLS approximately 0.00028.
+- `git diff --check`: passed; local preview ports 4325–4327 were closed after the gate.
+- Checksum-verified Actionlint 1.7.12 passed both workflows. Checksum-verified Gitleaks 8.30.1 found no leaks across the 37-commit merged history (approximately 7.63 MB) or the exact staged Batch 8 delta, with redaction enabled. The staged-patch byte count is intentionally omitted because Gitleaks reports different totals for different diff-context representations.
+- Exact-tree review of the documentation-only successor, commit, and push remain pending; no new Astro deployment or hosted workflow execution is claimed yet.
 
 ## Batch 7 candidate
 
@@ -284,16 +306,16 @@ Independent fail-closed review:
 - No Batch 4 blocker remains; the exact substantive staged tree passed comprehensive review plus independent end-state certification.
 - No Batch 5 blocker remains; corrected staged tree `538016428e66f2f88cb1480f6a6aa19cd6e1a217` passed fresh independent fail-closed review and exact-state certification.
 - No Batch 6 or 6.1 blocker remains; Batch 6.1 was committed as `cc7c83dbb133e88364e9e44dea98a7cda309060a` from the exact independently approved tree.
-- Batch 7's first exact tree was rejected for false Lighthouse server ownership. Corrected tree `8bb467120e41f495e85a658daf305cb1797f7018` passed replacement fail-closed review with no blockers; only the focused Batch 7 commit remains. GitHub-hosted execution cannot occur until Batch 8 creates and pushes a remote repository.
-- GitHub repository name, final deployment URL, and custom-domain decision are deferred to Batch 8.
+- Batch 7's first exact tree was rejected for false Lighthouse server ownership. Corrected substantive tree `8bb467120e41f495e85a658daf305cb1797f7018` and final documented tree `ec2ee5a1b394aff1ebc9eede05ea038a68386d9e` passed replacement reviews and were committed as `ccf098269467122077f30b38b53f3b18f537cedc`.
+- Batch 8's repository, provider, production origin, and no-custom-domain decision are confirmed. The blocking acceptance sequence is now the complete local gate, exact-tree review, reviewed commit/push, hosted workflow/deployment success, direct production validation, proportionate repository settings, and final evidence update.
 - Analytics provider is deferred to Batch 9.
 
 ## Exact continuation command
 
-After Batch 7's exact staged tree is approved and committed, run this from `site/` at the start of Batch 8:
+Run the complete pre-push Batch 8 gate from `site/`:
 
 ```bash
-git log -1 --oneline && git status --short && git remote -v
+npm run quality && npm run lighthouse && git diff --check
 ```
 
-Then confirm the GitHub repository destination, hosting platform, production origin, and branch-protection policy with Gabriel before creating remotes, pushing code, configuring required checks/secrets, or adding deployment automation. Keep analytics deferred to Batch 9.
+Then freeze the exact staged candidate, obtain a fail-closed independent review, commit only the approved tree, and push `main` without force. Do not configure required status contexts or claim production acceptance until the first new GitHub-hosted workflow and Pages deployment expose their actual check names, deployment SHA, URL, and observed responses. Keep analytics deferred to Batch 9.

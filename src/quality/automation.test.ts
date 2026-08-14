@@ -1,11 +1,24 @@
 import { readFile } from "node:fs/promises";
 import { describe, expect, test } from "vitest";
+import { parse } from "yaml";
 
 const root = new URL("../../", import.meta.url);
 const readRepositoryFile = (path: string) => readFile(new URL(path, root), "utf8");
 const immutableAction = /uses:\s*[\w.-]+\/[\w.-]+(?:\/[\w.-]+)?@([a-f\d]{40})(?:\s|$)/g;
 
 describe("GitHub automation policy", () => {
+  test("Astro builds canonical metadata for the confirmed root production origin", async () => {
+    const { default: astroConfig } = await import("../../astro.config.mjs");
+
+    expect(astroConfig.site).toBe("https://gabrielrgoldstein.github.io");
+    expect(astroConfig.base ?? "/").toBe("/");
+
+    const packageJson = JSON.parse(await readRepositoryFile("package.json"));
+    expect(packageJson.scripts["test:production"]).toBe(
+      "playwright test --config=playwright.production.config.ts",
+    );
+  });
+
   test("quality automation is least-privilege, reproducible, and retains useful reports", async () => {
     const workflow = await readRepositoryFile(".github/workflows/quality.yml");
     const actionUses = [...workflow.matchAll(/uses:\s*([^\s]+)/g)];
@@ -29,6 +42,44 @@ describe("GitHub automation policy", () => {
     expect(playwrightConfig).toContain('process.env.CI ? [["list"], ["html", { open: "never" }]] : "list"');
   });
 
+  test("main pushes deploy the verified dist artifact with job-scoped Pages permissions", async () => {
+    const source = await readRepositoryFile(".github/workflows/quality.yml");
+    const workflow = parse(source);
+    const deployCondition = "github.event_name == 'push' && github.ref == 'refs/heads/main'";
+    const verifySteps = workflow.jobs.verify.steps;
+    const lighthouseIndex = verifySteps.findIndex((step: { run?: string }) => step.run === "npm run lighthouse");
+    const configureIndex = verifySteps.findIndex(
+      (step: { uses?: string }) =>
+        step.uses === "actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d",
+    );
+    const uploadIndex = verifySteps.findIndex(
+      (step: { uses?: string }) =>
+        step.uses === "actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9",
+    );
+    const uploadStep = verifySteps[uploadIndex];
+    const deploy = workflow.jobs.deploy;
+
+    expect(workflow.permissions).toEqual({ contents: "read" });
+    expect(workflow.jobs.verify.permissions).toEqual({ contents: "read", pages: "read" });
+    expect(configureIndex).toBeGreaterThan(lighthouseIndex);
+    expect(uploadIndex).toBeGreaterThan(configureIndex);
+    expect(verifySteps[configureIndex].if).toBe(deployCondition);
+    expect(uploadStep.if).toBe(deployCondition);
+    expect(uploadStep.with.path).toBe("./dist");
+    expect(deploy.if).toBe(deployCondition);
+    expect(deploy.needs).toBe("verify");
+    expect(deploy.permissions).toEqual({ pages: "write", "id-token": "write" });
+    expect(deploy.environment).toEqual({
+      name: "github-pages",
+      url: "${{ steps.deployment.outputs.page_url }}",
+    });
+    expect(deploy.steps).toContainEqual({
+      name: "Deploy to GitHub Pages",
+      id: "deployment",
+      uses: "actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128",
+    });
+  });
+
   test("security automation runs CodeQL and secret scanning with bounded permissions", async () => {
     const workflow = await readRepositoryFile(".github/workflows/security.yml");
     const actionUses = [...workflow.matchAll(/uses:\s*([^\s]+)/g)];
@@ -48,7 +99,12 @@ describe("GitHub automation policy", () => {
     const site = JSON.parse(await readRepositoryFile("src/data/site.json"));
     expect(securityPolicy).toContain(site.email);
     expect(securityPolicy).toMatch(/do not (?:open|file) a public issue/i);
-    expect(securityPolicy).toMatch(/private vulnerability reporting.*Batch 8/i);
+    expect(securityPolicy).toMatch(/private vulnerability reporting is enabled and API-verified/i);
+    expect(securityPolicy).toContain("GabrielRGoldstein/GabrielRGoldstein.github.io");
+    expect(securityPolicy).toContain(
+      "https://github.com/GabrielRGoldstein/GabrielRGoldstein.github.io/security/advisories/new",
+    );
+    expect(securityPolicy).not.toMatch(/cannot be promised|wait until Batch 8/i);
   });
 
   test("Dependabot maintains npm and immutable GitHub Actions dependencies weekly", async () => {

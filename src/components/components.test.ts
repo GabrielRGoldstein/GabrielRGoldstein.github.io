@@ -9,6 +9,8 @@ import SiteHeader from "../components/SiteHeader.astro";
 import { portfolioContent } from "../lib/content";
 import IndexPage from "../pages/index.astro";
 
+const productionOrigin = "https://gabrielrgoldstein.github.io";
+
 describe("SiteHeader", () => {
   it("renders the required navigation from validated site content", async () => {
     const container = await AstroContainer.create();
@@ -374,6 +376,42 @@ describe("Playwright configuration", () => {
       reuseExistingServer: false,
     });
     expect(webServer).not.toMatchObject({ command: expect.stringContaining("dev") });
+  });
+
+  it("uses a separate fail-closed configuration for the exact production origin", async () => {
+    const previousProductionUrl = process.env.PRODUCTION_URL;
+    process.env.PRODUCTION_URL = productionOrigin;
+    let productionConfig;
+    let requireProductionUrl: ((value?: string) => string) | undefined;
+
+    try {
+      const productionModule = await import("../../playwright.production.config");
+      productionConfig = productionModule.default;
+      requireProductionUrl = productionModule.requireProductionUrl;
+    } catch {
+      productionConfig = undefined;
+      requireProductionUrl = undefined;
+    } finally {
+      if (previousProductionUrl === undefined) delete process.env.PRODUCTION_URL;
+      else process.env.PRODUCTION_URL = previousProductionUrl;
+    }
+
+    expect(productionConfig).toBeDefined();
+    expect(productionConfig?.webServer).toBeUndefined();
+    expect(productionConfig?.workers).toBe(1);
+    expect(productionConfig?.use).toMatchObject({ baseURL: productionOrigin });
+    expect(requireProductionUrl?.(productionOrigin)).toBe(productionOrigin);
+    for (const invalidUrl of [
+      undefined,
+      "http://gabrielrgoldstein.github.io",
+      "https://example.com",
+      "https://user:password@gabrielrgoldstein.github.io",
+      `${productionOrigin}/portfolio/`,
+      `${productionOrigin}/?preview=true`,
+      `${productionOrigin}/#preview`,
+    ]) {
+      expect(() => requireProductionUrl?.(invalidUrl)).toThrow(/production[_ ]url/i);
+    }
   });
 });
 
