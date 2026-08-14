@@ -1,6 +1,6 @@
 # Portfolio Implementation Status
 
-Last updated: 2026-08-13 22:26 MDT
+Last updated: 2026-08-13 22:38 MDT
 
 ## Locked design decisions
 
@@ -42,15 +42,18 @@ Confirmed target: `GabrielRGoldstein/GabrielRGoldstein.github.io` on GitHub Page
 - Direct origin validation passed: production Playwright 18/18; two production Lighthouse runs at 100/100/100/100 with median FCP/LCP approximately 365 ms, TBT 0 ms, and CLS approximately 0.00028; HTTP redirects once to HTTPS; the valid managed certificate covers `*.github.io`; deployed `/` is byte-identical to `dist/index.html` (SHA-256 `2c4b282a54387cacd5dff55d2488e60080a84c1c8a7a4f687d7b06be29488610`); 23 same-origin URLs returned successfully; the PDF résumé, robots, sitemap, metadata, social image, favicons, and custom `404` were valid; no mixed content, external runtime resources, source-map references, generated-artifact secrets, or visual desktop regressions were found.
 - Observed GitHub Pages response policy includes HSTS (`max-age=31556952`), `Cache-Control: max-age=600`, ETag, Last-Modified, byte ranges, and provider edge caching. CSP, `X-Content-Type-Options`, `X-Frame-Options`, Referrer-Policy, and Permissions-Policy were not present; GitHub Pages does not expose repository-level custom response-header configuration, so no unavailable control is claimed.
 - Repository controls are live and API-verified: default workflow tokens are read-only; workflow-authored pull-request approvals remain disabled; allowed actions are limited to GitHub-owned actions; full-length SHA pinning is required; private vulnerability reporting and managed HTTPS remain enabled. Manual post-hardening Quality run `31769052642` passed verification and skipped deployment, while manual Security run `31769053829` passed. `main` protection requires strict GitHub Actions checks `verify`, `codeql`, and `secrets` (app ID `15368`) and forbids force-pushes/deletion; administrator enforcement remains temporarily disabled only for the final reviewed evidence push.
-- Final evidence review correctly found that private vulnerability reporting had become disabled and that hosted Lighthouse upload steps retained no report artifacts because hidden files were excluded. Private vulnerability reporting was deliberately re-enabled and returned `enabled: true` on two authenticated reads. A failing-then-passing workflow regression now gives the Lighthouse step a stable identity, uploads only when that step ran, explicitly includes hidden files, and fails if expected reports are absent. Hosted artifact verification of this correction is pending.
+- Final evidence review correctly found that private vulnerability reporting had become disabled and that hosted Lighthouse upload steps retained no report artifacts because hidden files were excluded. Private vulnerability reporting was deliberately re-enabled and returned `enabled: true` on repeated authenticated reads. A failing-then-passing workflow regression gave the Lighthouse step a stable identity, uploads only when that step ran, explicitly includes hidden files, and fails if expected reports are absent.
+- Lighthouse-retention tree `0f7709be24b3c368163a173234f5cab2122fb645` passed fail-closed review with all blocker arrays empty and exact opening/closing identity. It was committed as `676198db4c1a3a5b1bf49b84041fd7fb5e1547fc` (`fix: retain lighthouse workflow reports`) and pushed as a normal administrator-bypassed fast-forward while administrator enforcement remained intentionally disabled; GitHub reported the three expected required checks during the bypass.
+- Hosted Quality run `31770352315` succeeded for exact commit `676198db4c1a3a5b1bf49b84041fd7fb5e1547fc`: verify job `94674789800` and deploy job `94675033310` passed. Artifact `lighthouse-31770352315` (ID `9207900659`, seven-day expiry) was downloaded and contained exactly `run-1.json` and `run-2.json`; both identified the same owned loopback preview URL and scored 100/100/100/100. Pages deployment `5900576048` succeeded for the same exact SHA at `https://gabrielrgoldstein.github.io/`.
+- Hosted Security run `31770352337` also succeeded for exact commit `676198db4c1a3a5b1bf49b84041fd7fb5e1547fc`: the Linux archive checksum passed, Gitleaks scanned 43 fetched commits and found no leaks, and CodeQL completed successfully. Current API read-back still confirms private vulnerability reporting, read-only default workflow tokens, GitHub-owned-only Actions, full-SHA pinning, managed HTTPS, and strict `verify`/`codeql`/`secrets` branch checks.
 
 Batch 8 local verification evidence:
 - `npm run quality`: 93 tests across 5 files; 32 Astro/TypeScript/JavaScript files with zero diagnostics; two-page static build; 18/18 production-preview Playwright tests; 39 internal references; two parsed workflows; zero dependency vulnerabilities
 - The generated-output browser suite verifies absolute canonical/share metadata, robots and sitemap discovery, social card/favicons, custom 404, accessibility, responsive geometry and images, interaction behavior, no-JavaScript content, reduced motion, and zero third-party runtime resources.
 - `npm run lighthouse`: two exact-artifact/report-URL runs passed at 100/100/100/100 with median FCP approximately 394 ms, LCP approximately 434 ms, TBT 0 ms, and CLS approximately 0.00028.
 - `git diff --check`: passed; local preview ports 4325–4327 were closed after the gate.
-- Checksum-verified Actionlint 1.7.12 passed both workflows. Checksum-verified Gitleaks 8.30.1 currently finds no leaks across the local ref set it scans (39 commits, approximately 7.66 MB); the hosted full-history checkout scanned 42 fetched commits (approximately 7.67 MB) with the same result. Exact staged deltas were also clean with redaction enabled. Staged-patch byte counts are intentionally omitted because different diff-context representations produce different totals.
-- Initial and corrected Astro Pages deployments, exact hosted Quality/Security runs, direct real-origin validation, and repository hardening are observed. Remaining closeout is exact-tree review/commit of the Lighthouse-retention correction, hosted proof of its artifact, a final documentation-integrity commit, and administrator enforcement of the existing branch protection.
+- Checksum-verified Actionlint 1.7.12 passed both workflows. Checksum-verified Gitleaks 8.30.1 found no leaks across the local ref set before the Lighthouse-retention commit (39 commits, approximately 7.66 MB); the latest hosted full-history checkout scanned 43 fetched commits with the same result. Exact staged deltas were also clean with redaction enabled. Staged-patch byte counts are intentionally omitted because different diff-context representations produce different totals.
+- Initial and corrected Astro Pages deployments, exact hosted Quality/Security runs, retained Lighthouse reports, direct real-origin validation, and repository hardening are observed. Remaining closeout is independent review/commit of this final documentation delta, its required hosted checks, and administrator enforcement of the existing branch protection.
 
 ## Batch 7 candidate
 
@@ -317,15 +320,15 @@ Independent fail-closed review:
 - No Batch 5 blocker remains; corrected staged tree `538016428e66f2f88cb1480f6a6aa19cd6e1a217` passed fresh independent fail-closed review and exact-state certification.
 - No Batch 6 or 6.1 blocker remains; Batch 6.1 was committed as `cc7c83dbb133e88364e9e44dea98a7cda309060a` from the exact independently approved tree.
 - Batch 7's first exact tree was rejected for false Lighthouse server ownership. Corrected substantive tree `8bb467120e41f495e85a658daf305cb1797f7018` and final documented tree `ec2ee5a1b394aff1ebc9eede05ea038a68386d9e` passed replacement reviews and were committed as `ccf098269467122077f30b38b53f3b18f537cedc`.
-- Batch 8's corrected reviewed commit is deployed; hosted Quality/Security, direct production validation, and repository controls passed. Remaining closeout is hosted proof of the Lighthouse-retention correction, final reviewed evidence, and administrator enforcement of the configured branch protection.
+- Batch 8's latest reviewed commit is deployed; hosted Quality/Security, retained Lighthouse artifacts, direct production validation, and repository controls passed. Remaining closeout is final reviewed evidence and administrator enforcement of the configured branch protection.
 - Analytics provider is deferred to Batch 9.
 
 ## Exact continuation command
 
-Verify and freeze the Lighthouse-retention correction and accompanying truthful evidence:
+For the final documentation-only closeout, verify and freeze the exact staged evidence delta:
 
 ```bash
-npm run quality && npm run lighthouse && git diff --check
+git diff --cached --check
 ```
 
-Obtain fail-closed exact-tree review, commit only the approved tree, and push `main` without force. Verify its hosted Lighthouse artifact and required `verify`, `codeql`, and `secrets` checks, then make the final reviewed documentation-only evidence commit. Enable administrator enforcement on the existing `main` protection after that commit's checks pass and confirm the repository is clean. Keep analytics deferred to Batch 9.
+Obtain fail-closed documentation-integrity review, commit only the approved tree, and push `main` without force. Verify its required `verify`, `codeql`, and `secrets` checks, enable administrator enforcement on the existing `main` protection, and confirm final commit/tree identity plus a clean repository. Keep analytics deferred to Batch 9.
