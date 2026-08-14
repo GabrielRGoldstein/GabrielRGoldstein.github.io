@@ -93,7 +93,42 @@ describe("GitHub automation policy", () => {
     expect(workflow.match(/persist-credentials:\s*false/g)).toHaveLength(2);
     expect(workflow).toContain("github/codeql-action/init@");
     expect(workflow).toContain("github/codeql-action/analyze@");
-    expect(workflow).toContain("gitleaks/gitleaks-action@");
+    expect(workflow).not.toContain("gitleaks/gitleaks-action@");
+
+    const parsedWorkflow = parse(workflow);
+    const secretSteps = parsedWorkflow.jobs.secrets.steps;
+    const secretCheckout = secretSteps.find((step: { name?: string }) => step.name === "Check out complete history");
+    expect(secretCheckout.with["fetch-depth"]).toBe(0);
+
+    const scanStep = secretSteps.find(
+      (step: { name?: string }) => step.name === "Scan complete history for committed secrets",
+    );
+    expect(scanStep.env).toEqual({
+      GITLEAKS_VERSION: "8.30.1",
+      GITLEAKS_ARCHIVE: "gitleaks_8.30.1_linux_x64.tar.gz",
+      GITLEAKS_SHA256: "551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb",
+    });
+
+    const scanRun = scanStep.run as string;
+    const scanLines = scanRun.split("\n").map((line) => line.trim());
+    expect(scanRun).toContain(
+      "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/${GITLEAKS_ARCHIVE}",
+    );
+    expect(scanLines).toContain(
+      `printf '%s  %s\\n' "\${GITLEAKS_SHA256}" "\${tool_dir}/\${GITLEAKS_ARCHIVE}" | sha256sum --check --strict`,
+    );
+    expect(scanLines).toContain(
+      `tar -xzf "\${tool_dir}/\${GITLEAKS_ARCHIVE}" -C "\${tool_dir}" gitleaks`,
+    );
+    expect(scanLines).toContain(
+      `test "$(git -C "$GITHUB_WORKSPACE" rev-parse --is-inside-work-tree)" = "true"`,
+    );
+    expect(scanLines.filter((line) => line.startsWith('"${tool_dir}/gitleaks" git'))).toEqual([
+      `"\${tool_dir}/gitleaks" git "$GITHUB_WORKSPACE" --redact --no-banner`,
+    ]);
+    expect(scanRun).not.toMatch(
+      /--log-opts|github\.event|GITHUB_(?:SHA|BASE_REF|HEAD_REF)|(?:HEAD|[0-9a-f]{7,40})[~^]|\.\./,
+    );
 
     const securityPolicy = await readRepositoryFile("SECURITY.md");
     const site = JSON.parse(await readRepositoryFile("src/data/site.json"));

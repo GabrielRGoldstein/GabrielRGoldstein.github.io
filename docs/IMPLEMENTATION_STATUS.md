@@ -1,6 +1,6 @@
 # Portfolio Implementation Status
 
-Last updated: 2026-08-13 21:26 MDT
+Last updated: 2026-08-13 21:53 MDT
 
 ## Locked design decisions
 
@@ -29,18 +29,21 @@ Confirmed target: `GabrielRGoldstein/GabrielRGoldstein.github.io` on GitHub Page
 - Added an absolute sitemap directive to `robots.txt` plus a one-route `sitemap.xml`; the custom 404 is intentionally excluded.
 - Extended `.github/workflows/quality.yml` so only a successful `main`-push verification uploads `dist/` and a dependent job deploys it to the `github-pages` environment. The verification job has only `contents: read` plus explicit `pages: read` for the pinned `configure-pages` metadata request; `pages: write` and `id-token: write` exist only on the deployment job. The Pages actions use verified immutable release commits. Main deployments are serialized while pull-request verification remains cancellable.
 - Added a separate `playwright.production.config.ts` and `npm run test:production`. It accepts only the exact HTTPS root origin through `PRODUCTION_URL`, starts no local server, and leaves the existing isolated `127.0.0.1:4325` production-preview configuration unchanged.
-- GitHub currently reports workflow-based Pages publishing, HTTPS enforcement, no custom domain, and an already built legacy site. Private vulnerability reporting is enabled and API-verified. `main` is not yet protected; default Actions permissions are currently write; repository SHA-pinning enforcement is currently disabled. Those settings remain to be narrowed only after the new workflow contexts exist.
+- GitHub currently reports workflow-based Pages publishing, HTTPS enforcement, no custom domain, and the deployed Astro portfolio from commit `60a6f53d792d01bf21ee2c2459bd0a2f0d0178b9`. Private vulnerability reporting is enabled and API-verified. `main` is not yet protected; default Actions permissions are currently write; repository SHA-pinning enforcement is currently disabled. Those settings remain to be narrowed after the corrected hosted workflow contexts succeed.
 - RED/GREEN evidence covered missing Astro origin, missing gated Pages deployment, missing remote Playwright configuration, missing production command, stale relative share metadata, and missing sitemap discovery. The focused browser and workflow contracts pass after the minimal implementations.
 - Exact tree `0c5a732652d69e913c3cdf13da88dbfcdb9d2bf2` passed comprehensive independent review with every blocker array empty and matching opening/closing state, but was intentionally superseded before commit or push. A direct unauthenticated Pages API probe returned 404 and GitHub documents `Pages: read` for that endpoint, so the verification job now declares that read-only permission explicitly. The review's non-blocking URL-hardening suggestion was also adopted: production Playwright now rejects non-empty URL username/password fields, with a failing-then-passing regression. A replacement exact-tree review is required.
 - Replacement tree `c467e08f431def37a7286693e9a38fb94cca1403` passed the independent implementation, deployment-logic, security, test-validity, accessibility/regression, gate-reproduction, and exact opening/closing-state checks, but its verdict remained fail-closed because the status file retained an ambiguous staged-patch byte count from earlier evidence. The byte-size claim is removed below; no commit or push occurred, and the resulting documentation-only successor still requires exact-tree review.
+- Documentation-only successor tree `d21680703f5bd52e70555e926c4f5ff96bb50048` passed independent review and was committed as `60a6f53d792d01bf21ee2c2459bd0a2f0d0178b9` (`chore: deploy portfolio to GitHub Pages`). A normal fast-forward push moved remote `main` from preserved legacy commit `9c732dd7a824c4eb6fff7a17d305a14f7137d0b2`; no force-push occurred.
+- Hosted Quality run `31767006264` completed successfully for exact commit `60a6f53d792d01bf21ee2c2459bd0a2f0d0178b9`: the verify job passed dependency installation, the complete quality gate, Lighthouse budgets, Pages configuration, `dist/` artifact upload, and evidence upload; dependent job `94665167859` then deployed the Pages artifact successfully.
+- Hosted Security run `31767006274` was correctly treated as failed. CodeQL job `94664864528` passed, but Gitleaks job `94664864395` scanned zero bytes because `gitleaks-action` inferred `a6593c802b46e3052695e203cc6e88a7c5a3b160^..60a6f53d792d01bf21ee2c2459bd0a2f0d0178b9`; `a6593c8` is the root of the preserved Astro first-parent history and has no parent. This was an action range-selection failure, not a leak finding. A failing-then-passing automation contract now replaces that action with an exact Gitleaks 8.30.1 Linux archive whose committed SHA-256 (`551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb`) was verified against the official release. The workflow scans the complete `fetch-depth: 0` checkout with redaction and no event-range inference; hosted verification of this correction is pending.
 
 Final local pre-push verification:
 - `npm run quality`: 93 tests across 5 files; 32 Astro/TypeScript/JavaScript files with zero diagnostics; two-page static build; 18/18 production-preview Playwright tests; 39 internal references; two parsed workflows; zero dependency vulnerabilities
 - The generated-output browser suite verifies absolute canonical/share metadata, robots and sitemap discovery, social card/favicons, custom 404, accessibility, responsive geometry and images, interaction behavior, no-JavaScript content, reduced motion, and zero third-party runtime resources.
 - `npm run lighthouse`: two exact-artifact/report-URL runs passed at 100/100/100/100 with median FCP approximately 394 ms, LCP approximately 434 ms, TBT 0 ms, and CLS approximately 0.00028.
 - `git diff --check`: passed; local preview ports 4325–4327 were closed after the gate.
-- Checksum-verified Actionlint 1.7.12 passed both workflows. Checksum-verified Gitleaks 8.30.1 found no leaks across the 37-commit merged history (approximately 7.63 MB) or the exact staged Batch 8 delta, with redaction enabled. The staged-patch byte count is intentionally omitted because Gitleaks reports different totals for different diff-context representations.
-- Exact-tree review of the documentation-only successor, commit, and push remain pending; no new Astro deployment or hosted workflow execution is claimed yet.
+- Checksum-verified Actionlint 1.7.12 passed both workflows. Checksum-verified Gitleaks 8.30.1 found no leaks across the current 38-commit merged history (approximately 7.65 MB) or the exact staged security-fix delta, with redaction enabled. The staged-patch byte count is intentionally omitted because Gitleaks reports different totals for different diff-context representations.
+- The initial Astro Pages deployment, exact hosted Quality run, and direct real-origin validation are observed. Exact-tree review, commit/push, and hosted verification of the security-workflow correction plus repository hardening remain pending.
 
 ## Batch 7 candidate
 
@@ -307,15 +310,15 @@ Independent fail-closed review:
 - No Batch 5 blocker remains; corrected staged tree `538016428e66f2f88cb1480f6a6aa19cd6e1a217` passed fresh independent fail-closed review and exact-state certification.
 - No Batch 6 or 6.1 blocker remains; Batch 6.1 was committed as `cc7c83dbb133e88364e9e44dea98a7cda309060a` from the exact independently approved tree.
 - Batch 7's first exact tree was rejected for false Lighthouse server ownership. Corrected substantive tree `8bb467120e41f495e85a658daf305cb1797f7018` and final documented tree `ec2ee5a1b394aff1ebc9eede05ea038a68386d9e` passed replacement reviews and were committed as `ccf098269467122077f30b38b53f3b18f537cedc`.
-- Batch 8's repository, provider, production origin, and no-custom-domain decision are confirmed. The blocking acceptance sequence is now the complete local gate, exact-tree review, reviewed commit/push, hosted workflow/deployment success, direct production validation, proportionate repository settings, and final evidence update.
+- Batch 8's initial reviewed commit is deployed and direct production validation passed. Remaining blockers are exact-tree approval and hosted success for the corrected full-history security scan, proportionate repository settings, and a final reviewed evidence update.
 - Analytics provider is deferred to Batch 9.
 
 ## Exact continuation command
 
-Run the complete pre-push Batch 8 gate from `site/`:
+Run the complete applicable gate from `site/` before freezing any new Batch 8 candidate:
 
 ```bash
 npm run quality && npm run lighthouse && git diff --check
 ```
 
-Then freeze the exact staged candidate, obtain a fail-closed independent review, commit only the approved tree, and push `main` without force. Do not configure required status contexts or claim production acceptance until the first new GitHub-hosted workflow and Pages deployment expose their actual check names, deployment SHA, URL, and observed responses. Keep analytics deferred to Batch 9.
+Then freeze the exact staged candidate, obtain a fail-closed independent review, commit only the approved tree, and push `main` without force. For the current security correction, verify both hosted workflows against the exact pushed SHA before configuring required status contexts or claiming final production acceptance. Keep analytics deferred to Batch 9.
