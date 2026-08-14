@@ -17,6 +17,11 @@ describe("GitHub automation policy", () => {
     expect(packageJson.scripts["test:production"]).toBe(
       "playwright test --config=playwright.production.config.ts",
     );
+    expect(packageJson.scripts["check:analytics"]).toBe(
+      "node scripts/check-analytics-build.mjs dist",
+    );
+    expect(packageJson.scripts.lighthouse).toBe("npm run build && npm run lighthouse:built");
+    expect(packageJson.scripts["lighthouse:built"]).toBe("node scripts/run-lighthouse.mjs");
   });
 
   test("quality automation is least-privilege, reproducible, and retains useful reports", async () => {
@@ -35,14 +40,14 @@ describe("GitHub automation policy", () => {
     expect(workflow).toContain("npx playwright install --with-deps chromium");
     expect(workflow).toContain("if: failure()");
     expect(workflow).toContain("playwright-report/");
-    expect(workflow).toContain("npm run lighthouse");
+    expect(workflow).toContain("npm run lighthouse:built");
     expect(workflow).toContain(".lighthouseci/");
 
     const parsedWorkflow = parse(workflow);
     const verifySteps = parsedWorkflow.jobs.verify.steps;
     const lighthouseStep = verifySteps.find((step: { name?: string }) => step.name === "Run Lighthouse budgets");
     const lighthouseUpload = verifySteps.find((step: { name?: string }) => step.name === "Upload Lighthouse reports");
-    expect(lighthouseStep).toMatchObject({ id: "lighthouse", run: "npm run lighthouse" });
+    expect(lighthouseStep).toMatchObject({ id: "lighthouse", run: "npm run lighthouse:built" });
     expect(lighthouseUpload.if).toBe("always() && steps.lighthouse.outcome != 'skipped'");
     expect(lighthouseUpload.with).toMatchObject({
       path: ".lighthouseci/",
@@ -60,7 +65,12 @@ describe("GitHub automation policy", () => {
     const workflow = parse(source);
     const deployCondition = "github.event_name == 'push' && github.ref == 'refs/heads/main'";
     const verifySteps = workflow.jobs.verify.steps;
-    const lighthouseIndex = verifySteps.findIndex((step: { run?: string }) => step.run === "npm run lighthouse");
+    const lighthouseIndex = verifySteps.findIndex(
+      (step: { run?: string }) => step.run === "npm run lighthouse:built",
+    );
+    const productionBuildIndex = verifySteps.findIndex(
+      (step: { name?: string }) => step.name === "Build production Pages artifact",
+    );
     const configureIndex = verifySteps.findIndex(
       (step: { uses?: string }) =>
         step.uses === "actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d",
@@ -74,6 +84,17 @@ describe("GitHub automation policy", () => {
 
     expect(workflow.permissions).toEqual({ contents: "read" });
     expect(workflow.jobs.verify.permissions).toEqual({ contents: "read", pages: "read" });
+    expect(productionBuildIndex).toBeGreaterThan(-1);
+    expect(productionBuildIndex).toBeLessThan(lighthouseIndex);
+    expect(productionBuildIndex).toBeLessThan(configureIndex);
+    expect(verifySteps[productionBuildIndex]).toMatchObject({
+      if: deployCondition,
+      env: {
+        PUBLIC_ANALYTICS_PROVIDER: "${{ vars.PUBLIC_ANALYTICS_PROVIDER }}",
+        PUBLIC_UMAMI_WEBSITE_ID: "${{ vars.PUBLIC_UMAMI_WEBSITE_ID }}",
+      },
+      run: "npm run build\nnpm run check:built\nnpm run check:analytics\n",
+    });
     expect(configureIndex).toBeGreaterThan(lighthouseIndex);
     expect(uploadIndex).toBeGreaterThan(configureIndex);
     expect(verifySteps[configureIndex].if).toBe(deployCondition);

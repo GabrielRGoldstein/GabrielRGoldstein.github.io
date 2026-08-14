@@ -10,12 +10,14 @@
     "dev": "astro dev",
     "check": "astro check",
     "check:built": "node scripts/check-built-site.mjs dist",
+    "check:analytics": "node scripts/check-analytics-build.mjs dist",
     "check:workflows": "node scripts/validate-workflows.mjs",
     "test": "vitest",
     "test:e2e": "npm run build && playwright test",
     "test:production": "playwright test --config=playwright.production.config.ts",
     "build": "astro build",
-    "lighthouse": "npm run build && node scripts/run-lighthouse.mjs",
+    "lighthouse": "npm run build && npm run lighthouse:built",
+    "lighthouse:built": "node scripts/run-lighthouse.mjs",
     "preview": "astro preview",
     "quality": "npm test -- --run && npm run check && npm run test:e2e && npm run check:built && npm run check:workflows && npm audit --audit-level=high",
     "astro": "astro"
@@ -29,6 +31,7 @@
     "@axe-core/playwright": "^4.13.0",
     "@playwright/test": "^1.62.1",
     "lighthouse": "13.4.1",
+    "parse5": "7.3.0",
     "typescript": "^6.0.3",
     "vitest": "^4.1.10",
     "yaml": "2.9.0"

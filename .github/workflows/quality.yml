@@ -36,9 +36,18 @@ jobs:
         run: npx playwright install --with-deps chromium
       - name: Run repository quality gate
         run: npm run quality
+      - name: Build production Pages artifact
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          PUBLIC_ANALYTICS_PROVIDER: ${{ vars.PUBLIC_ANALYTICS_PROVIDER }}
+          PUBLIC_UMAMI_WEBSITE_ID: ${{ vars.PUBLIC_UMAMI_WEBSITE_ID }}
+        run: |
+          npm run build
+          npm run check:built
+          npm run check:analytics
       - name: Run Lighthouse budgets
         id: lighthouse
-        run: npm run lighthouse
+        run: npm run lighthouse:built
       - name: Configure GitHub Pages
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0

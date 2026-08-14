@@ -57,10 +57,22 @@ const srcset = project.cover.sources
       hasLinks ? (
         <div class="project-card__links" aria-label={`${project.title} links`}>
           {project.repositoryUrl && (
-            <a href={project.repositoryUrl} target="_blank" rel="noreferrer">Repository ↗</a>
+            <a
+              href={project.repositoryUrl}
+              target="_blank"
+              rel="noreferrer"
+              data-analytics-event="project_repository_click"
+              data-analytics-project-id={project.slug}
+            >Repository ↗</a>
           )}
           {project.liveUrl && (
-            <a href={project.liveUrl} target="_blank" rel="noreferrer">Live demo ↗</a>
+            <a
+              href={project.liveUrl}
+              target="_blank"
+              rel="noreferrer"
+              data-analytics-event="project_demo_click"
+              data-analytics-project-id={project.slug}
+            >Live demo ↗</a>
           )}
         </div>
       ) : (
