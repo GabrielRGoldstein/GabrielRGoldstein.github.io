@@ -1,29 +1,8 @@
 import { defineConfig } from "@playwright/test";
 
-const expectedProductionOrigin = "https://gabrielrgoldstein.github.io";
+import { requireProductionUrl } from "./tests/support/production-origin";
 
-export function requireProductionUrl(value = process.env.PRODUCTION_URL) {
-  let parsed: URL;
-  try {
-    parsed = new URL(value ?? "");
-  } catch {
-    throw new Error("PRODUCTION_URL must be the confirmed HTTPS production origin");
-  }
-
-  if (
-    parsed.origin !== expectedProductionOrigin ||
-    parsed.protocol !== "https:" ||
-    parsed.username !== "" ||
-    parsed.password !== "" ||
-    parsed.pathname !== "/" ||
-    parsed.search !== "" ||
-    parsed.hash !== ""
-  ) {
-    throw new Error("PRODUCTION_URL must be the confirmed HTTPS production origin");
-  }
-
-  return parsed.origin;
-}
+export { requireProductionUrl } from "./tests/support/production-origin";
 
 const productionOrigin = requireProductionUrl();
 
