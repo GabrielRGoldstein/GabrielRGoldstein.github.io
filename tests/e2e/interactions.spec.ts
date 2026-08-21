@@ -1,10 +1,17 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
+import {
+  hasExpectedAnalyticsResources,
+  isProductionUrl,
+  umamiScriptUrl,
+} from "../support/production-origin";
+
 const experienceRows = "[data-experience-id]";
 const toggles = "[data-experience-toggle]";
 const panels = "[data-experience-panel]";
 const productionOrigin = "https://gabrielrgoldstein.github.io";
+const productionAnalyticsEnabled = isProductionUrl();
 
 test("has no automatically detectable accessibility violations", async ({ page }) => {
   await page.goto("/");
@@ -143,7 +150,7 @@ test("keeps the custom 404 page readable and inside the mobile gutter", async ({
 });
 
 for (const width of [375, 768, 1280, 1600]) {
-  test(`renders cleanly with local assets at ${width}px`, async ({ browser }) => {
+  test(`renders cleanly at ${width}px`, async ({ browser }) => {
     const context = await browser.newContext({ viewport: { width, height: 900 } });
     const page = await context.newPage();
     const runtimeErrors: string[] = [];
@@ -182,7 +189,7 @@ for (const width of [375, 768, 1280, 1600]) {
     expect(metrics.documentWidth).toBe(metrics.viewportWidth);
     expect(metrics.bodyWidth).toBe(metrics.viewportWidth);
     expect(Object.values(metrics.fonts).every(Boolean)).toBe(true);
-    expect(metrics.thirdPartyResources).toEqual([]);
+    expect(hasExpectedAnalyticsResources(metrics.thirdPartyResources)).toBe(true);
     expect(runtimeErrors).toEqual([]);
 
     const externalTabs = page.locator('a[target="_blank"]');
@@ -195,6 +202,12 @@ for (const width of [375, 768, 1280, 1600]) {
 }
 
 test("dispatches only allowlisted conversion events through the neutral browser adapter", async ({ page }) => {
+  await page.route(umamiScriptUrl, (route) =>
+    route.fulfill({
+      contentType: "application/javascript",
+      body: "",
+    }),
+  );
   await page.addInitScript(() => {
     const events: Array<{ event: string; properties?: Record<string, string> }> = [];
     Object.assign(window, {
@@ -208,7 +221,9 @@ test("dispatches only allowlisted conversion events through the neutral browser 
   });
   await page.goto("/");
 
-  await expect(page.locator('script[src="https://cloud.umami.is/script.js"]')).toHaveCount(0);
+  await expect(page.locator(`script[src="${umamiScriptUrl}"]`)).toHaveCount(
+    productionAnalyticsEnabled ? 1 : 0,
+  );
   const authoredEvents = await page
     .locator("[data-analytics-event]")
     .evaluateAll((elements) => elements.map((element) => element.getAttribute("data-analytics-event")));

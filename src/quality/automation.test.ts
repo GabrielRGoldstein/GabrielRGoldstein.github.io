@@ -7,6 +7,61 @@ const readRepositoryFile = (path: string) => readFile(new URL(path, root), "utf8
 const immutableAction = /uses:\s*[\w.-]+\/[\w.-]+(?:\/[\w.-]+)?@([a-f\d]{40})(?:\s|$)/g;
 
 describe("GitHub automation policy", () => {
+  test("production browser mode requires the exact validated root origin", async () => {
+    const {
+      hasExpectedAnalyticsResources,
+      isProductionUrl,
+      requireProductionUrl,
+      umamiGatewayUrl,
+      umamiScriptUrl,
+    } = await import(
+      "../../tests/support/production-origin"
+    );
+
+    expect(isProductionUrl("https://gabrielrgoldstein.github.io")).toBe(true);
+    expect(isProductionUrl("https://gabrielrgoldstein.github.io/")).toBe(true);
+
+    for (const invalid of [
+      undefined,
+      "",
+      "arbitrary-nonempty-local-value",
+      "http://gabrielrgoldstein.github.io/",
+      "https://gabrielrgoldstein.github.io/path",
+      "https://gabrielrgoldstein.github.io/?preview=1",
+      "https://gabrielrgoldstein.github.io/#preview",
+      "https://user:pass@gabrielrgoldstein.github.io/",
+      "https://example.com/",
+    ]) {
+      expect(isProductionUrl(invalid)).toBe(false);
+      expect(() => requireProductionUrl(invalid)).toThrow(
+        "PRODUCTION_URL must be the confirmed HTTPS production origin",
+      );
+    }
+
+    const exactResources = [umamiScriptUrl, umamiGatewayUrl];
+    expect(hasExpectedAnalyticsResources(exactResources, "https://gabrielrgoldstein.github.io/")).toBe(
+      true,
+    );
+    expect(
+      hasExpectedAnalyticsResources(exactResources.toReversed(), "https://gabrielrgoldstein.github.io/"),
+    ).toBe(true);
+    for (const invalidResources of [
+      [umamiScriptUrl],
+      [umamiGatewayUrl],
+      [umamiScriptUrl, umamiScriptUrl, umamiGatewayUrl],
+      [umamiScriptUrl, umamiGatewayUrl, umamiGatewayUrl],
+      [umamiScriptUrl, umamiGatewayUrl, "https://example.com/script.js"],
+      [`${umamiScriptUrl}?unexpected=1`, umamiGatewayUrl],
+      [umamiScriptUrl, `${umamiGatewayUrl}/`],
+    ]) {
+      expect(
+        hasExpectedAnalyticsResources(invalidResources, "https://gabrielrgoldstein.github.io/"),
+      ).toBe(false);
+    }
+    expect(hasExpectedAnalyticsResources([], undefined)).toBe(true);
+    expect(hasExpectedAnalyticsResources(exactResources, undefined)).toBe(false);
+  });
+
   test("Astro builds canonical metadata for the confirmed root production origin", async () => {
     const { default: astroConfig } = await import("../../astro.config.mjs");
 
