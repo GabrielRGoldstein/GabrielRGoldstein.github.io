@@ -19,6 +19,14 @@ const FOCUSABLE_SELECTOR = [
   "textarea:not([disabled])",
   "[tabindex]:not([tabindex='-1'])",
 ].join(",");
+const INTERACTIVE_CARD_SELECTOR = [
+  "a[href]",
+  "button",
+  "input",
+  "select",
+  "textarea",
+  "[contenteditable='true']",
+].join(",");
 const relationships: ProjectDialogRelationship[] = [];
 const DialogConstructor =
   typeof globalThis.HTMLDialogElement === "function"
@@ -64,6 +72,12 @@ function readEventTarget(event: Event): EventTarget | null {
   } catch {
     return null;
   }
+}
+
+function eventTargetElement(event: Event): Element | null {
+  const target = readEventTarget(event);
+  if (target instanceof Element) return target;
+  return target instanceof Node ? target.parentElement : null;
 }
 
 function containTabFocus(
@@ -162,6 +176,12 @@ for (const { trigger, dialog, closeButton, card } of relationships) {
       setPageDialogState();
     }
     if (opened) recordProjectOpen(trigger);
+  });
+
+  card.addEventListener("click", (event) => {
+    const target = eventTargetElement(event);
+    if (!target || target.closest(INTERACTIVE_CARD_SELECTOR)) return;
+    trigger.click();
   });
 
   closeButton.addEventListener("click", () => {

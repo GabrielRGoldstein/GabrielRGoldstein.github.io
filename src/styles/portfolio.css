@@ -246,6 +246,10 @@
     transform var(--transition-base);
 }
 
+.project-card--dialog-enhanced {
+  cursor: pointer;
+}
+
 .project-card:hover,
 .project-card:focus-within {
   border-color: var(--color-accent);

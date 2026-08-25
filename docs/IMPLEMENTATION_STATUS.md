@@ -1,6 +1,6 @@
 # Portfolio Implementation Status
 
-Last updated: 2026-08-24 19:55 MDT
+Last updated: 2026-08-24 20:11 MDT
 
 ## Locked design decisions
 
@@ -17,9 +17,9 @@ Last updated: 2026-08-24 19:55 MDT
 
 ## Current batch
 
-Batch 10.1 — Editorial Projects and Experience Redesign — **stdout-archive successor evidence and promotion hardening in verification**
+Batch 10.2 — Clickable Project Cards — **focused interaction follow-up**
 
-This branch replaces the superseded original-gallery lock with Gabriel's approved Sketch 11 Editorial Links direction. It corrects the production grid-row void and disconnected project header, introduces compact image-led cards and accessible project dialogs, adds a repository-owned image-ingestion command, and condenses Experience without changing verified public-safe claims.
+Batch 10.1 is deployed. This focused follow-up lets pointer users open a project dialog by clicking non-interactive space anywhere in an enhanced card while retaining the explicit Explore button for keyboard access and preserving Repository/Live Demo link behavior.
 
 ## Batch 10.1 implementation checkpoint
 
@@ -386,12 +386,9 @@ Independent fail-closed review:
 - Batch 7's first exact tree was rejected for false Lighthouse server ownership. Corrected substantive tree `8bb467120e41f495e85a658daf305cb1797f7018` and final documented tree `ec2ee5a1b394aff1ebc9eede05ea038a68386d9e` passed replacement reviews and were committed as `ccf098269467122077f30b38b53f3b18f537cedc`.
 - No Batch 8 blocker remains: the latest reviewed evidence commit is deployed; hosted Quality/Security, retained Lighthouse artifacts, direct production validation, and administrator-enforced repository controls passed.
 - Batch 9 selected Umami Cloud, implemented and deployed the fail-closed adapter/build/deployment contract, configured both public repository variables, verified the live tracker plus genuine custom-event ingestion, and completed its protected production-test closeout on `main`.
-- Batch 10.1 has repaired every blocker reproduced against its superseded candidates and passes complete local quality and Lighthouse gates. Replacement exact-tree review, commit, protected pull request, hosted checks, deployment, and production confirmation remain pending.
+- Batch 10.1 shipped through protected pull request #16 as merge commit `52d4aece80667bec0ff29d5c08a405a790779a52`; hosted `verify`, `codeql`, `secrets`, and Pages deployment passed, deployment `6074965881` succeeded for the exact SHA, and production visual/DOM smoke checks passed.
+- Batch 10.2 uses RED/GREEN browser coverage for whole-card pointer activation, direct-link exclusion, close-button focus, and trigger focus restoration. Adjacent keyboard and hostile-event-target dialog regressions pass.
 
 ## Exact continuation
 
-Batch 10.1 is in progress on `redesign/editorial-projects` from protected production baseline `a0af7894cefef49adf00d9041e101d1ff86bb125`. Do not commit, push, or open a pull request until three fresh independent reviewers approve one identical opening and closing staged tree with a clean tracked worktree. Any file change invalidates that identity and requires complete local gates, restaging, a new tree hash, and replacement review. After unanimous approval, commit only the already-reviewed staged bytes without restaging:
-
-```bash
-git commit -m "feat: redesign projects and experience"
-```
+Batch 10.2 is in progress on `feat/clickable-project-cards` from deployed protected `main`. Keep this interaction batch separate from the later screenshot-content pass; use the focused dialog tests locally and protected hosted checks for merge/deployment.
