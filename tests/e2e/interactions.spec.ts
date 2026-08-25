@@ -427,6 +427,29 @@ test("gives project cards equivalent hover and keyboard-focus treatment", async 
     .toBe(hover.borderColor);
 });
 
+test("opens project details from non-interactive card space without hijacking links", async ({
+  page,
+}) => {
+  await page.goto("/#work");
+
+  const card = page.locator(".project-card").first();
+  const dialog = page.locator("[data-project-dialog]").first();
+  const trigger = card.locator("[data-project-dialog-trigger]");
+  const repository = card.getByRole("link", { name: "Repository ↗" });
+
+  await card.locator(".project-card__visual").click();
+  await expect(dialog).toBeVisible();
+  await expect(dialog.locator("[data-project-dialog-close]")).toBeFocused();
+  await dialog.locator("[data-project-dialog-close]").click();
+  await expect(trigger).toBeFocused();
+
+  await repository.evaluate((link) =>
+    link.addEventListener("click", (event) => event.preventDefault(), { once: true }),
+  );
+  await repository.click();
+  await expect(dialog).toBeHidden();
+});
+
 test("opens project details by keyboard and restores focus for every close path", async ({
   page,
 }) => {
