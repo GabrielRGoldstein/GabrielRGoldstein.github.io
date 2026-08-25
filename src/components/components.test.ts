@@ -21,7 +21,9 @@ describe("SiteHeader", () => {
     expect(html).toContain("Gabriel Goldstein, back to top");
     expect(html).toContain('href="#work"');
     expect(html).toContain('href="#experience"');
-    expect(portfolioContent.site.resumeUrl).toBe("/documents/gabriel-goldstein-resume.pdf");
+    expect(portfolioContent.site.resumeUrl).toBe(
+      "/documents/gabriel-goldstein-resume.pdf",
+    );
     expect(html).toContain('href="/documents/gabriel-goldstein-resume.pdf"');
     expect(html).toContain('target="_blank"');
     expect(html).toContain('data-analytics-event="resume_download"');
@@ -51,9 +53,11 @@ describe("GithubIdentity", () => {
     expect(html).toContain('data-analytics-event="github_profile_click"');
     expect(html).toContain('rel="me noreferrer"');
     expect(html).toContain('target="_blank"');
-    expect(html).toContain(`src="${portfolioContent.site.github.avatarFallback}"`);
-    expect(html).toContain('/images/avatar-96.webp 96w');
-    expect(html).toContain('/images/avatar-128.webp 128w');
+    expect(html).toContain(
+      `src="${portfolioContent.site.github.avatarFallback}"`,
+    );
+    expect(html).toContain("/images/avatar-96.webp 96w");
+    expect(html).toContain("/images/avatar-128.webp 128w");
     expect(html).toContain(`alt="${portfolioContent.site.github.avatarAlt}"`);
     expect(portfolioContent.site.github.avatarAlt).toContain("GitHub avatar");
     expect(portfolioContent.site.github.avatarAlt).not.toMatch(/illustrat/i);
@@ -85,8 +89,12 @@ describe("Hero", () => {
 });
 
 describe("ProjectCard", () => {
-  it("renders an authored project without fabricating pending links", async () => {
-    const project = portfolioContent.projects[0];
+  const unlinkedProject = portfolioContent.projects.find(
+    ({ repositoryUrl, liveUrl }) => repositoryUrl === null && liveUrl === null,
+  )!;
+
+  it("renders an authored project with an honest audited-link state", async () => {
+    const project = unlinkedProject;
     const container = await AstroContainer.create();
     const html = await container.renderToString(ProjectCard, {
       props: { project },
@@ -98,22 +106,118 @@ describe("ProjectCard", () => {
       ?.map(({ src, width }) => `${src} ${width}w`)
       .concat(`${project.cover.src} ${project.cover.width}w`)
       .join(", ");
+    expect(html).toContain(`srcset="${responsiveCandidates}"`);
     expect(html).toContain(
-      `srcset="${responsiveCandidates}"`,
+      'sizes="(max-width: 53.125rem) calc(100vw - clamp(2.5rem, 8vw, 3.5rem) - 2px), (max-width: 81rem) calc((100vw - 4.75rem) / 2), 610px"',
     );
-    expect(html).toContain('sizes="(max-width: 53.125rem) calc(100vw - clamp(2.5rem, 8vw, 3.5rem) - 2px), (max-width: 81rem) calc((100vw - 4.75rem) / 2), 610px"');
     expect(html).toContain(`alt="${project.cover.alt}"`);
     expect(html).toContain(`width="${project.cover.width}"`);
     expect(html).toContain(`height="${project.cover.height}"`);
     expect(html).toContain(project.title);
     expect(html).toContain(project.summary);
-    expect(html).toContain("01 / Featured");
-    expect(html).toContain("Project links pending");
+    expect(html).toContain(
+      `${String(project.order).padStart(2, "0")} / Featured`,
+    );
+    expect(html).toContain("Public project links are pending review.");
+    expect(html).not.toContain("Project links pending");
     expect(html).not.toContain("href=");
 
     for (const technology of project.stack) {
       expect(html).toContain(`>${technology}</li>`);
     }
+  });
+
+  it("keeps homepage cards compact while retaining technical detail in the dialog", async () => {
+    const project = unlinkedProject;
+    const container = await AstroContainer.create();
+    const html = await container.renderToString(ProjectCard, {
+      props: { project, layout: "wide" },
+    });
+    const dialogStart = html.indexOf("<dialog");
+    const cardHtml = html.slice(0, dialogStart);
+    const dialogHtml = html.slice(dialogStart);
+
+    expect(cardHtml).toContain(project.title);
+    expect(cardHtml).toContain(project.summary);
+    expect(cardHtml).not.toContain("<noscript>");
+    expect(cardHtml).not.toContain("project-card__stack");
+    expect(cardHtml).not.toContain("Project links pending");
+    expect(cardHtml).toContain("project-card__fallback-details");
+    expect(cardHtml).toContain("data-project-dialog-fallback");
+    expect(dialogHtml).toContain("project-dialog__stack");
+    expect(dialogHtml).toContain("Public project links are pending review.");
+
+    for (const technology of project.stack) {
+      expect(cardHtml).toContain(`>${technology}</li>`);
+      expect(dialogHtml).toContain(`>${technology}</li>`);
+    }
+  });
+
+  it("renders an accessible static project dialog relationship for progressive enhancement", async () => {
+    const project = portfolioContent.projects[0];
+    const container = await AstroContainer.create();
+    const html = await container.renderToString(ProjectCard, {
+      props: { project, layout: "wide" },
+    });
+    const dialogId = `project-${project.slug}-dialog`;
+
+    expect(html).toContain(`<dialog id="${dialogId}"`);
+    expect(html).not.toContain(`<dialog id="${dialogId}" open`);
+    expect(html).toContain(`aria-controls="${dialogId}"`);
+    expect(html).toContain("data-project-dialog-trigger");
+    expect(html).toContain("data-project-dialog-close");
+    expect(html).not.toContain('data-analytics-event="project_open"');
+    expect(html).toContain(`data-analytics-project-id="${project.slug}"`);
+    expect(html).toContain(`Explore ${project.title}`);
+    expect(html).toContain(`aria-labelledby="${dialogId}-title"`);
+    expect(html).toContain(`aria-describedby="${dialogId}-summary"`);
+  });
+
+  it("applies an authored safe focal position to the homepage cover", async () => {
+    const project = {
+      ...portfolioContent.projects[0],
+      cover: {
+        ...portfolioContent.projects[0].cover,
+        objectPosition: "top" as const,
+      },
+    };
+    const container = await AstroContainer.create();
+    const html = await container.renderToString(ProjectCard, {
+      props: { project },
+    });
+    const cardEnd = html.indexOf("</article>");
+    const cardHtml = html.slice(0, cardEnd);
+
+    expect(cardHtml).toContain('style="object-position: top"');
+  });
+
+  it("uses an authored full-aspect gallery image inside the project dialog", async () => {
+    const project = {
+      ...portfolioContent.projects[0],
+      gallery: [
+        {
+          src: "/images/projects/discord-clone-detail.webp",
+          alt: "Full Discord Clone application interface",
+          width: 1600,
+          height: 1067,
+        },
+      ],
+    };
+    const container = await AstroContainer.create();
+    const html = await container.renderToString(ProjectCard, {
+      props: { project },
+    });
+    const dialogStart = html.indexOf("<dialog");
+    const dialogHtml = html.slice(dialogStart);
+
+    expect(dialogHtml).toContain(
+      'src="/images/projects/discord-clone-detail.webp"',
+    );
+    expect(dialogHtml).toContain(
+      'alt="Full Discord Clone application interface"',
+    );
+    expect(dialogHtml).toContain('width="1600"');
+    expect(dialogHtml).toContain('height="1067"');
   });
 
   it("renders configured repository and live-demo destinations as safe external links", async () => {
@@ -129,11 +233,18 @@ describe("ProjectCard", () => {
 
     expect(html).toContain(`href="${project.repositoryUrl}"`);
     expect(html).toContain(`href="${project.liveUrl}"`);
-    expect(html.match(/data-analytics-project-id=/g)).toHaveLength(2);
+    expect(html.match(/data-analytics-project-id=/g)).toHaveLength(5);
+    expect(html.match(/data-analytics-event="project_open"/g)).toBeNull();
+    expect(
+      html.match(/data-analytics-event="project_repository_click"/g),
+    ).toHaveLength(2);
+    expect(
+      html.match(/data-analytics-event="project_demo_click"/g),
+    ).toHaveLength(2);
     expect(html).toContain('data-analytics-event="project_repository_click"');
     expect(html).toContain('data-analytics-event="project_demo_click"');
-    expect(html.match(/target="_blank"/g)).toHaveLength(2);
-    expect(html.match(/rel="noreferrer"/g)).toHaveLength(2);
+    expect(html.match(/target="_blank"/g)).toHaveLength(4);
+    expect(html.match(/rel="noreferrer"/g)).toHaveLength(4);
     expect(html).not.toContain("Project links pending");
   });
 
@@ -149,7 +260,9 @@ describe("ProjectCard", () => {
       },
     };
     const container = await AstroContainer.create();
-    const html = await container.renderToString(ProjectCard, { props: { project } });
+    const html = await container.renderToString(ProjectCard, {
+      props: { project },
+    });
 
     expect(html).toContain(
       'srcset="/images/projects/custom-small.webp 500w, /images/projects/custom-original.webp 1200w"',
@@ -170,7 +283,9 @@ describe("ProjectCard", () => {
       },
     };
     const container = await AstroContainer.create();
-    const html = await container.renderToString(ProjectCard, { props: { project } });
+    const html = await container.renderToString(ProjectCard, {
+      props: { project },
+    });
 
     expect(html).toContain('src="/images/projects/base-only.webp"');
     expect(html).not.toContain("srcset=");
@@ -188,9 +303,21 @@ describe("ProjectGrid", () => {
 
     expect(html).toContain('id="work"');
     expect(html).toContain('aria-labelledby="work-title"');
-    expect(html.match(/data-project-id=/g)).toHaveLength(portfolioContent.projects.length);
+    expect(html).toContain('<div class="section-header__intro">');
+    expect(html).toMatch(
+      /<div class="section-header__intro">[\s\S]*?<h2 id="work-title">Selected projects<\/h2>[\s\S]*?<p>Production-minded work spanning real-time systems, AI, commerce, and data\.<\/p>[\s\S]*?<\/div>/,
+    );
+    expect(html).toContain(
+      `<span class="section-header__count">${portfolioContent.projects.length} selected projects</span>`,
+    );
+    expect(html).not.toContain('class="section-header__summary"');
+    expect(html.match(/data-project-id=/g)).toHaveLength(
+      portfolioContent.projects.length,
+    );
 
-    const titleOffsets = portfolioContent.projects.map((project) => html.indexOf(project.title));
+    const titleOffsets = portfolioContent.projects.map((project) =>
+      html.indexOf(project.title),
+    );
     expect(titleOffsets.every((offset) => offset >= 0)).toBe(true);
     expect(titleOffsets).toEqual([...titleOffsets].sort((a, b) => a - b));
   });
@@ -204,11 +331,15 @@ describe("ProjectGrid", () => {
       title: `Project ${index + 1}`,
     }));
     const container = await AstroContainer.create();
-    const html = await container.renderToString(ProjectGrid, { props: { projects } });
+    const html = await container.renderToString(ProjectGrid, {
+      props: { projects },
+    });
 
     expect(html.match(/data-project-id=/g)).toHaveLength(7);
     expect(html).toContain("7 selected projects");
-    expect(html).toContain("Production-minded work spanning real-time systems, AI, commerce, and data.");
+    expect(html).toContain(
+      "Production-minded work spanning real-time systems, AI, commerce, and data.",
+    );
     expect(html.match(/data-project-layout="wide"/g)).toHaveLength(1);
     expect(html.match(/data-project-layout="narrow"/g)).toHaveLength(1);
     expect(html.match(/data-project-layout="standard"/g)).toHaveLength(5);
@@ -216,7 +347,6 @@ describe("ProjectGrid", () => {
     const titleOffsets = projects.map((project) => html.indexOf(project.title));
     expect(titleOffsets).toEqual([...titleOffsets].sort((a, b) => a - b));
   });
-
 });
 
 describe("Contact", () => {
@@ -269,14 +399,17 @@ describe("Contact", () => {
 
 describe("SiteFooter", () => {
   it("renders the validated identity and location with the current year", async () => {
-    const { default: SiteFooter } = await import("../components/SiteFooter.astro");
+    const { default: SiteFooter } =
+      await import("../components/SiteFooter.astro");
     const container = await AstroContainer.create();
     const html = await container.renderToString(SiteFooter, {
       props: { site: portfolioContent.site },
     });
 
     expect(html).toContain("<footer");
-    expect(html).toContain(`© ${new Date().getUTCFullYear()} ${portfolioContent.site.name}`);
+    expect(html).toContain(
+      `© ${new Date().getUTCFullYear()} ${portfolioContent.site.name}`,
+    );
     expect(html).toContain(portfolioContent.site.location);
     expect(html).not.toContain(portfolioContent.site.email);
   });
@@ -284,7 +417,8 @@ describe("SiteFooter", () => {
 
 describe("ExperienceList", () => {
   it("renders every validated experience role as complete static content", async () => {
-    const { default: ExperienceList } = await import("../components/ExperienceList.astro");
+    const { default: ExperienceList } =
+      await import("../components/ExperienceList.astro");
     const container = await AstroContainer.create();
     const html = await container.renderToString(ExperienceList, {
       props: { experience: portfolioContent.experience },
@@ -292,7 +426,12 @@ describe("ExperienceList", () => {
 
     expect(html).toContain('id="experience"');
     expect(html).toContain('aria-labelledby="experience-title"');
-    expect(html.match(/data-experience-id=/g)).toHaveLength(portfolioContent.experience.length);
+    expect(html).toMatch(
+      /<header class="section-header">[\s\S]*?<div class="section-header__intro">[\s\S]*?<h2 id="experience-title">Experience<\/h2>[\s\S]*?<p>Public-safe impact across systems integration, security automation, data engineering, and product work\.<\/p>/,
+    );
+    expect(html.match(/data-experience-id=/g)).toHaveLength(
+      portfolioContent.experience.length,
+    );
     expect(html.match(/<script/g)).toHaveLength(1);
     expect(html).toContain('<script type="module"');
     expect(html).not.toMatch(/<script[^>]+src="https?:/);
@@ -325,7 +464,8 @@ describe("ExperienceList", () => {
   });
 
   it("renders progressive disclosure hooks without hiding static content", async () => {
-    const { default: ExperienceList } = await import("../components/ExperienceList.astro");
+    const { default: ExperienceList } =
+      await import("../components/ExperienceList.astro");
     const container = await AstroContainer.create();
     const html = await container.renderToString(ExperienceList, {
       props: { experience: portfolioContent.experience },
@@ -334,8 +474,12 @@ describe("ExperienceList", () => {
     expect(html.match(/data-experience-toggle(?:\s|>)/g)).toHaveLength(
       portfolioContent.experience.length,
     );
-    expect(html.match(/data-experience-panel/g)).toHaveLength(portfolioContent.experience.length);
-    expect(html.match(/<button[^>]*hidden/g)).toHaveLength(portfolioContent.experience.length);
+    expect(html.match(/data-experience-panel/g)).toHaveLength(
+      portfolioContent.experience.length,
+    );
+    expect(html.match(/<button[^>]*hidden/g)).toHaveLength(
+      portfolioContent.experience.length,
+    );
     expect(html).not.toContain("aria-expanded=");
 
     for (const entry of portfolioContent.experience) {
@@ -357,26 +501,50 @@ describe("ExperienceList", () => {
     }
   });
 
-  it("formats every experience period for people and machines", async () => {
-    const { default: ExperienceList } = await import("../components/ExperienceList.astro");
+  it("keeps location out of the scan line while retaining it in static details", async () => {
+    const { default: ExperienceList } =
+      await import("../components/ExperienceList.astro");
+    const entry = portfolioContent.experience[0];
+    const container = await AstroContainer.create();
+    const html = await container.renderToString(ExperienceList, {
+      props: { experience: [entry] },
+    });
+    const headingStart = html.indexOf(
+      '<header class="experience-row__heading">',
+    );
+    const headingEnd = html.indexOf("</header>", headingStart);
+    const panelStart = html.indexOf("data-experience-panel");
+    const headingHtml = html.slice(headingStart, headingEnd);
+    const panelHtml = html.slice(panelStart);
+
+    expect(headingHtml).not.toContain(entry.location);
+    expect(panelHtml).toContain(entry.location);
+    expect(panelHtml).toContain('class="experience-row__details-meta"');
+  });
+
+  it("formats experience periods as concise years while preserving exact machine dates", async () => {
+    const { default: ExperienceList } =
+      await import("../components/ExperienceList.astro");
     const container = await AstroContainer.create();
     const html = await container.renderToString(ExperienceList, {
       props: { experience: portfolioContent.experience },
     });
 
-    expect(html).toContain('<time datetime="2026-06">Jun 2026</time>');
+    expect(html).toContain('<time datetime="2026-06">2026</time>');
     expect(html).toContain("Present");
-    expect(html).toContain('<time datetime="2023-12">Dec 2023</time>');
-    expect(html).toContain('<time datetime="2024-10">Oct 2024</time>');
-    expect(html).toContain('<time datetime="2020-12">Dec 2020</time>');
-    expect(html).toContain('<time datetime="2022-06">Jun 2022</time>');
-    expect(html).not.toContain('>2026-06</time>');
+    expect(html).toContain('<time datetime="2023-12">2023</time>');
+    expect(html).toContain('<time datetime="2024-10">2024</time>');
+    expect(html).toContain('<time datetime="2020-12">2020</time>');
+    expect(html).toContain('<time datetime="2022-06">2022</time>');
+    expect(html).not.toContain(">Jun 2026</time>");
+    expect(html).not.toContain(">Dec 2023</time>");
   });
 });
 
 describe("Playwright configuration", () => {
   it("runs browser regressions against the generated production preview", async () => {
-    const { default: playwrightConfig } = await import("../../playwright.config");
+    const { default: playwrightConfig } =
+      await import("../../playwright.config");
     const webServer = playwrightConfig.webServer;
 
     expect(Array.isArray(webServer)).toBe(false);
@@ -384,7 +552,9 @@ describe("Playwright configuration", () => {
       command: expect.stringContaining("preview"),
       reuseExistingServer: false,
     });
-    expect(webServer).not.toMatchObject({ command: expect.stringContaining("dev") });
+    expect(webServer).not.toMatchObject({
+      command: expect.stringContaining("dev"),
+    });
   });
 
   it("uses a separate fail-closed configuration for the exact production origin", async () => {
@@ -394,14 +564,16 @@ describe("Playwright configuration", () => {
     let requireProductionUrl: ((value?: string) => string) | undefined;
 
     try {
-      const productionModule = await import("../../playwright.production.config");
+      const productionModule =
+        await import("../../playwright.production.config");
       productionConfig = productionModule.default;
       requireProductionUrl = productionModule.requireProductionUrl;
     } catch {
       productionConfig = undefined;
       requireProductionUrl = undefined;
     } finally {
-      if (previousProductionUrl === undefined) delete process.env.PRODUCTION_URL;
+      if (previousProductionUrl === undefined)
+        delete process.env.PRODUCTION_URL;
       else process.env.PRODUCTION_URL = previousProductionUrl;
     }
 
@@ -419,7 +591,9 @@ describe("Playwright configuration", () => {
       `${productionOrigin}/?preview=true`,
       `${productionOrigin}/#preview`,
     ]) {
-      expect(() => requireProductionUrl?.(invalidUrl)).toThrow(/production[_ ]url/i);
+      expect(() => requireProductionUrl?.(invalidUrl)).toThrow(
+        /production[_ ]url/i,
+      );
     }
   });
 });
@@ -437,16 +611,24 @@ describe("SeoHead", () => {
       },
     });
 
-    expect(html).toContain(`<title>${portfolioContent.site.meta.title}</title>`);
-    expect(html).toContain(`name="description" content="${portfolioContent.site.meta.description}"`);
+    expect(html).toContain(
+      `<title>${portfolioContent.site.meta.title}</title>`,
+    );
+    expect(html).toContain(
+      `name="description" content="${portfolioContent.site.meta.description}"`,
+    );
     expect(html).toContain(`rel="canonical" href="${canonicalUrl.href}"`);
     expect(html).toContain('property="og:type" content="website"');
     expect(html).toContain(`property="og:url" content="${canonicalUrl.href}"`);
-    expect(html).toContain('property="og:image" content="https://portfolio.example/og/portfolio-card.png"');
+    expect(html).toContain(
+      'property="og:image" content="https://portfolio.example/og/portfolio-card.png"',
+    );
     expect(html).toContain('property="og:image:width" content="1200"');
     expect(html).toContain('property="og:image:height" content="630"');
     expect(html).toContain('name="twitter:card" content="summary_large_image"');
-    expect(html).toContain('name="twitter:image" content="https://portfolio.example/og/portfolio-card.png"');
+    expect(html).toContain(
+      'name="twitter:image" content="https://portfolio.example/og/portfolio-card.png"',
+    );
   });
 
   it("does not fabricate a canonical deployment origin", async () => {
@@ -462,7 +644,9 @@ describe("SeoHead", () => {
     expect(html).not.toContain('rel="canonical"');
     expect(html).not.toContain('property="og:url"');
     expect(html).not.toMatch(/https?:\/\/localhost/);
-    expect(html).toContain('property="og:image" content="/og/portfolio-card.png"');
+    expect(html).toContain(
+      'property="og:image" content="/og/portfolio-card.png"',
+    );
   });
 });
 
@@ -471,9 +655,15 @@ describe("index page", () => {
     const container = await AstroContainer.create();
     const html = await container.renderToString(IndexPage);
 
-    expect(html).toContain(`<title>${portfolioContent.site.meta.title}</title>`);
-    expect(html).toContain(`property="og:title" content="${portfolioContent.site.meta.title}"`);
-    expect(html).toContain('property="og:image" content="/og/portfolio-card.png"');
+    expect(html).toContain(
+      `<title>${portfolioContent.site.meta.title}</title>`,
+    );
+    expect(html).toContain(
+      `property="og:title" content="${portfolioContent.site.meta.title}"`,
+    );
+    expect(html).toContain(
+      'property="og:image" content="/og/portfolio-card.png"',
+    );
     expect(html).toContain('name="twitter:card" content="summary_large_image"');
     expect(html).not.toContain('rel="canonical"');
     expect(html).not.toContain('property="og:url"');
@@ -487,7 +677,9 @@ describe("index page", () => {
     expect(html).toContain(portfolioContent.site.hero.summary);
     expect(html).toContain('<main id="main-content" tabindex="-1">');
     expect(html).toContain(`@${portfolioContent.site.github.username}`);
-    expect(html).not.toContain("Structural placeholder establishing final card proportions");
+    expect(html).not.toContain(
+      "Structural placeholder establishing final card proportions",
+    );
     expect(html).not.toContain("Curated project content and filtering arrive");
 
     for (const project of portfolioContent.projects) {
@@ -507,11 +699,15 @@ describe("index page", () => {
 
     expect(html).toContain(portfolioContent.site.contact.heading);
     expect(html).toContain('href="/documents/gabriel-goldstein-resume.pdf"');
-    expect(html).toContain(`© ${new Date().getUTCFullYear()} ${portfolioContent.site.name}`);
-    expect(html).not.toContain("Compact role rows will become accessible disclosures");
+    expect(html).toContain(
+      `© ${new Date().getUTCFullYear()} ${portfolioContent.site.name}`,
+    );
+    expect(html).not.toContain(
+      "Compact role rows will become accessible disclosures",
+    );
     expect(html).not.toContain("Software engineering role");
     expect(html).not.toContain('id="about"');
-    expect(html.match(/<script/g)).toHaveLength(2);
+    expect(html.match(/<script/g)).toHaveLength(3);
     expect(html).toContain('<script type="module"');
     expect(html).not.toMatch(/<script[^>]+src="https?:/);
     expect(html).not.toContain("client:");

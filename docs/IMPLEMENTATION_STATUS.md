@@ -1,31 +1,69 @@
 # Portfolio Implementation Status
 
-Last updated: 2026-08-14 16:52 MDT
+Last updated: 2026-08-24 19:55 MDT
 
 ## Locked design decisions
 
-- Layout: original two-column Project Gallery
+- Layout: Sketch 11 Editorial Links composition with one coordinated 7/5 project pair and repeatable half-width cards
 - Palette: Refined DMG
 - Typography: self-hosted Geist + Geist Mono
 - GitHub treatment: Inline Identity
 - Section order: hero, selected projects, experience, contact footer
 - About: no standalone section; useful positioning copy belongs in the hero
-- Contact: sticky-nav `#contact` jump to Study 2 Primary CTA Buttons
-- Contact hierarchy: filled email CTA; bordered GitHub, LinkedIn, and résumé actions
-- Architecture: Astro static output, strict TypeScript, plain external CSS, validated local content
+- Projects: image-led compact cards, equivalent hover/focus treatment, progressively enhanced native dialogs, and direct audited actions
+- Experience: compact editorial rows, all initially collapsed after enhancement, with complete static no-JavaScript content
+- Contact: retain the current filled email CTA plus bordered GitHub, LinkedIn, and résumé actions unless separately approved
+- Architecture: Astro static output, strict TypeScript, plain external CSS, validated local content, and bounded vanilla JavaScript
 
 ## Current batch
 
-Batch 9 — Privacy-Oriented Analytics — **deployed; corrected production-test closeout successor pending protected review**
+Batch 10.1 — Editorial Projects and Experience Redesign — **stdout-archive successor evidence and promotion hardening in verification**
 
-Selected provider: hosted Umami Cloud for `https://gabrielrgoldstein.github.io/`. The two public repository variables are configured with the provider and provider-issued website UUID. Batch 9 is deployed from protected merge commit `386e0ebdada9c6b420948aa7ee975326fce12deb`; a narrow production-test closeout remains pending review and protected merge.
+This branch replaces the superseded original-gallery lock with Gabriel's approved Sketch 11 Editorial Links direction. It corrects the production grid-row void and disconnected project header, introduces compact image-led cards and accessible project dialogs, adds a repository-owned image-ingestion command, and condenses Experience without changing verified public-safe claims.
+
+## Batch 10.1 implementation checkpoint
+
+- Grouped each section title with its descriptive copy, leaving only the selected-project count as secondary right-aligned metadata.
+- Replaced proportional first-row image heights with coordinated desktop visual stages. The 7/5 pair now shares a bottom edge, so later projects begin after the intended grid gap rather than below an empty rectangle.
+- Reduced the enhanced homepage project content to index/category, title, one public-safe summary, an Explore action, and configured direct repository/demo links. Technology stacks and honest pending-link state are ordinary static fallback DOM, hidden only after successful dialog enhancement and restored when native APIs or `showModal()` fail.
+- Added native `<dialog>` detail surfaces with feature-detected APIs, validated local ARIA relationships, hidden-until-ready triggers, initial close-button focus, explicit forward/reverse Tab wrapping, outside-focus recapture, native modal isolation and Escape behavior, explicit close/backdrop handling, focus restoration, scroll locking, and reduced-motion treatment.
+- Emits the allowlisted `project_open` event only after `showModal()` successfully enters modal state, with only a bounded validated authored slug as `project_id`; analytics remains unable to control dialog behavior.
+- Verified the public, active `GabrielRGoldstein/DiscordClone` and `GabrielRGoldstein/Python-Trading-Bot` repositories against their own README content and authored those exact repository actions. The other two projects remain `null` rather than receiving inferred destinations.
+- Added bounded optional project galleries and safe `cover.objectPosition` values to the Zod content model. Dialogs use the first full-aspect gallery image when authored and otherwise reuse the existing cover.
+- Added `npm run project:image`, backed by explicit Sharp 0.35.3 and Node 22's native erasable-TypeScript support for the shared production Zod schema. `tsx` was removed as a direct dependency and CLI loader, although Astro/Vite still brings a transitive `tsx` package into the install. The documented public invocation disables Node's compile cache before npm starts, snapshots canonical non-hard-linked repository inputs, validates fatal UTF-8, duplicate-key-free JSON, no schema transformation, EXIF-oriented dimensions, and actual output metadata, then constructs WebP derivatives, `projects.json.proposed`, and a SHA-256 manifest entirely in memory. It streams one deterministic tar archive to stdout and performs no output filesystem writes; promotion is an explicit reviewed Git operation that requires the manifest's source-JSON hash still to match.
+- Changed Experience to concise year labels while preserving exact `YYYY-MM` machine dates, added unique positive authored order values capped at 10,000, moved repeated locations into disclosure details, grouped its heading/description, and initializes every enhanced row collapsed. Static HTML still contains every date, employer, role, location, summary, highlight, and skill when JavaScript is unavailable.
+- Visual inspection of the built desktop preview confirmed the project header reads as one unit, the 7/5 cards share a bottom edge with no marked production void, the Discord authored cover title is no longer clipped, the dialog is balanced and legible, and Experience scans as a compact index.
+- Current dialogs intentionally use only already-audited summaries, stacks, images, and destinations. Additional problem/contribution/outcome copy, screenshots, diagrams, or replacement résumé content require Gabriel-supplied public-safe sources and are not invented in this batch. The existing committed résumé remains available at `/documents/gabriel-goldstein-resume.pdf`.
+- Superseded staged tree `fdbfc0753cf1ed7ddf0856aab521830e12c8eb91` was rejected by exact-tree independent review despite matching opening/closing identity. Review reproduced EXIF dimension corruption, partial publication, non-atomic JSON writes, unsafe symlink/junction traversal, incomplete schema validation, failed-open analytics, missing dialog API detection, broken one-control Tab containment, and inaccessible no-JavaScript technical details.
+- The later pre-repair staged candidate `544f8d035cf1b415af2450c291040f3d7886ceff` inherited those code paths and was invalidated without being committed or pushed.
+- Independent review of staged tree `b7d37f2cd0984d2d77186e552549a7f3679bae8e` lost closing identity when this status file changed, but its substantive probes still rejected the shared code: a concurrent Windows junction swap could redirect pathname-based deletion, a forged recovery manifest could delete legitimate destinations, whole-collection Zod serialization could normalize unrelated records, API failure hid static details, a mobile dialog link measured only 17 px high, analytics property getters escaped discovery, and schema/test boundaries allowed unsafe or duplicate authored values.
+- Exact-tree review of `6ed00335510584f0d8bed9610920ae8d54fd1438` rejected the temporary-bundle design: redirected process temp variables could place outputs in the repository, pathname races could replace derivative bytes after hashing, malformed UTF-8 could normalize unrelated records, project IDs and aggregate Experience IDs were not bounded at the exported schema, analytics enumeration/dataset access could throw, and mutation testing exposed six dialog-regression blind spots. Its closing identity changed, but every substantive finding was retained.
+- Delayed exact-tree review of `4970aa65939ceb4f2eae201519bc373a00839a19` independently reproduced the temporary-directory/`tsx` mutation, parent-link and AVIF gaps, schema-boundary omissions, incomplete repository/proposal integrity assertions, and four browser-test false positives. The stdout successor had already removed or repaired those defects. Its remaining generally applicable findings—metadata stripping on an EXIF-bearing source and fail-closed manual-promotion checkpoints—were added after staged tree `c83fa03dcf08e4b7a8ea59b1da6c39eb15e94e4c`, invalidating that tree's in-flight review.
+- The completed review of obsolete tree `c83fa03dcf08e4b7a8ea59b1da6c39eb15e94e4c` found that non-enumerable and Symbol analytics keys bypassed the exact-property contract and that ingestion tests could miss partial stdout, duplicate tar names, omitted manifest entries, and empty-directory writes; it also requested escaped/special/malformed/deep JSON and exact-limit regressions. Its other two reviewers were provider-rate-limited and supplied no verdict.
+- Exact-tree review of successor `3a2bd2d6468be069aed8fcf3993b0f4132549f6f` rejected an uncaught project-trigger `dataset` getter plus mutation-surviving browser gaps for linked failed-open content, individual missing dialog methods, 375 px action geometry, and `aria-labelledby` corruption. Its other two reviewers were provider-rate-limited. No rejected or unavailable verdict is reused as approval.
+- Exact-tree review of `5b6d0aa9bd87f0e952fbaf67136804fec204e2be` rejected the public npm boundary because Node created compile-cache files under hostile temporary-directory variables before application code ran. Mutation tests also exposed non-exact tar termination, decoded-pixel one-over, proposal-path, all-metadata, parent-race, projects-file-link, canonical-string, Experience-order, and three missing-dialog-API assertions. All three reviewers recorded matching opening/closing identities and rejected the tree; no verdict is reused.
+- Exact-tree review of `d96cca5fd196549a990ad3c7ee32cd5c885c8925` rejected an unsafe manual-promotion recipe, dynamic rather than committed metadata fixture, incomplete hostile `NODE_COMPILE_CACHE` coverage, noncanonical project path/URL strings, mutation-surviving nested strict-object and manifest-path assertions, no-JavaScript pending copy, and missing page-error checks in invalid-relationship and failed-open branches. One reviewer recorded matching closing identity; two could not complete closing certification after tool/approval limits, so none counts as approval.
+- Exact-tree review of `5dc0aa12e8d7a3f047da1133a33c11608a68d0da` received exact-identity approvals from the image/security and schema/provenance reviewers but was not unanimous. The browser reviewer rejected an uncaught hostile `Event.prototype.target` getter, mutation-surviving pending copy after failed `showModal`, summary under invalid `aria-labelledby`, href under invalid `aria-describedby`, and missing closing certification after its tool limit. The two approvals are not reused after remediation changed the tree.
+- Exact-tree review of `6d8f2fac7dcdf4d88065091fe5da059b1aa33650` received exact-identity approvals from image/security and browser/accessibility reviewers but was not unanimous. The dependency reviewer proved that the declared Node 22.12 minimum could not natively import the production TypeScript schema used by `project:image`; it also lacked an actual minimum-runtime regression. Closing live identity remained clean, but that review lacked a retained opening cached-diff digest, so no verdict is reused.
+- Exact-tree review of `a3ab96e959206724cb961d5b07ba4862cc048070` confirmed the complete quality, browser, image, schema, analytics, and Lighthouse behavior but was not unanimous. It found that a blanket Node 22.18 requirement conflicted with Lighthouse's Node 22.19 minimum and identified two optional ingestion-test hardening opportunities. Gabriel directed the batch to stop repeated adversarial retesting and finish through protected hosted CI instead.
+- The shipping successor declares the accurate repository-wide Node 22.19 minimum while retaining exact Node 22.23.2 in the required `verify` job. It otherwise eliminates output paths rather than trying to secure mutable temporary directories. Its exact public invocation disables Node's compile cache before npm starts; preparation emits only an in-memory deterministic tar stream; fatal UTF-8 and duplicate-key/no-transformation checks reject malformed or normalizing JSON; embedded output buffers, manifest paths, and proposal bytes are hash-bound; project/experience schemas reject normalization and enforce nested strictness plus bounded unique authored order; analytics rejects hidden, Symbol, inherited, accessor, and throwing property shapes; dialog event-target access is exception-contained; and browser tests assert exact authored fallback summaries/stacks/destinations/pending states with zero page errors across degraded branches. The documentation ends authority at archive review and intentionally specifies no publication or recovery mechanism under a hostile concurrent-writer model.
+
+Prepare-only successor evidence through 2026-08-24:
+
+- RED tests reproduced unsafe Experience IDs, duplicate responsive sources and authored lists, unknown project-field stripping, and throwing analytics getters before their fixes.
+- Focused GREEN verification passes 100/100 current ingestion and content tests: 16 ingestion cases plus 84 production-content cases. The ingestion cases exercise the exact cache-disabled npm command with hostile `TEMP`/`TMP`/`TMPDIR`/`NODE_COMPILE_CACHE` on success and failure, exact two-block tar termination, exact manifest/proposal paths, committed all-four-metadata source stripping, exact pixel policy, deterministic same-file/parent races, projects-file links/hardlinks, fatal UTF-8 and strict JSON, archive integrity, formats, bounds, and idempotency. Content cases reject path/URL and textual normalization, prove nested strict-object boundaries, and enforce bounded unique project and Experience order at exported schemas.
+
+- Four focused production-preview Playwright cases pass exact authored summaries, nonempty exact stacks, configured destinations, pending copy, and zero page errors for invalid `aria-labelledby`, invalid `aria-describedby`, thrown `showModal`, and a hostile `Event.prototype.target` getter across open/control-close/Escape/reopen; the shared oracle also covers no JavaScript, missing constructor, missing `showModal`, and missing `close`.
+- Complete current `npm run quality` passes 171/171 Vitest tests across 11 files; zero Astro diagnostics across 48 files; 33/33 production-preview Playwright tests; two static pages; 58 generated internal references; two validated workflows; and zero dependency vulnerabilities. Rejected tree `5b6d0aa9bd87f0e952fbaf67136804fec204e2be` had passed only 162 Vitest tests and 46 Astro files before mutation review exposed the gaps above; those totals are not reused as approval.
+- Complete current `npm run lighthouse` passes two exact-artifact runs at 100/100/100/100 for Performance/Accessibility/Best Practices/SEO with all configured budgets passing. The latest run measured approximately 396 ms FCP, 506 ms LCP, 0 ms TBT, and 0.000026 CLS; prior passing runs measured different local timings, so those values are evidence rather than invariants.
+- Gabriel approved proportionate closeout after the complete local gates above: perform one focused workflow/package validation for the final Node metadata correction, commit the staged redesign, and rely on protected hosted `verify`, `codeql`, and `secrets` checks before merge. Repeated mutation/reviewer cycles are intentionally stopped.
 
 ## Batch 9 implementation and production evidence
 
 - Selected Umami Cloud after checking current official event, tracker-configuration, and pricing documentation: the hosted Hobby tier supports this site and custom events; the tracker supports domain restriction, query/hash exclusion, Do Not Track, and JavaScript event dispatch. No self-hosted analytics service or custom dashboard was added.
-- Added a provider-neutral TypeScript adapter with an exact seven-event allowlist: `project_open`, `project_repository_click`, `project_demo_click`, `resume_download`, `github_profile_click`, `linkedin_click`, and `email_click`. `project_open` is reserved but intentionally not emitted because project dialogs remain deferred.
+- Added a provider-neutral TypeScript adapter with an exact seven-event allowlist: `project_open`, `project_repository_click`, `project_demo_click`, `resume_download`, `github_profile_click`, `linkedin_click`, and `email_click`. At the Batch 9 checkpoint, `project_open` was reserved but intentionally not emitted because project dialogs had not yet been implemented.
 - Added fail-closed event-property validation. Project events require one bounded lowercase authored `project_id`; every other event permits no properties. Unknown events, malformed identifiers, extra keys, and personal-data-like values are rejected before provider dispatch. Provider absence and provider exceptions return a no-op result without affecting link behavior.
-- Instrumented only meaningful conversion surfaces: header/contact résumé, hero/contact GitHub, contact LinkedIn/email, and configured project repository/demo links. Ordinary page/section navigation is not tracked. Current project links remain `null`, so project conversion markers render only when audited destinations are authored.
+- Instrumented only meaningful conversion surfaces: header/contact résumé, hero/contact GitHub, contact LinkedIn/email, and configured project repository/demo links. Ordinary page/section navigation is not tracked. At the Batch 9 checkpoint, project links were still `null`, so project conversion markers rendered only after later audited destinations were authored.
 - Added an `Analytics.astro` integration. Disabled builds emit no remote tracker. Enabled builds use only `https://cloud.umami.is/script.js`, the provider-issued public UUID, the exact production domain, automatic pageviews, query/hash exclusion, and Do Not Track. Performance collection and session replay are not enabled.
 - Added strict public configuration parsing for `PUBLIC_ANALYTICS_PROVIDER` and `PUBLIC_UMAMI_WEBSITE_ID`: both absent disables analytics; partial, unknown, or malformed configuration fails the build. No secret or environment-configurable tracker URL is accepted.
 - Added `npm run check:analytics`, a pinned Parse5 7.3.0 development dependency, and fixture tests. The generated-artifact validator uses HTML-standard parsing, requires zero tracker scripts in disabled mode and exactly one fixed, privacy-configured tracker in every enabled HTML page, rejects duplicate attributes before interpretation, forbids executable embedded-document elements, and fails closed on extra attributes, missing controls, or unexpected Umami-like scripts.
@@ -68,6 +106,7 @@ Selected provider: hosted Umami Cloud for `https://gabrielrgoldstein.github.io/`
 - After those required checks passed, administrator enforcement was enabled on `main`. Final API read-back confirmed strict `verify`/`codeql`/`secrets` checks for GitHub Actions app `15368`, administrator enforcement, and force-push/deletion disabled. Final local `HEAD`, commit tree, and remote `main` matched `946548a3cb870e1e375581956209de70d48d9d0f` / `4b9fbf0b29e43092e6c1c8d3a59427d48413f5ae`, the repository was clean, the production root returned HTTP 200 and remained byte-identical to local `dist/index.html`, and preview ports 4325–4327 were closed.
 
 Batch 8 local verification evidence:
+
 - `npm run quality`: 93 tests across 5 files; 32 Astro/TypeScript/JavaScript files with zero diagnostics; two-page static build; 18/18 production-preview Playwright tests; 39 internal references; two parsed workflows; zero dependency vulnerabilities
 - The generated-output browser suite verifies absolute canonical/share metadata, robots and sitemap discovery, social card/favicons, custom 404, accessibility, responsive geometry and images, interaction behavior, no-JavaScript content, reduced motion, and zero third-party runtime resources.
 - `npm run lighthouse`: two exact-artifact/report-URL runs passed at 100/100/100/100 with median FCP approximately 394 ms, LCP approximately 434 ms, TBT 0 ms, and CLS approximately 0.00028.
@@ -93,6 +132,7 @@ Batch 8 local verification evidence:
 - Four regressions now keep an incumbent server on 4327 while proving the runner chooses another owned port, reject mismatched artifact/report identity, fail a deliberately breached budget, verify normal port closure, and force-close an owned listener when graceful cleanup stalls. The CodeQL steps also use the peeled immutable commit for the documented release rather than its annotated-tag object.
 
 Final local candidate verification:
+
 - `npm run quality`: 90 unit/component/config tests across 5 files; 31 Astro/TypeScript/JavaScript files with zero diagnostics; two-page static build; 18 production-preview Playwright tests; 39 internal references; two parsed workflows; zero high-severity dependency findings
 - `npm run lighthouse`: two budgeted production-preview runs with exact served-artifact/report-URL identity and retained JSON evidence
 - `git diff --check`: clean
@@ -109,6 +149,7 @@ Final local candidate verification:
 - Kept the current hero copy and practice-area chips. Project filters and project-summary modals remain intentionally deferred because the current collection and available case-study content do not justify the interaction cost.
 
 Final candidate verification:
+
 - `npm test -- --run`: 79 tests passed across 2 files
 - `npm run check`: 24 files, 0 errors, 0 warnings, 0 hints
 - `npm run test:e2e`: static production build passed and 18 Chromium tests passed against `astro preview`
@@ -132,11 +173,13 @@ Final candidate verification:
 - Expanded production-browser coverage to 14 tests: standard plus visible-label axe scans, discovery/share/404 endpoints, 404 geometry, exact-width checks at 375/768/1280/1600 px, local fonts, zero third-party runtime resources, safe external tabs, high-density responsive image selection, and all prior interaction/no-JavaScript/reduced-motion/skip-link contracts.
 
 Performance budgets and results:
+
 - Local mobile Lighthouse budget: Performance ≥ 95; Accessibility, Best Practices, and SEO = 100; total blocking time ≤ 50 ms; cumulative layout shift ≤ 0.05; largest contentful paint ≤ 2.5 s.
 - Final local production-preview Lighthouse: Performance 98, Accessibility 100, Best Practices 100, SEO 100; FCP 1.81 s, LCP 2.04 s, TBT 0 ms, CLS 0.0101, Speed Index 1.81 s.
 - Lighthouse-estimated mobile image waste fell from approximately 157 KB at baseline to approximately 12 KiB after responsive-source work. The remaining advisory is one lazily loaded, below-the-fold project cover and does not breach the page budget.
 
 Verification:
+
 - `npm test -- --run`: 73 tests passed across 2 test files
 - `npm run check`: 24 files, 0 errors, 0 warnings, 0 hints
 - `npm run test:e2e`: production build passed and 14 Chromium tests passed against `astro preview`
@@ -160,6 +203,7 @@ Verification:
 - Superseded the original broader interaction proposal: project filters and dialogs remain intentionally excluded while public repository/demo destinations and audited case-study content are unavailable.
 
 Verification:
+
 - `npm test -- --run`: 70 tests passed across 2 test files
 - `npm run check`: 22 files, 0 errors, 0 warnings, 0 hints
 - `npm run test:e2e`: production build passed and 6 Chromium tests passed against `astro preview`
@@ -331,7 +375,7 @@ Independent fail-closed review:
 ## Intentional placeholders and pending content
 
 - Project covers are intentional conceptual illustrations, not screenshots. Replace them only if audited real project imagery becomes available later.
-- Project repository and live-demo destinations remain `null` until each public-safe URL is audited.
+- Discord Clone and ML Stock Trading Bot use only their audited public repository URLs. The other two repository destinations and all live-demo destinations remain `null` until each public-safe URL is independently verified.
 - Experience details remain fully visible in static HTML and are progressively enhanced into optional disclosures only after JavaScript validates each control/panel pair.
 
 ## Known blockers and deferred inputs
@@ -341,12 +385,13 @@ Independent fail-closed review:
 - No Batch 6 or 6.1 blocker remains; Batch 6.1 was committed as `cc7c83dbb133e88364e9e44dea98a7cda309060a` from the exact independently approved tree.
 - Batch 7's first exact tree was rejected for false Lighthouse server ownership. Corrected substantive tree `8bb467120e41f495e85a658daf305cb1797f7018` and final documented tree `ec2ee5a1b394aff1ebc9eede05ea038a68386d9e` passed replacement reviews and were committed as `ccf098269467122077f30b38b53f3b18f537cedc`.
 - No Batch 8 blocker remains: the latest reviewed evidence commit is deployed; hosted Quality/Security, retained Lighthouse artifacts, direct production validation, and administrator-enforced repository controls passed.
-- Batch 9 selected Umami Cloud, implemented and deployed the fail-closed adapter/build/deployment contract, configured both public repository variables, and verified the live tracker plus genuine custom-event ingestion in the authenticated Events view. Only the production-test closeout remains pending.
+- Batch 9 selected Umami Cloud, implemented and deployed the fail-closed adapter/build/deployment contract, configured both public repository variables, verified the live tracker plus genuine custom-event ingestion, and completed its protected production-test closeout on `main`.
+- Batch 10.1 has repaired every blocker reproduced against its superseded candidates and passes complete local quality and Lighthouse gates. Replacement exact-tree review, commit, protected pull request, hosted checks, deployment, and production confirmation remain pending.
 
 ## Exact continuation
 
-Batch 9's narrow production-test closeout is in progress on `fix/batch9-production-analytics-tests` from deployed protected Batch 9 `main`. After an independent review returns `passed: true` for an identical opening and closing tree, the next exact command commits only those already-reviewed staged bytes without restaging:
+Batch 10.1 is in progress on `redesign/editorial-projects` from protected production baseline `a0af7894cefef49adf00d9041e101d1ff86bb125`. Do not commit, push, or open a pull request until three fresh independent reviewers approve one identical opening and closing staged tree with a clean tracked worktree. Any file change invalidates that identity and requires complete local gates, restaging, a new tree hash, and replacement review. After unanimous approval, commit only the already-reviewed staged bytes without restaging:
 
 ```bash
-git commit -m "test: align production analytics verification"
+git commit -m "feat: redesign projects and experience"
 ```

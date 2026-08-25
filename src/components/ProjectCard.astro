@@ -8,6 +8,7 @@ interface Props {
 
 const { project, layout = "standard" } = Astro.props;
 const projectNumber = String(project.order).padStart(2, "0");
+const dialogId = `project-${project.slug}-dialog`;
 const hasLinks = project.repositoryUrl !== null || project.liveUrl !== null;
 const responsiveSizes = {
   wide: "(max-width: 53.125rem) calc(100vw - clamp(2.5rem, 8vw, 3.5rem) - 2px), (max-width: 81rem) calc((100vw - 4.375rem) * 0.583), 715px",
@@ -20,6 +21,8 @@ const srcset = project.cover.sources
       `${project.cover.src} ${project.cover.width}w`,
     ].join(", ")
   : undefined;
+const dialogImage = project.gallery?.[0] ?? project.cover;
+const dialogSrcset = project.gallery ? undefined : srcset;
 ---
 
 <article
@@ -36,6 +39,9 @@ const srcset = project.cover.sources
       alt={project.cover.alt}
       width={project.cover.width}
       height={project.cover.height}
+      style={project.cover.objectPosition
+        ? `object-position: ${project.cover.objectPosition}`
+        : undefined}
       loading="lazy"
       decoding="async"
     />
@@ -49,9 +55,31 @@ const srcset = project.cover.sources
     <h3 id={`project-${project.slug}-title`}>{project.title}</h3>
     <p>{project.summary}</p>
 
-    <ul class="project-card__stack" aria-label={`${project.title} technologies`}>
-      {project.stack.map((technology) => <li>{technology}</li>)}
-    </ul>
+    <div class="project-card__fallback-details" data-project-dialog-fallback>
+      <p class="project-card__fallback-label">Technologies</p>
+      <ul aria-label={`${project.title} technologies`}>
+        {project.stack.map((technology) => <li>{technology}</li>)}
+      </ul>
+      {
+        !hasLinks && (
+          <p class="project-card__fallback-pending">
+            Public project links are pending review.
+          </p>
+        )
+      }
+    </div>
+
+    <button
+      class="project-card__open"
+      type="button"
+      aria-controls={dialogId}
+      aria-haspopup="dialog"
+      data-project-dialog-trigger
+      data-analytics-project-id={project.slug}
+      hidden
+    >
+      Explore {project.title}<span aria-hidden="true"> ↗</span>
+    </button>
 
     {
       hasLinks ? (
@@ -75,12 +103,74 @@ const srcset = project.cover.sources
             >Live demo ↗</a>
           )}
         </div>
-      ) : (
-        <p class="project-card__pending">
-          <span aria-hidden="true">Project links pending</span>
-          <span class="visually-hidden">{project.title} — public project links pending review</span>
-        </p>
-      )
+      ) : null
     }
   </div>
 </article>
+
+<dialog
+  id={dialogId}
+  class="project-dialog"
+  data-project-dialog
+  aria-labelledby={`${dialogId}-title`}
+  aria-describedby={`${dialogId}-summary`}
+>
+  <div class="project-dialog__shell">
+    <button
+      class="project-dialog__close"
+      type="button"
+      data-project-dialog-close
+      aria-label={`Close ${project.title} project details`}
+    >×</button>
+
+    <figure class="project-dialog__visual">
+      <img
+        src={dialogImage.src}
+        srcset={dialogSrcset}
+        sizes={dialogSrcset ? "(max-width: 53.125rem) calc(100vw - 3rem), 52rem" : undefined}
+        alt={dialogImage.alt}
+        width={dialogImage.width}
+        height={dialogImage.height}
+        loading="lazy"
+        decoding="async"
+      />
+    </figure>
+
+    <div class="project-dialog__content">
+      <p class="project-dialog__eyebrow">{projectNumber} / {project.category}</p>
+      <h3 id={`${dialogId}-title`}>{project.title}</h3>
+      <p id={`${dialogId}-summary`}>{project.summary}</p>
+
+      <ul class="project-dialog__stack" aria-label={`${project.title} technologies`}>
+        {project.stack.map((technology) => <li>{technology}</li>)}
+      </ul>
+
+      {
+        hasLinks ? (
+          <div class="project-dialog__links" aria-label={`${project.title} project links`}>
+            {project.repositoryUrl && (
+              <a
+                href={project.repositoryUrl}
+                target="_blank"
+                rel="noreferrer"
+                data-analytics-event="project_repository_click"
+                data-analytics-project-id={project.slug}
+              >Repository ↗</a>
+            )}
+            {project.liveUrl && (
+              <a
+                href={project.liveUrl}
+                target="_blank"
+                rel="noreferrer"
+                data-analytics-event="project_demo_click"
+                data-analytics-project-id={project.slug}
+              >Live demo ↗</a>
+            )}
+          </div>
+        ) : (
+          <p class="project-dialog__pending">Public project links are pending review.</p>
+        )
+      }
+    </div>
+  </div>
+</dialog>

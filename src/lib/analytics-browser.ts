@@ -23,27 +23,37 @@ export interface UmamiHost {
 export function createUmamiProvider(
   host: UmamiHost,
 ): AnalyticsProvider | undefined {
-  const tracker = host.umami;
-  if (!tracker || typeof tracker.track !== "function") return undefined;
+  try {
+    const tracker = host.umami;
+    if (!tracker) return undefined;
+    const dispatch = tracker.track;
+    if (typeof dispatch !== "function") return undefined;
 
-  return {
-    dispatch(event, properties) {
-      tracker.track(event, properties);
-    },
-  };
+    return {
+      dispatch(event, properties) {
+        dispatch.call(tracker, event, properties);
+      },
+    };
+  } catch {
+    return undefined;
+  }
 }
 
 export function trackElement(
   dataset: AnalyticsDataset,
   provider?: AnalyticsProvider,
 ): boolean {
-  const event = dataset.analyticsEvent;
-  if (!isAnalyticsEvent(event)) return false;
+  try {
+    const event = dataset.analyticsEvent;
+    if (!isAnalyticsEvent(event)) return false;
 
-  const properties = dataset.analyticsProjectId
-    ? { project_id: dataset.analyticsProjectId }
-    : undefined;
-  return track(event, properties, provider);
+    const properties = dataset.analyticsProjectId
+      ? { project_id: dataset.analyticsProjectId }
+      : undefined;
+    return track(event, properties, provider);
+  } catch {
+    return false;
+  }
 }
 
 interface AnalyticsTarget {
@@ -64,12 +74,16 @@ export function initializeAnalytics(
   host: UmamiHost = window as unknown as UmamiHost,
 ): () => void {
   const listener: EventListener = (event) => {
-    if (!hasClosestTarget(event.target)) return;
+    try {
+      if (!hasClosestTarget(event.target)) return;
 
-    const element = event.target.closest("[data-analytics-event]");
-    if (!element) return;
+      const element = event.target.closest("[data-analytics-event]");
+      if (!element) return;
 
-    trackElement(element.dataset, createUmamiProvider(host));
+      trackElement(element.dataset, createUmamiProvider(host));
+    } catch {
+      // Analytics must never affect the underlying interaction.
+    }
   };
 
   root.addEventListener("click", listener, true);

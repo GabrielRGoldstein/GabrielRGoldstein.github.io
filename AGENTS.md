@@ -5,7 +5,9 @@
 - Production code lives in this `site/` repository.
 - The parent `../sketches/` directory is read-only design reference material.
 - Follow `docs/IMPLEMENTATION_STATUS.md` and complete only the active implementation batch.
-- Preserve the locked original gallery layout, Refined DMG palette, Geist typography, and Study 2 contact footer.
+- Preserve the approved Sketch 11 Editorial Links direction: Refined DMG palette, Geist typography, grouped editorial section headers, image-led project cards, compact Experience rows, and no standalone About section.
+- Preserve the current contact footer unless Gabriel separately approves a footer change.
+- Keep essential content and direct links usable without analytics; use defensive vanilla JavaScript only for progressive enhancement.
 - Do not introduce React, Tailwind, a CMS, a database, or runtime server behavior without a revised plan and explicit approval.
 
 ## Commands

@@ -1,5 +1,7 @@
 # Sketch 11 parity, lean verification, and project scaling
 
+> **Historical/superseded audit.** This document records the 2026-08-12 Batch 6.1 baseline and recommendations. Batch 10.1 later adopted the approved Editorial Links redesign and implemented accessible project dialogs using verified existing content. Present-tense statements below describe that older baseline; current implementation state and continuation live in `IMPLEMENTATION_STATUS.md`.
+
 Date: 2026-08-12
 Production baseline: `ab898e2 feat: polish responsive SEO and performance`
 Reference: `../sketches/011-contact-footer-variations/primary-cta-buttons/index.html`

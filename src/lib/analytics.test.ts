@@ -81,4 +81,48 @@ describe("analytics", () => {
     expect(track("email_click", { email: "visitor@example.com" }, provider)).toBe(false);
     expect(provider.dispatch).not.toHaveBeenCalled();
   });
+
+  it("contains hostile property enumeration and value access", () => {
+    const provider: AnalyticsProvider = { dispatch: vi.fn() };
+    const throwingKeys = new Proxy(
+      { project_id: "dependable-tools" },
+      {
+        ownKeys() {
+          throw new Error("ownKeys failure");
+        },
+      },
+    ) as AnalyticsProperties;
+    const throwingValue = {} as AnalyticsProperties;
+    Object.defineProperty(throwingValue, "project_id", {
+      enumerable: true,
+      get() {
+        throw new Error("property getter failure");
+      },
+    });
+    const hiddenProperty = { project_id: "dependable-tools" } as AnalyticsProperties;
+    Object.defineProperty(hiddenProperty, "visitor", {
+      value: "hidden",
+      enumerable: false,
+    });
+    const symbolProperty = {
+      project_id: "dependable-tools",
+      [Symbol("visitor")]: "hidden",
+    } as AnalyticsProperties;
+    const inheritedProperty = Object.assign(
+      Object.create({ visitor: "hidden" }),
+      { project_id: "dependable-tools" },
+    ) as AnalyticsProperties;
+
+    for (const properties of [
+      throwingKeys,
+      throwingValue,
+      hiddenProperty,
+      symbolProperty,
+      inheritedProperty,
+    ]) {
+      expect(() => track("project_open", properties, provider)).not.toThrow();
+      expect(track("project_open", properties, provider)).toBe(false);
+    }
+    expect(provider.dispatch).not.toHaveBeenCalled();
+  });
 });
