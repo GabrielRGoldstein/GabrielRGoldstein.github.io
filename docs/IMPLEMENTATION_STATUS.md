@@ -1,6 +1,6 @@
 # Portfolio Implementation Status
 
-Last updated: 2026-08-24 20:11 MDT
+Last updated: 2026-08-24 20:48 MDT
 
 ## Locked design decisions
 
@@ -17,9 +17,17 @@ Last updated: 2026-08-24 20:11 MDT
 
 ## Current batch
 
-Batch 10.2 — Clickable Project Cards — **focused interaction follow-up**
+Batch 10.3 — Authentic Project Media and Résumé — **accepted locally; ready for protected shipping**
 
-Batch 10.1 is deployed. This focused follow-up lets pointer users open a project dialog by clicking non-interactive space anywhere in an enhanced card while retaining the explicit Explore button for keyboard access and preserving Repository/Live Demo link behavior.
+Batch 10.2 is deployed. This final content pass replaces the public résumé at its stable path and replaces three conceptual covers with user-supplied, audited screenshots for Discord Clone, ML Stock Trading Bot, and Ceiling Sam. Responsive card crops preserve useful focal regions while fuller WebP captures appear in project dialogs.
+
+## Batch 10.3 implementation checkpoint
+
+- Replaced `/documents/gabriel-goldstein-resume.pdf` byte-for-byte with the user-approved two-page source while preserving the existing download URL and `resume_download` analytics path.
+- Audited all three supplied screenshots for attribution, public safety, orientation, dimensions, and suitability. Discord contains only a test server and empty general channel; the trading image is described as a strategy/backtest visualization; Ceiling Sam is a public storefront capture.
+- Authored 640×400, 800×500, and 1600×1000 metadata-stripped WebP covers plus fuller dialog WebPs. Discord uses a tighter lower-left card crop; Trading keeps the main chart while the dialog restores the range selector; Ceiling Sam keeps the storefront hero while the dialog restores the lower CTA section.
+- Retained the intentional 24/7 AI Livestream illustration because no authentic screenshot was supplied.
+- Completed desktop card/dialog review and true 390px Chromium card/dialog review with no horizontal overflow, broken images, interaction regressions, or clipping. Gabriel approved the current treatment for shipping.
 
 ## Batch 10.1 implementation checkpoint
 
@@ -374,7 +382,7 @@ Independent fail-closed review:
 
 ## Intentional placeholders and pending content
 
-- Project covers are intentional conceptual illustrations, not screenshots. Replace them only if audited real project imagery becomes available later.
+- Discord Clone, ML Stock Trading Bot, and Ceiling Sam use audited real screenshots. The 24/7 AI Livestream cover remains an intentional conceptual illustration until audited real project imagery becomes available.
 - Discord Clone and ML Stock Trading Bot use only their audited public repository URLs. The other two repository destinations and all live-demo destinations remain `null` until each public-safe URL is independently verified.
 - Experience details remain fully visible in static HTML and are progressively enhanced into optional disclosures only after JavaScript validates each control/panel pair.
 
@@ -387,8 +395,9 @@ Independent fail-closed review:
 - No Batch 8 blocker remains: the latest reviewed evidence commit is deployed; hosted Quality/Security, retained Lighthouse artifacts, direct production validation, and administrator-enforced repository controls passed.
 - Batch 9 selected Umami Cloud, implemented and deployed the fail-closed adapter/build/deployment contract, configured both public repository variables, verified the live tracker plus genuine custom-event ingestion, and completed its protected production-test closeout on `main`.
 - Batch 10.1 shipped through protected pull request #16 as merge commit `52d4aece80667bec0ff29d5c08a405a790779a52`; hosted `verify`, `codeql`, `secrets`, and Pages deployment passed, deployment `6074965881` succeeded for the exact SHA, and production visual/DOM smoke checks passed.
-- Batch 10.2 uses RED/GREEN browser coverage for whole-card pointer activation, direct-link exclusion, close-button focus, and trigger focus restoration. Adjacent keyboard and hostile-event-target dialog regressions pass.
+- Batch 10.2 shipped through protected pull request #17 as merge commit `377f5bbed20090d1e83ee7dd2250bd6315f33c60`; hosted `verify`, `codeql`, `secrets`, and Pages deployment passed, and production whole-card activation was verified.
+- Batch 10.3 replaces the approved public résumé and integrates three approved authentic screenshot sets without changing the deployed interaction model.
 
 ## Exact continuation
 
-Batch 10.2 is in progress on `feat/clickable-project-cards` from deployed protected `main`. Keep this interaction batch separate from the later screenshot-content pass; use the focused dialog tests locally and protected hosted checks for merge/deployment.
+Batch 10.3 is in progress on `content/project-screenshots-resume` from deployed protected `main`. Run one complete local gate, ship through a protected pull request, verify the exact Pages deployment SHA and production assets, then request final acceptance before creating any launch/freeze tag.
