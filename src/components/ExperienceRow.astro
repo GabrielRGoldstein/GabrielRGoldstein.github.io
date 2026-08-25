@@ -8,13 +8,8 @@ interface Props {
 const { experience } = Astro.props;
 const detailsId = `${experience.id}-details`;
 
-function formatMonth(value: string): string {
-  const [year, month] = value.split("-").map(Number);
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    year: "numeric",
-    timeZone: "UTC",
-  }).format(new Date(Date.UTC(year, month - 1, 1)));
+function formatYear(value: string): string {
+  return value.slice(0, 4);
 }
 ---
 
@@ -27,12 +22,12 @@ function formatMonth(value: string): string {
     {
       experience.periods.map((period) => (
         <span class="experience-row__period">
-          <time datetime={period.start}>{formatMonth(period.start)}</time>
+          <time datetime={period.start}>{formatYear(period.start)}</time>
           <span>–</span>
           {period.end === null ? (
             <span>Present</span>
           ) : (
-            <time datetime={period.end}>{formatMonth(period.end)}</time>
+            <time datetime={period.end}>{formatYear(period.end)}</time>
           )}
         </span>
       ))
@@ -43,7 +38,6 @@ function formatMonth(value: string): string {
     <header class="experience-row__heading">
       <p class="experience-row__company">{experience.company}</p>
       <h3 id={`${experience.id}-role`}>{experience.role}</h3>
-      <p class="experience-row__location">{experience.location}</p>
     </header>
 
     <div class="experience-row__intro">
@@ -62,6 +56,7 @@ function formatMonth(value: string): string {
     </div>
 
     <div id={detailsId} class="experience-row__details" data-experience-panel>
+      <p class="experience-row__details-meta">{experience.location}</p>
       <ul class="experience-row__highlights" aria-label={`Highlights from ${experience.company}`}>
         {experience.highlights.map((highlight) => <li>{highlight}</li>)}
       </ul>

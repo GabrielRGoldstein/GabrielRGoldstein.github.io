@@ -13,12 +13,13 @@
       "alt": "Designed project cover illustrating Discord Clone servers, channels, and live messaging",
       "width": 1600,
       "height": 1000,
+      "objectPosition": "top",
       "sources": [
         { "src": "/images/projects/discord-clone-640.webp", "width": 640 },
         { "src": "/images/projects/discord-clone-800.webp", "width": 800 }
       ]
     },
-    "repositoryUrl": null,
+    "repositoryUrl": "https://github.com/GabrielRGoldstein/DiscordClone",
     "liveUrl": null
   },
   {
@@ -36,11 +37,17 @@
       "width": 1600,
       "height": 1000,
       "sources": [
-        { "src": "/images/projects/ml-stock-trading-bot-640.webp", "width": 640 },
-        { "src": "/images/projects/ml-stock-trading-bot-800.webp", "width": 800 }
+        {
+          "src": "/images/projects/ml-stock-trading-bot-640.webp",
+          "width": 640
+        },
+        {
+          "src": "/images/projects/ml-stock-trading-bot-800.webp",
+          "width": 800
+        }
       ]
     },
-    "repositoryUrl": null,
+    "repositoryUrl": "https://github.com/GabrielRGoldstein/Python-Trading-Bot",
     "liveUrl": null
   },
   {

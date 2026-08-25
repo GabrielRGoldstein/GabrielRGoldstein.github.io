@@ -11,15 +11,21 @@ const layoutFor = (index: number) => (index === 0 ? "wide" : index === 1 ? "narr
 ---
 
 <section class="content-section" id="work" aria-labelledby="work-title">
-  <header class="section-header">
-    <h2 id="work-title">Selected projects</h2>
-    <div class="section-header__summary">
+  <header class="section-header section-header--projects">
+    <div class="section-header__intro">
+      <h2 id="work-title">Selected projects</h2>
       <p>Production-minded work spanning real-time systems, AI, commerce, and data.</p>
-      <span>{projects.length} selected {projects.length === 1 ? "project" : "projects"}</span>
     </div>
+    <span class="section-header__count">
+      {projects.length} selected {projects.length === 1 ? "project" : "projects"}
+    </span>
   </header>
 
   <div class="project-grid">
     {projects.map((project, index) => <ProjectCard project={project} layout={layoutFor(index)} />)}
   </div>
 </section>
+
+<script>
+  import "../scripts/project-dialogs";
+</script>

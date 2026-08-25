@@ -6,38 +6,40 @@ The site is a static Astro project. Design studies and portable wireframes remai
 
 ## Current design direction
 
-- Original project-gallery layout
+- Sketch 11 Editorial Links composition with coordinated 7/5 project emphasis
 - Refined DMG color system
 - Geist + Geist Mono typography
 - Inline GitHub identity
-- Selected projects above expandable professional experience
+- Image-led project cards with accessible native-dialog details
+- Selected projects above compact, initially collapsed professional experience
 - No standalone About section
 - Contact footer with a primary email CTA and secondary GitHub, LinkedIn, and résumé actions
 
 ## Requirements
 
-- Node.js 22.12 or newer
+- Node.js 22.19 or newer
 - npm 10 or newer
 
 ## Commands
 
 Run commands from this `site/` directory.
 
-| Command | Purpose |
-| --- | --- |
-| `npm ci` | Reproduce the exact locked dependency tree |
-| `npm run dev` | Start the Astro development server |
-| `npm run check` | Run Astro and TypeScript diagnostics |
-| `npm test -- --run` | Run the content-contract test suite once |
-| `npm run test:e2e` | Build and test generated output through `astro preview` |
+| Command                                                                      | Purpose                                                                                       |
+| ---------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| `npm ci`                                                                     | Reproduce the exact locked dependency tree                                                    |
+| `npm run dev`                                                                | Start the Astro development server                                                            |
+| `npm run check`                                                              | Run Astro and TypeScript diagnostics                                                          |
+| `npm test -- --run`                                                          | Run the complete Vitest unit, content, component, quality, and automation suite once          |
+| `npm run test:e2e`                                                           | Build and test generated output through `astro preview`                                       |
 | `PRODUCTION_URL=https://gabrielrgoldstein.github.io npm run test:production` | Run the browser suite against the exact deployed HTTPS origin without starting a local server |
-| `npm run build` | Generate the static production site in `dist/` |
-| `npm run check:built` | Validate generated internal routes, fragments, and assets |
-| `npm run check:analytics` | Validate the generated analytics state and exact privacy-configured tracker contract |
-| `npm run check:workflows` | Parse workflow YAML and enforce immutable action SHAs |
-| `npm run lighthouse` | Build, run two Lighthouse audits, enforce budgets, and write ignored reports |
-| `npm run quality` | Run unit, type/static, production-browser, built-output, workflow, and dependency gates |
-| `npm run preview` | Preview the generated production build |
+| `npm run build`                                                              | Generate the static production site in `dist/`                                                |
+| `npm run check:built`                                                        | Validate generated internal routes, fragments, and assets                                     |
+| `npm run check:analytics`                                                    | Validate the generated analytics state and exact privacy-configured tracker contract          |
+| `npm run check:workflows`                                                    | Parse workflow YAML and enforce immutable action SHAs                                         |
+| `npm run lighthouse`                                                         | Build, run two Lighthouse audits, enforce budgets, and write ignored reports                  |
+| `npm run quality`                                                            | Run unit, type/static, production-browser, built-output, workflow, and dependency gates       |
+| `npm run preview`                                                            | Preview the generated production build                                                        |
+| `NODE_DISABLE_COMPILE_CACHE=1 npm run --silent project:image -- --slug <slug> --source <path> --alt <text> > <outside-repo>.tar` | Prepare a validated stdout-only project-image review archive; the shell chooses its destination |
 
 `npm run quality` is the canonical local CI equivalent. Its Playwright command owns `127.0.0.1:4325` with `reuseExistingServer: false`, builds first, and tests production output rather than Astro's development server. `npm run lighthouse` starts Astro's programmatic production preview on a kernel-assigned `127.0.0.1` port, verifies the served root exactly matches `dist/index.html`, requires each report to identify that URL, and verifies server shutdown. Generated JSON reports live under ignored `.lighthouseci/`.
 
@@ -45,7 +47,7 @@ Run commands from this `site/` directory.
 
 Repository-contained automation targets the confirmed public repository [`GabrielRGoldstein/GabrielRGoldstein.github.io`](https://github.com/GabrielRGoldstein/GabrielRGoldstein.github.io):
 
-- `.github/workflows/quality.yml` runs on pull requests, pushes to `main`, and manual dispatch. Its verification job has only `contents: read` plus the `pages: read` required to query configured Pages metadata, uses an exact Node 22.23.2 runtime, runs `npm ci`, the canonical quality gate, and Lighthouse budgets. Playwright failure evidence and Lighthouse JSON are retained as short-lived workflow artifacts instead of being committed; the Lighthouse upload explicitly includes its hidden report directory and fails if expected reports are absent. Browser tests run with analytics disabled for determinism. A successful `main` push then rebuilds `dist/` with public repository analytics variables, validates internal references plus the exact generated analytics contract, runs Lighthouse against that already-final artifact without rebuilding it, uploads only that same `dist/`, and deploys it from a dedicated job whose only write capabilities are `pages: write` and `id-token: write`.
+- `.github/workflows/quality.yml` runs on pull requests, pushes to `main`, and manual dispatch. Its required `verify` job has only `contents: read` plus the `pages: read` required to query configured Pages metadata, uses exact Node 22.23.2, runs `npm ci`, the canonical quality gate, and Lighthouse budgets. Playwright failure evidence and Lighthouse JSON are retained as short-lived workflow artifacts instead of being committed; the Lighthouse upload explicitly includes its hidden report directory and fails if expected reports are absent. Browser tests run with analytics disabled for determinism. A successful `main` push then rebuilds `dist/` with public repository analytics variables, validates internal references plus the exact generated analytics contract, runs Lighthouse against that already-final artifact without rebuilding it, uploads only that same `dist/`, and deploys it from a dedicated job whose only write capabilities are `pages: write` and `id-token: write`.
 - `.github/workflows/security.yml` runs CodeQL for JavaScript/TypeScript and a complete-history Gitleaks scan on pull requests, pushes to `main`, a weekly schedule, and manual dispatch. The scanner downloads the exact Gitleaks 8.30.1 Linux archive, verifies its committed SHA-256 before extraction, and does not infer a partial event range. Only the CodeQL job receives `security-events: write`.
 - `.github/dependabot.yml` schedules bounded weekly npm and GitHub Actions updates.
 - Every third-party action is pinned to a full commit SHA. Dependabot maintains those immutable references, and `npm run check:workflows` rejects floating action tags.
@@ -70,15 +72,15 @@ Both values absent is the only disabled configuration. Partial values, an unknow
 
 The stable custom-event dictionary is:
 
-| Event | Trigger | Permitted properties |
-| --- | --- | --- |
-| `project_open` | Reserved for a future audited project-detail interaction; not currently emitted | `project_id` |
-| `project_repository_click` | Authored public repository link | `project_id` |
-| `project_demo_click` | Authored public live-demo link | `project_id` |
-| `resume_download` | Header or contact résumé action | none |
-| `github_profile_click` | Hero or contact GitHub action | none |
-| `linkedin_click` | Contact LinkedIn action | none |
-| `email_click` | Contact email action | none |
+| Event                      | Trigger                                | Permitted properties |
+| -------------------------- | -------------------------------------- | -------------------- |
+| `project_open`             | Open a validated project-detail dialog | `project_id`         |
+| `project_repository_click` | Authored public repository link        | `project_id`         |
+| `project_demo_click`       | Authored public live-demo link         | `project_id`         |
+| `resume_download`          | Header or contact résumé action        | none                 |
+| `github_profile_click`     | Hero or contact GitHub action          | none                 |
+| `linkedin_click`           | Contact LinkedIn action                | none                 |
+| `email_click`              | Contact email action                   | none                 |
 
 Only a bounded lowercase authored project slug may become `project_id`. Unexpected keys or malformed project identifiers reject the event before dispatch. Names, email addresses, link URLs, query strings, hash fragments, free-form text, résumé contents, and other visitor/user-provided values are not custom-event properties. Umami Cloud remains an external processor of tracker requests under its own published terms; this repository does not claim that ordinary network metadata never reaches the provider.
 
@@ -105,9 +107,29 @@ To add a project:
 1. Add one JSON object with a unique `id`, `slug`, and `order`.
 2. Set `selected` to control homepage inclusion.
 3. Add a public-safe summary, category, stack, and honest `null` or confirmed HTTP(S) project links.
-4. Add a repository-owned base cover under `public/images/projects/` and author its root-relative `src`, `alt`, `width`, and `height`.
-5. Optionally add a `cover.sources` array of responsive image paths and intrinsic widths. If it is omitted, the base cover renders by itself; the component never guesses filenames.
-6. Run `npm test -- --run`, `npm run check`, and `npm run build`.
+4. Run the repository-owned preparation command shown below. It validates one immutable source snapshot, creates the card derivatives, preserves a full-aspect dialog image, strips source metadata through re-encoding, and streams a proposed project record plus integrity manifest without performing output filesystem writes.
+5. Keep the redirected tar archive outside the repository. List or extract it into a separate review directory, then inspect `manifest.json`, every generated crop, and `projects.json.proposed`. If the source, crop, alt text, or focal position needs adjustment, discard the archive, make the corresponding public-safe authored-input change, and regenerate; never edit an extracted file or proposal because that invalidates its manifest digest.
+6. Stop at review. This prepare-only workflow deliberately provides no promotion command, direct pathname-copy recipe, replacement procedure, or recovery recipe. Archive verification does not authorize writing any archive member into the repository. In particular, do not copy these files over `public/images/projects/` or `src/data/projects.json`, and do not rely on `git restore` as transaction recovery: it cannot undo writes through redirected or multiply linked destinations and does not remove new untracked files.
+7. If the reviewed result is accepted, open a separate implementation change in a newly created, clean, isolated checkout with no untrusted or concurrent local writer. Author the accepted files there as ordinary Git source changes, review every staged byte, and run the complete repository gates. If that isolation guarantee cannot be established, do not incorporate the archive. Designing and validating a publication mechanism is intentionally outside this command's authority and outside this workflow.
+8. Author only verified public repository/demo URLs; `null` remains the honest state when a destination has not been audited.
+9. Review `git diff`, then run `npm test -- --run`, `npm run check`, and `npm run build`.
+
+```bash
+NODE_DISABLE_COMPILE_CACHE=1 npm run --silent project:image -- \
+  --slug example-project \
+  --source "C:/path/to/site/public-safe-screenshot.png" \
+  --alt "Example Project dashboard showing the primary workflow" \
+  > "C:/path/outside-site/example-project-review.tar"
+
+tar -tf "C:/path/outside-site/example-project-review.tar"
+mkdir -p "C:/path/outside-site/example-project-review"
+tar -xf "C:/path/outside-site/example-project-review.tar" \
+  -C "C:/path/outside-site/example-project-review"
+```
+
+The project record with that slug and the non-hard-linked source file must already exist under the canonical repository root. Accepted sources are single-image JPEG, PNG, WebP, or AVIF files no larger than 25 MiB or 40 megapixels. After EXIF orientation is applied, the usable canvas must be at least 1600 × 1000. Every transform reads the same bounded in-memory snapshot. The command asserts Sharp's actual output metadata before authoring JSON, then embeds 640 × 400, 800 × 500, and 1600 × 1000 WebP card crops plus a full-aspect WebP bounded to 1600 × 1600.
+
+Preparation is deliberately output-filesystem-free when invoked exactly as documented. `NODE_DISABLE_COMPILE_CACHE=1` must be present before `npm` starts; do not omit it, because Node may otherwise create compile-cache files under an attacker-selected temporary directory before the repository script runs. In PowerShell, set `$env:NODE_DISABLE_COMPILE_CACHE = "1"` before invoking the same npm command. The command reads canonical, non-redirected, non-hard-linked repository inputs; requires fatal UTF-8 decoding, duplicate-key-free JSON, and no schema transformation through the shared strict production Zod schema; rejects symlinks, junctions, duplicate collection/list/image values, unsafe IDs, unsupported formats, animation, and resource-limit violations; constructs all outputs in memory; and writes one deterministic tar stream to stdout. `npm run --silent` prevents npm banners from corrupting that stream, while the shell redirection makes the operator—not the command—choose the archive destination. The archive contains four WebPs, `projects.json.proposed`, and `manifest.json`; the manifest records source/current-project SHA-256 digests plus every embedded derivative and proposal byte length, digest, and dimensions. The exact documented invocation never creates, deletes, renames, truncates, or overwrites an output path and never uses a temporary bundle. This workflow ends at archive review and intentionally specifies no promotion mechanism; a stale source hash always requires regeneration.
 
 Example cover configuration:
 
@@ -117,6 +139,7 @@ Example cover configuration:
   "alt": "Designed project cover illustrating Example Project",
   "width": 1600,
   "height": 1000,
+  "objectPosition": "center",
   "sources": [
     { "src": "/images/projects/example-project-640.webp", "width": 640 },
     { "src": "/images/projects/example-project-800.webp", "width": 800 }
@@ -124,7 +147,11 @@ Example cover configuration:
 }
 ```
 
-The first two selected projects receive a 7/5 wide/narrow desktop emphasis adapted from Sketch 11. This moderated split preserves a clear featured hierarchy without compressing the secondary cover or creating the excessive dead space produced by the sketch's stronger 8/4 ratio. Every later selected project uses the repeatable half-width card treatment, and all cards stack in one column below the gallery breakpoint. Filters, pagination, and project modals remain intentionally absent until the collection or case-study content creates a real need.
+The first two selected projects receive a 7/5 wide/narrow desktop emphasis adapted from Sketch 11. Their coordinated visual stages and compact card bodies share a bottom edge, preventing the conventional CSS Grid dead zone that previously appeared under the shorter card. Every later selected project uses the repeatable half-width treatment, and all cards stack in one column below the gallery breakpoint. Filters and pagination remain intentionally absent with four selected projects.
+
+Each selected project emits a native `<dialog>` containing only existing audited content: cover or gallery image, category/title, public-safe summary, technology stack, and verified actions. The defensive vanilla-JavaScript controller feature-detects the native API and exposes a trigger only after validating the button/dialog/close, containing card, fallback, and local ARIA-reference relationships. Native modal isolation and Escape behavior are supplemented by explicit forward/reverse Tab wrapping and outside-focus recapture; every close path restores focus to the opener. `project_open` is validated and dispatched only after `showModal()` succeeds, analytics property discovery is exception-contained, and analytics failures cannot control the dialog. Summaries, configured direct links, every technology stack, and the honest pending-link state are ordinary static DOM. Successful dialog enhancement hides only the duplicated fallback details; missing native APIs or a thrown `showModal()` leave or restore those details, and no JavaScript leaves them readable while inert triggers stay hidden. Richer problem/contribution/outcome copy and additional gallery images must come from Gabriel-supplied public-safe sources; they are not fabricated during implementation.
+
+Discord Clone and ML Stock Trading Bot link directly to Gabriel's public, active `DiscordClone` and `Python-Trading-Bot` repositories. Each destination was matched against its repository README before authoring. The remaining project destinations stay `null` until an equally exact public source is verified.
 
 ## Fonts
 

@@ -35,10 +35,15 @@ function hasAllowedProperties(
   if (!PROJECT_EVENTS.has(event)) return properties === undefined;
   if (!properties) return false;
 
-  const keys = Object.keys(properties);
-  if (keys.length !== 1 || keys[0] !== "project_id") return false;
+  const prototype = Object.getPrototypeOf(properties);
+  if (prototype !== Object.prototype && prototype !== null) return false;
 
-  const projectId = properties.project_id;
+  const keys = Reflect.ownKeys(properties);
+  if (keys.length !== 1 || keys[0] !== "project_id") return false;
+  const descriptor = Object.getOwnPropertyDescriptor(properties, "project_id");
+  if (!descriptor?.enumerable || !("value" in descriptor)) return false;
+
+  const projectId = descriptor.value;
   return (
     typeof projectId === "string" &&
     projectId.length <= 64 &&
@@ -51,11 +56,15 @@ export function track(
   properties?: AnalyticsProperties,
   provider?: AnalyticsProvider,
 ): boolean {
-  if (!isAnalyticsEvent(event) || !provider || !hasAllowedProperties(event, properties)) {
-    return false;
-  }
-
   try {
+    if (
+      !isAnalyticsEvent(event) ||
+      !provider ||
+      !hasAllowedProperties(event, properties)
+    ) {
+      return false;
+    }
+
     provider.dispatch(event, properties);
     return true;
   } catch {

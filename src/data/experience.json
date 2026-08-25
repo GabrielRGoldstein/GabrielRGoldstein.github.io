@@ -1,6 +1,7 @@
 [
   {
     "id": "l3harris-test-integration-specialist",
+    "order": 1,
     "company": "L3Harris",
     "role": "Test and Integration Specialist",
     "location": "Colorado Springs, CO",
@@ -14,6 +15,7 @@
   },
   {
     "id": "nlogic-cyber-security-test-engineer",
+    "order": 2,
     "company": "nLogic",
     "role": "Cyber Security Test Engineer",
     "location": "Colorado Springs, CO",
@@ -27,6 +29,7 @@
   },
   {
     "id": "freelance-front-end-engineer",
+    "order": 3,
     "company": "Freelance",
     "role": "Front-End Engineer",
     "location": "Los Angeles, CA",
@@ -43,6 +46,7 @@
   },
   {
     "id": "general-motors-software-engineer",
+    "order": 4,
     "company": "General Motors",
     "role": "Software Engineer",
     "location": "Chandler, AZ",

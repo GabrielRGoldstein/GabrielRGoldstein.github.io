@@ -46,7 +46,7 @@ export function validateExperience(input: unknown): Experience[] {
     seenIds.add(role.id);
   }
 
-  return experience;
+  return [...experience].sort((left, right) => left.order - right.order);
 }
 
 export function validateProjects(input: unknown): Project[] {
