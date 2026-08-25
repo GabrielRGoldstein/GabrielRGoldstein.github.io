@@ -10,15 +10,23 @@
     "stack": ["Next.js", "React", "Prisma", "SQL", "Tailwind CSS"],
     "cover": {
       "src": "/images/projects/discord-clone.webp",
-      "alt": "Designed project cover illustrating Discord Clone servers, channels, and live messaging",
+      "alt": "Discord Clone interface showing a test server, general channel, and real-time status",
       "width": 1600,
       "height": 1000,
-      "objectPosition": "top",
+      "objectPosition": "bottom left",
       "sources": [
         { "src": "/images/projects/discord-clone-640.webp", "width": 640 },
         { "src": "/images/projects/discord-clone-800.webp", "width": 800 }
       ]
     },
+    "gallery": [
+      {
+        "src": "/images/projects/discord-clone-detail.webp",
+        "alt": "Full Discord Clone workspace with server navigation, general channel, message composer, and real-time status",
+        "width": 1600,
+        "height": 821
+      }
+    ],
     "repositoryUrl": "https://github.com/GabrielRGoldstein/DiscordClone",
     "liveUrl": null
   },
@@ -33,7 +41,7 @@
     "stack": ["Python", "FinBERT", "Alpaca API", "NLP"],
     "cover": {
       "src": "/images/projects/ml-stock-trading-bot.webp",
-      "alt": "Designed project cover illustrating ML Stock Trading Bot sentiment and paper-trading signals",
+      "alt": "MLTrader backtest chart comparing the strategy with SPY and displaying buy and sell markers",
       "width": 1600,
       "height": 1000,
       "sources": [
@@ -47,6 +55,14 @@
         }
       ]
     },
+    "gallery": [
+      {
+        "src": "/images/projects/ml-stock-trading-bot-detail.webp",
+        "alt": "Full MLTrader backtest visualization with strategy, SPY, cash, buy, and sell series from 2020 through 2023",
+        "width": 1600,
+        "height": 1206
+      }
+    ],
     "repositoryUrl": "https://github.com/GabrielRGoldstein/Python-Trading-Bot",
     "liveUrl": null
   },
@@ -83,7 +99,7 @@
     "stack": ["Shopify", "JavaScript", "HTML", "CSS"],
     "cover": {
       "src": "/images/projects/ceiling-sam.webp",
-      "alt": "Designed project cover illustrating the Ceiling Sam Shopify storefront",
+      "alt": "Ceiling Sam storefront showing navigation and a garage storage elevator hero",
       "width": 1600,
       "height": 1000,
       "sources": [
@@ -91,6 +107,14 @@
         { "src": "/images/projects/ceiling-sam-800.webp", "width": 800 }
       ]
     },
+    "gallery": [
+      {
+        "src": "/images/projects/ceiling-sam-detail.webp",
+        "alt": "Full Ceiling Sam storefront with product navigation, storage elevator hero, and shopping calls to action",
+        "width": 1341,
+        "height": 1204
+      }
+    ],
     "repositoryUrl": null,
     "liveUrl": null
   }
