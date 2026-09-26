@@ -496,6 +496,11 @@
   object-fit: contain;
 }
 
+/* The full-width editor proof needs the figure's grid track, not its UA 40px margin. */
+#project-figma-clone-dialog .project-dialog__visual {
+  margin: 0;
+}
+
 .project-dialog__content {
   display: flex;
   min-width: 0;
@@ -545,8 +550,9 @@
 
 .project-dialog__links {
   display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-4);
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
   margin-top: var(--space-3);
 }
 
@@ -918,6 +924,10 @@
     max-height: 28rem;
   }
 
+  #project-figma-clone-dialog .project-dialog__visual {
+    padding: var(--space-1);
+  }
+
   .project-dialog__content {
     justify-content: start;
   }
@@ -1032,5 +1042,59 @@
 @media (max-width: 30rem) {
   .site-nav__experience {
     display: none;
+  }
+}
+
+/* Proof-first selected-project gallery */
+.project-card--reverse { grid-column: span 5; }
+.project-card--feature { grid-column: span 7; }
+.project-card--feature:nth-of-type(5) {
+  grid-column: 1 / -1;
+  flex-direction: row;
+}
+.project-card--feature:nth-of-type(5) .project-card__visual {
+  width: 58.333%;
+  height: auto;
+  min-height: 19rem;
+  border-right: 1px solid var(--color-border);
+  border-bottom: 0;
+}
+.project-card--feature:nth-of-type(5) .project-card__visual img { height: 100%; }
+.project-card--feature:nth-of-type(5) .project-card__body { width: 41.667%; }
+.project-card__visual { position: relative; }
+.project-card__evidence {
+  position: absolute;
+  right: var(--space-3);
+  bottom: var(--space-3);
+  left: var(--space-3);
+  width: fit-content;
+  max-width: calc(100% - 2 * var(--space-3));
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background: var(--color-nav);
+  color: var(--color-text);
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  line-height: 1.4;
+}
+.project-card__open {
+  margin: 0;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  letter-spacing: inherit;
+}
+[data-project-static-title][hidden] { display: none; }
+.project-card__links { margin-top: 0; }
+@media (max-width: 53.125rem) {
+  .project-card--reverse, .project-card--feature { grid-column: 1 / -1; }
+  .project-card--feature:nth-of-type(5) { flex-direction: column; }
+  .project-card--feature:nth-of-type(5) .project-card__visual,
+  .project-card--feature:nth-of-type(5) .project-card__body { width: 100%; }
+  .project-card--feature:nth-of-type(5) .project-card__visual {
+    min-height: 0;
+    border-right: 0;
+    border-bottom: 1px solid var(--color-border);
   }
 }

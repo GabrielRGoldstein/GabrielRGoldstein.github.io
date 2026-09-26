@@ -3,7 +3,7 @@ import type { Project } from "../schemas/content";
 
 interface Props {
   project: Project;
-  layout?: "wide" | "narrow" | "standard";
+  layout?: "wide" | "narrow" | "standard" | "reverse" | "feature";
 }
 
 const { project, layout = "standard" } = Astro.props;
@@ -14,6 +14,8 @@ const responsiveSizes = {
   wide: "(max-width: 53.125rem) calc(100vw - clamp(2.5rem, 8vw, 3.5rem) - 2px), (max-width: 81rem) calc((100vw - 4.375rem) * 0.583), 715px",
   narrow: "(max-width: 53.125rem) calc(100vw - clamp(2.5rem, 8vw, 3.5rem) - 2px), (max-width: 81rem) calc((100vw - 5.25rem) * 0.417), 505px",
   standard: "(max-width: 53.125rem) calc(100vw - clamp(2.5rem, 8vw, 3.5rem) - 2px), (max-width: 81rem) calc((100vw - 4.75rem) / 2), 610px",
+  reverse: "(max-width: 53.125rem) calc(100vw - clamp(2.5rem, 8vw, 3.5rem) - 2px), (max-width: 81rem) calc((100vw - 5.25rem) * 0.417), 505px",
+  feature: "(max-width: 53.125rem) calc(100vw - clamp(2.5rem, 8vw, 3.5rem) - 2px), (max-width: 81rem) calc((100vw - 4.375rem) * 0.583), 715px",
 };
 const srcset = project.cover.sources
   ? [
@@ -45,6 +47,7 @@ const dialogSrcset = project.gallery ? undefined : srcset;
       loading="lazy"
       decoding="async"
     />
+    {project.evidenceCaption && <span class="project-card__evidence">{project.evidenceCaption}</span>}
   </div>
 
   <div class="project-card__body">
@@ -52,7 +55,19 @@ const dialogSrcset = project.gallery ? undefined : srcset;
       <span class="project-card__index">{projectNumber} / Featured</span>
       <span class="project-card__category">{project.category}</span>
     </div>
-    <h3 id={`project-${project.slug}-title`}>{project.title}</h3>
+    <h3 id={`project-${project.slug}-title`}>
+      <span data-project-static-title>{project.title}</span>
+      <button
+        class="project-card__open"
+        type="button"
+        aria-label={`Open ${project.title} project details`}
+        aria-controls={dialogId}
+        aria-haspopup="dialog"
+        data-project-dialog-trigger
+        data-analytics-project-id={project.slug}
+        hidden
+      >{project.title}<span aria-hidden="true"> ↗</span></button>
+    </h3>
     <p>{project.summary}</p>
 
     <div class="project-card__fallback-details" data-project-dialog-fallback>
@@ -60,51 +75,13 @@ const dialogSrcset = project.gallery ? undefined : srcset;
       <ul aria-label={`${project.title} technologies`}>
         {project.stack.map((technology) => <li>{technology}</li>)}
       </ul>
-      {
-        !hasLinks && (
-          <p class="project-card__fallback-pending">
-            Public project links are pending review.
-          </p>
-        )
-      }
-    </div>
-
-    <button
-      class="project-card__open"
-      type="button"
-      aria-controls={dialogId}
-      aria-haspopup="dialog"
-      data-project-dialog-trigger
-      data-analytics-project-id={project.slug}
-      hidden
-    >
-      Explore {project.title}<span aria-hidden="true"> ↗</span>
-    </button>
-
-    {
-      hasLinks ? (
+      {hasLinks && (
         <div class="project-card__links" aria-label={`${project.title} links`}>
-          {project.repositoryUrl && (
-            <a
-              href={project.repositoryUrl}
-              target="_blank"
-              rel="noreferrer"
-              data-analytics-event="project_repository_click"
-              data-analytics-project-id={project.slug}
-            >Repository ↗</a>
-          )}
-          {project.liveUrl && (
-            <a
-              href={project.liveUrl}
-              target="_blank"
-              rel="noreferrer"
-              data-analytics-event="project_demo_click"
-              data-analytics-project-id={project.slug}
-            >Live demo ↗</a>
-          )}
+          {project.repositoryUrl && <a href={project.repositoryUrl} target="_blank" rel="noreferrer" data-analytics-event="project_repository_click" data-analytics-project-id={project.slug}>View repository</a>}
+          {project.liveUrl && <a href={project.liveUrl} target="_blank" rel="noreferrer" data-analytics-event="project_demo_click" data-analytics-project-id={project.slug}>{project.slug === "discord-clone" ? "View project (sign-in required)" : "View project"}</a>}
         </div>
-      ) : null
-    }
+      )}
+    </div>
   </div>
 </article>
 
@@ -155,7 +132,7 @@ const dialogSrcset = project.gallery ? undefined : srcset;
                 rel="noreferrer"
                 data-analytics-event="project_repository_click"
                 data-analytics-project-id={project.slug}
-              >Repository ↗</a>
+              >View repository</a>
             )}
             {project.liveUrl && (
               <a
@@ -164,12 +141,10 @@ const dialogSrcset = project.gallery ? undefined : srcset;
                 rel="noreferrer"
                 data-analytics-event="project_demo_click"
                 data-analytics-project-id={project.slug}
-              >Live demo ↗</a>
+              >{project.slug === "discord-clone" ? "View project (sign-in required)" : "View project"}</a>
             )}
           </div>
-        ) : (
-          <p class="project-dialog__pending">Public project links are pending review.</p>
-        )
+        ) : null
       }
     </div>
   </div>

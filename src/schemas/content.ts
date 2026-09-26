@@ -148,6 +148,7 @@ export const projectSchema = z
     title: nonEmptyString,
     category: nonEmptyString,
     summary: nonEmptyString,
+    evidenceCaption: nonEmptyString.max(120).optional(),
     stack: uniqueNonEmptyStrings("stack", 1, 24),
     cover: projectImageSchema
       .extend({

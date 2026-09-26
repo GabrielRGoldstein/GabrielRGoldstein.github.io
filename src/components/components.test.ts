@@ -118,7 +118,7 @@ describe("ProjectCard", () => {
     expect(html).toContain(
       `${String(project.order).padStart(2, "0")} / Featured`,
     );
-    expect(html).toContain("Public project links are pending review.");
+    expect(html).not.toContain("Public project links are pending review.");
     expect(html).not.toContain("Project links pending");
     expect(html).not.toContain("href=");
 
@@ -145,7 +145,7 @@ describe("ProjectCard", () => {
     expect(cardHtml).toContain("project-card__fallback-details");
     expect(cardHtml).toContain("data-project-dialog-fallback");
     expect(dialogHtml).toContain("project-dialog__stack");
-    expect(dialogHtml).toContain("Public project links are pending review.");
+    expect(dialogHtml).not.toContain("Public project links are pending review.");
 
     for (const technology of project.stack) {
       expect(cardHtml).toContain(`>${technology}</li>`);
@@ -168,7 +168,8 @@ describe("ProjectCard", () => {
     expect(html).toContain("data-project-dialog-close");
     expect(html).not.toContain('data-analytics-event="project_open"');
     expect(html).toContain(`data-analytics-project-id="${project.slug}"`);
-    expect(html).toContain(`Explore ${project.title}`);
+    expect(html).not.toContain(`Explore ${project.title}`);
+    expect(html).toContain(`Open ${project.title} project details`);
     expect(html).toContain(`aria-labelledby="${dialogId}-title"`);
     expect(html).toContain(`aria-describedby="${dialogId}-summary"`);
   });
@@ -246,6 +247,37 @@ describe("ProjectCard", () => {
     expect(html.match(/target="_blank"/g)).toHaveLength(4);
     expect(html.match(/rel="noreferrer"/g)).toHaveLength(4);
     expect(html).not.toContain("Project links pending");
+  });
+
+  it("renders the five approved CTA states with static links and a semantic title control", async () => {
+    const container = await AstroContainer.create();
+    const matrix = [
+      ["discord-clone", ["View repository", "View project (sign-in required)"]],
+      ["ml-stock-trading-bot", ["View repository"]],
+      ["ai-livestream", []],
+      ["ceiling-sam", ["View project"]],
+      ["figma-clone", ["View repository", "View project"]],
+    ] as const;
+    for (const [slug, labels] of matrix) {
+      const project = portfolioContent.projects.find((item) => item.slug === slug)!;
+      expect(project).toBeDefined();
+      const html = await container.renderToString(ProjectCard, { props: { project } });
+      const card = html.slice(0, html.indexOf("</article>"));
+      const dialog = html.slice(html.indexOf("<dialog"));
+      expect(card).toContain("data-project-dialog-fallback");
+      expect(card).toContain(`Open ${project.title} project details`);
+      expect(card).not.toContain(`Explore ${project.title}`);
+      expect(card.match(/class="project-card__links"/g) ?? []).toHaveLength(labels.length ? 1 : 0);
+      for (const label of labels) {
+        expect(card).toContain(label);
+        expect(dialog).toContain(label);
+      }
+      for (const url of [project.repositoryUrl, project.liveUrl].filter(Boolean)) {
+        expect(card).toContain(`href="${url}"`);
+        expect(dialog).toContain(`href="${url}"`);
+      }
+      expect(dialog).not.toContain("pending review");
+    }
   });
 
   it("uses only authored responsive image sources and dimensions", async () => {
@@ -342,7 +374,9 @@ describe("ProjectGrid", () => {
     );
     expect(html.match(/data-project-layout="wide"/g)).toHaveLength(1);
     expect(html.match(/data-project-layout="narrow"/g)).toHaveLength(1);
-    expect(html.match(/data-project-layout="standard"/g)).toHaveLength(5);
+    expect(html.match(/data-project-layout="reverse"/g)).toHaveLength(1);
+    expect(html.match(/data-project-layout="feature"/g)).toHaveLength(2);
+    expect(html.match(/data-project-layout="standard"/g)).toHaveLength(2);
 
     const titleOffsets = projects.map((project) => html.indexOf(project.title));
     expect(titleOffsets).toEqual([...titleOffsets].sort((a, b) => a - b));

@@ -5,6 +5,7 @@
     "selected": true,
     "order": 1,
     "title": "Discord Clone",
+    "evidenceCaption": "Product state · empty test channel",
     "category": "fullstack",
     "summary": "A real-time full-stack application with servers, channels, live messaging, and video and audio calls.",
     "stack": ["Next.js", "React", "Prisma", "SQL", "Tailwind CSS"],
@@ -24,11 +25,11 @@
         "src": "/images/projects/discord-clone-detail.webp",
         "alt": "Full Discord Clone workspace with server navigation, general channel, message composer, and real-time status",
         "width": 1600,
-        "height": 821
+        "height": 758
       }
     ],
     "repositoryUrl": "https://github.com/GabrielRGoldstein/DiscordClone",
-    "liveUrl": null
+    "liveUrl": "https://discordclone-production-5eb1.up.railway.app/servers/61d46ee4-4bc8-4ec7-85ff-6e10b218b492/channels/802c9d2c-780d-46eb-b11a-f0b0ab8e73ae"
   },
   {
     "id": "ml-stock-trading-bot",
@@ -36,6 +37,7 @@
     "selected": true,
     "order": 2,
     "title": "ML Stock Trading Bot",
+    "evidenceCaption": "Backtest visualization · not performance proof",
     "category": "data-ai",
     "summary": "A sentiment-informed paper-trading system with automated buy and sell decisions and bracket-order risk controls.",
     "stack": ["Python", "FinBERT", "Alpaca API", "NLP"],
@@ -72,12 +74,13 @@
     "selected": true,
     "order": 3,
     "title": "24/7 AI Livestream",
+    "evidenceCaption": "Player capture · supplied project screenshot",
     "category": "systems",
     "summary": "A high-availability microservice pipeline that eliminated full-pipeline downtime during service failures and increased voice throughput by roughly four times.",
     "stack": ["Docker", "Kubernetes", "Unity", "MongoDB"],
     "cover": {
       "src": "/images/projects/ai-livestream.webp",
-      "alt": "Designed project cover illustrating the AI Livestream pipeline from Discord prompts to a Unity scene",
+      "alt": "AI Livestream player showing a stylized game scene with cartoon characters and live controls",
       "width": 1600,
       "height": 1000,
       "sources": [
@@ -85,6 +88,12 @@
         { "src": "/images/projects/ai-livestream-800.webp", "width": 800 }
       ]
     },
+    "gallery": [{
+      "src": "/images/projects/ai-livestream-detail.webp",
+      "alt": "AI Livestream player capture showing a game scene and playback interface",
+      "width": 1189,
+      "height": 762
+    }],
     "repositoryUrl": null,
     "liveUrl": null
   },
@@ -94,8 +103,9 @@
     "selected": true,
     "order": 4,
     "title": "Ceiling Sam",
+    "evidenceCaption": "Public client storefront · captured state",
     "category": "client",
-    "summary": "A custom Shopify storefront developed around a client’s visual direction and associated with an approximately 50% sales lift.",
+    "summary": "A custom Shopify storefront developed around a client's visual direction; the image shows the client's public site, not independently verified sales results.",
     "stack": ["Shopify", "JavaScript", "HTML", "CSS"],
     "cover": {
       "src": "/images/projects/ceiling-sam.webp",
@@ -111,11 +121,40 @@
       {
         "src": "/images/projects/ceiling-sam-detail.webp",
         "alt": "Full Ceiling Sam storefront with product navigation, storage elevator hero, and shopping calls to action",
-        "width": 1341,
-        "height": 1204
+        "width": 1600,
+        "height": 806
       }
     ],
     "repositoryUrl": null,
-    "liveUrl": null
+    "liveUrl": "https://ceilingsam.com/"
+  },
+  {
+    "id": "figma-clone",
+    "slug": "figma-clone",
+    "selected": true,
+    "order": 5,
+    "title": "Figma Clone",
+    "evidenceCaption": "Editor interface · desktop capture",
+    "category": "fullstack",
+    "summary": "An editor-interface clone inspired by JS Mastery's design. The public page renders an editor on desktop; editing and mobile controls have not been verified.",
+    "stack": ["React", "Fabric.js", "Liveblocks"],
+    "cover": {
+      "src": "/images/projects/figma-clone.webp",
+      "alt": "FigPro editor canvas with shapes and text between Layers and Design panels",
+      "width": 1600,
+      "height": 1000,
+      "sources": [
+        { "src": "/images/projects/figma-clone-640.webp", "width": 640 },
+        { "src": "/images/projects/figma-clone-800.webp", "width": 800 }
+      ]
+    },
+    "gallery": [{
+      "src": "/images/projects/figma-clone-detail.webp",
+      "alt": "Full FigPro editor screenshot with toolbar, Layers and Design panels, and canvas shapes and text",
+      "width": 1600,
+      "height": 797
+    }],
+    "repositoryUrl": "https://github.com/GabrielRGoldstein/FigmaClone",
+    "liveUrl": "https://figmaclone-production.up.railway.app/"
   }
 ]
