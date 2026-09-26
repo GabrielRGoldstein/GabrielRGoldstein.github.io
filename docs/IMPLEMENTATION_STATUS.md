@@ -1,6 +1,6 @@
 # Portfolio Implementation Status
 
-Last updated: 2026-08-24 20:48 MDT
+Last updated: 2026-09-24
 
 ## Locked design decisions
 
@@ -17,7 +17,17 @@ Last updated: 2026-08-24 20:48 MDT
 
 ## Current batch
 
-Batch 10.3 — Authentic Project Media and Résumé — **accepted locally; ready for protected shipping**
+Batch 10.4 — Approved five-project proof-first gallery and audited actions — **independently reviewed local candidate; uncommitted, not released**
+
+The selected gallery now follows the approved Discord, trading, livestream, Ceiling Sam, and Figma order. The first row retains its coordinated 7/5 ratio; the second reverses that ratio; the fifth card spans the grid with a split visual/text treatment, stacking at mobile widths. All five cards use owner-supplied captures (not mockups), short evidence captions, responsive covers, and full-aspect detail images. The three documented live links and three public repositories appear only where audited; Discord labels its sign-in requirement. No unavailable AI Livestream destination was invented. The Ceiling Sam summary does not repeat an unverified sales result, and Figma copy does not claim unverified editing/mobile behavior.
+
+The semantic title becomes the only dialog trigger when the native dialog API is available; when JavaScript or dialog APIs fail, the plain title, complete technical details, and all six configured direct actions remain usable. On `showModal()` failure the title and links are restored. Five supplied source hashes match the study manifest. The Figma card/detail derivatives retain the full editor frame and mask only the canvas-floating app placeholder with a visible neutral circle; privacy masking is derivative-only and the canonical screenshot remains byte-identical. Independent pixel review rejected the first circle for a leftover bright source rim and rejected the dialog framing as shrunken. The bounded follow-up uses radius 27, verifies a 1,604-pixel RGB delta inside x=[1886,1940],y=[233,287], and removes the Figma dialog figure's default 40px margin (mobile padding 4px); `review/figma-mask-lineage.md` records hashes and comparison captures. The right Design panel, complete triangle, toolbar, and approved top-right placeholder remain in the full source frame outside the bounded mask. Subsequent independent media/pixel, stacked-action and browser reviews passed for the bounded candidate. Gabriel viewed and accepted the four actual desktop/mobile Figma and Discord stacked-dialog captures after disclosure that the mobile Figma close ring still overlaps the image corner; this is not blanket acceptance of unshown views. Owner-supplied rights/client permission has not been independently legally certified.
+
+Historical prepatch verification: `npm.cmd run quality` passed 172/172 tests, check zero diagnostics across 50 files, built two static pages, passed 34/34 e2e, validated two HTML / 51 internal references and two workflows, then **failed** at unchanged `npm audit --audit-level=high`: eight flagged package nodes (three moderate, four high, one critical; including Astro and pinned Sharp). The radius-27 derivatives were regenerated after that run; another `npm.cmd run build` passed with two pages and final Chromium 1440×900 / 390×844 captures of work, decoded dialog, focus and JS-disabled gallery were made in `review/`. The Figma dialog image decoded to 1600×797 with no page errors, rendering 626×312 desktop and 334×166 mobile; before/study/after viewport comparisons are in `review/*-figma-dialog-comparison.png`. The prepatch Windows Chrome launcher failed cleanup with EPERM; that attempt did not establish a Lighthouse pass.
+
+Current pre-documentation-change candidate: the authorized minimal dependency patch and independent review (`t_149c80b9`) reproduced normal `npm ci`, `npm run quality` (172/172 unit, 34/34 e2e, 52-file check with zero diagnostics, two-page build, two HTML / 51 references and two workflows), and zero-vulnerability full and production-only npm audits. Independent integrated reconciliation (`t_cbf6c332`) matched all 139 live tracked/untracked files byte-for-byte to the reviewed Linux Lighthouse archive (ZIP SHA-256 `943353be97aff1c749e1285b7b3b1be917ef0ba100718940765ea427f4450210`). The unchanged configured two-run postpatch Linux `lighthouse:built` gate passed every budget on that archived pre-documentation-change snapshot (`t_ee3449a9`, `t_8a6809bc`). Docker isolation was independently supported at original command level only; effective daemon/container settings could not be inspected after `--rm`, and the launched image tag was mutable. The historical eight-node audit and Windows EPERM are not current failures. Independent media, stacked-action, browser and integrated technical reviews passed within their stated scopes; protected hosted CI and production/release have not run for this candidate. This documentation edit changes the archived source identity: Lighthouse was **not** run on post-documentation-change source. Transfer of runtime evidence requires a future independent comparison of deployable build outputs. No commit, push, merge or deployment has been made from this candidate.
+
+Batch 10.3 — Authentic Project Media and Résumé — **historical shipped checkpoint; not the current release gate**
 
 Batch 10.2 is deployed. This final content pass replaces the public résumé at its stable path and replaces three conceptual covers with user-supplied, audited screenshots for Discord Clone, ML Stock Trading Bot, and Ceiling Sam. Responsive card crops preserve useful focal regions while fuller WebP captures appear in project dialogs.
 
@@ -380,10 +390,10 @@ Independent fail-closed review:
 - A separate narrow integrity review then certified the same exact tree, branch, HEAD, 12-path staged set, passing cached diff check, and zero unstaged or untracked files, closing the sole procedural blocker.
 ```
 
-## Intentional placeholders and pending content
+## Intentional placeholders and pending content (current Batch 10.4 candidate)
 
-- Discord Clone, ML Stock Trading Bot, and Ceiling Sam use audited real screenshots. The 24/7 AI Livestream cover remains an intentional conceptual illustration until audited real project imagery becomes available.
-- Discord Clone and ML Stock Trading Bot use only their audited public repository URLs. The other two repository destinations and all live-demo destinations remain `null` until each public-safe URL is independently verified.
+- All five featured projects use owner-supplied captures. The 24/7 AI Livestream has no verified public repository or demo URL; Ceiling Sam has an approved storefront URL but no repository URL. Trading has only a repository URL; Discord and Figma have audited repository and live URLs, with Discord's sign-in requirement explicit and Figma functionality not independently verified.
+- Batch 10.3 below is a historical checkpoint; its conceptual illustration and null demo URLs describe that earlier state, not this candidate.
 - Experience details remain fully visible in static HTML and are progressively enhanced into optional disclosures only after JavaScript validates each control/panel pair.
 
 ## Known blockers and deferred inputs
@@ -396,8 +406,8 @@ Independent fail-closed review:
 - Batch 9 selected Umami Cloud, implemented and deployed the fail-closed adapter/build/deployment contract, configured both public repository variables, verified the live tracker plus genuine custom-event ingestion, and completed its protected production-test closeout on `main`.
 - Batch 10.1 shipped through protected pull request #16 as merge commit `52d4aece80667bec0ff29d5c08a405a790779a52`; hosted `verify`, `codeql`, `secrets`, and Pages deployment passed, deployment `6074965881` succeeded for the exact SHA, and production visual/DOM smoke checks passed.
 - Batch 10.2 shipped through protected pull request #17 as merge commit `377f5bbed20090d1e83ee7dd2250bd6315f33c60`; hosted `verify`, `codeql`, `secrets`, and Pages deployment passed, and production whole-card activation was verified.
-- Batch 10.3 replaces the approved public résumé and integrates three approved authentic screenshot sets without changing the deployed interaction model.
+- Batch 10.3 replaced the approved public résumé and integrated three approved authentic screenshot sets; Batch 10.4 is the isolated, uncommitted candidate described above.
 
 ## Exact continuation
 
-Batch 10.3 is in progress on `content/project-screenshots-resume` from deployed protected `main`. Run one complete local gate, ship through a protected pull request, verify the exact Pages deployment SHA and production assets, then request final acceptance before creating any launch/freeze tag.
+Batch 10.4 remains uncommitted in `wt/t_404f160a`. Next exact action: obtain independent Saru scope and no-runtime-impact review of this documentation-only diff, including a comparison of deployable build outputs before transferring the pre-documentation-change Lighthouse evidence. After that review, prepare a LOCAL reviewable commit only under Gabriel's bounded authorization. Do not push, merge, deploy, release, rerun Lighthouse or bypass protected hosted checks; hosted CI, production validation and release decisions remain separate.

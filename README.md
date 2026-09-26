@@ -170,12 +170,6 @@ The package's license text is preserved at [`public/fonts/LICENSE-Geist.txt`](pu
 
 Implementation is organized into small, independently verified batches. See [`docs/IMPLEMENTATION_STATUS.md`](docs/IMPLEMENTATION_STATUS.md) for the current checkpoint and exact continuation command.
 
-The full implementation plan lives in the parent workspace at:
-
-```text
-../.hermes/plans/2026-08-06_172556-portfolio-mvp-batched-implementation.md
-```
-
 ## Deployment
 
 The confirmed deployment target is the existing public root-site repository [`GabrielRGoldstein/GabrielRGoldstein.github.io`](https://github.com/GabrielRGoldstein/GabrielRGoldstein.github.io), hosted by GitHub Pages at <https://gabrielrgoldstein.github.io/>. No custom domain or deployment secret is configured. Batch 9 analytics uses only public repository variables and remains disabled until both validated values are present.

@@ -24,7 +24,7 @@
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^7.2.0",
+    "astro": "^7.2.8",
     "zod": "^4.4.3"
   },
   "devDependencies": {
@@ -33,9 +33,9 @@
     "@playwright/test": "^1.62.1",
     "lighthouse": "13.4.1",
     "parse5": "7.3.0",
-    "sharp": "0.35.3",
+    "sharp": "0.35.4",
     "typescript": "^6.0.3",
-    "vitest": "^4.1.10",
+    "vitest": "^4.1.11",
     "yaml": "2.9.0"
   }
 }

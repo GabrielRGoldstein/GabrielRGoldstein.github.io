@@ -6,6 +6,7 @@ import {
 
 interface ProjectDialogRelationship {
   trigger: HTMLButtonElement;
+  staticTitle: HTMLElement;
   dialog: HTMLDialogElement;
   closeButton: HTMLButtonElement;
   card: HTMLElement;
@@ -147,18 +148,21 @@ if (supportsNativeDialog && DialogConstructor) {
       "[data-project-dialog-close]",
     );
     const card = trigger.closest<HTMLElement>(".project-card");
+    const staticTitle = card?.querySelector<HTMLElement>("[data-project-static-title]");
     if (!closeButton) continue;
+    if (!staticTitle) continue;
     if (!card?.querySelector("[data-project-dialog-fallback]")) continue;
     if (!hasContainedIdReferences(dialog, "aria-labelledby")) continue;
     if (!hasContainedIdReferences(dialog, "aria-describedby")) continue;
 
-    relationships.push({ trigger, dialog, closeButton, card });
+    relationships.push({ trigger, staticTitle, dialog, closeButton, card });
   }
 }
 
-for (const { trigger, dialog, closeButton, card } of relationships) {
+for (const { trigger, staticTitle, dialog, closeButton, card } of relationships) {
   card.classList.add("project-card--dialog-enhanced");
   trigger.hidden = false;
+  staticTitle.hidden = true;
 
   trigger.addEventListener("click", () => {
     if (dialog.open) return;
@@ -172,6 +176,7 @@ for (const { trigger, dialog, closeButton, card } of relationships) {
       opened = true;
     } catch {
       trigger.hidden = true;
+      staticTitle.hidden = false;
       card.classList.remove("project-card--dialog-enhanced");
       setPageDialogState();
     }

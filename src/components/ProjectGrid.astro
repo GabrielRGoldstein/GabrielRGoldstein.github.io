@@ -7,7 +7,8 @@ interface Props {
 }
 
 const { projects } = Astro.props;
-const layoutFor = (index: number) => (index === 0 ? "wide" : index === 1 ? "narrow" : "standard");
+const layoutFor = (index: number) =>
+  index === 0 ? "wide" : index === 1 ? "narrow" : index === 2 ? "reverse" : index === 3 ? "feature" : index === 4 ? "feature" : "standard";
 ---
 
 <section class="content-section" id="work" aria-labelledby="work-title">

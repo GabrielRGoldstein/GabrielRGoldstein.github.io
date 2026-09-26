@@ -290,6 +290,14 @@ test("dispatches only allowlisted conversion events through the neutral browser 
     "github_profile_click",
     "github_profile_click",
     "linkedin_click",
+    "project_demo_click",
+    "project_demo_click",
+    "project_demo_click",
+    "project_demo_click",
+    "project_demo_click",
+    "project_demo_click",
+    "project_repository_click",
+    "project_repository_click",
     "project_repository_click",
     "project_repository_click",
     "project_repository_click",
@@ -307,9 +315,8 @@ test("dispatches only allowlisted conversion events through the neutral browser 
       (element as HTMLElement).click();
     });
   await page.locator("[data-project-dialog-trigger]").first().click();
-  await page.locator("[data-project-dialog-close]").first().click();
   await page
-    .locator('.project-card [data-analytics-event="project_repository_click"]')
+    .locator('.project-dialog [data-analytics-event="project_repository_click"]')
     .first()
     .evaluate((element) => {
       element.addEventListener("click", (event) => event.preventDefault(), {
@@ -317,6 +324,7 @@ test("dispatches only allowlisted conversion events through the neutral browser 
       });
       (element as HTMLElement).click();
     });
+  await page.locator("[data-project-dialog-close]").first().click();
   await page.evaluate(() => {
     const button = document.createElement("button");
     button.dataset.analyticsEvent = "project_repository_click";
@@ -435,7 +443,7 @@ test("opens project details from non-interactive card space without hijacking li
   const card = page.locator(".project-card").first();
   const dialog = page.locator("[data-project-dialog]").first();
   const trigger = card.locator("[data-project-dialog-trigger]");
-  const repository = card.getByRole("link", { name: "Repository ↗" });
+  const repository = dialog.getByRole("link", { name: "View repository" });
 
   await card.locator(".project-card__visual").click();
   await expect(dialog).toBeVisible();
@@ -443,10 +451,13 @@ test("opens project details from non-interactive card space without hijacking li
   await dialog.locator("[data-project-dialog-close]").click();
   await expect(trigger).toBeFocused();
 
+  await trigger.click();
   await repository.evaluate((link) =>
     link.addEventListener("click", (event) => event.preventDefault(), { once: true }),
   );
   await repository.click();
+  await expect(dialog).toBeVisible();
+  await page.keyboard.press("Escape");
   await expect(dialog).toBeHidden();
 });
 
@@ -460,8 +471,8 @@ test("opens project details by keyboard and restores focus for every close path"
   const firstTrigger = triggers.first();
   const firstDialog = dialogs.first();
 
-  await expect(triggers).toHaveCount(4);
-  await expect(dialogs).toHaveCount(4);
+  await expect(triggers).toHaveCount(5);
+  await expect(dialogs).toHaveCount(5);
   await expect(firstTrigger).toBeVisible();
   await expect(firstDialog).toBeHidden();
   await expect(
@@ -502,7 +513,7 @@ test("contains focus and passes accessibility checks inside a linkless project d
   const mobileActions = page.locator(
     ".project-card__open:visible, .project-card__links a:visible",
   );
-  expect(await mobileActions.count()).toBeGreaterThanOrEqual(6);
+  expect(await mobileActions.count()).toBe(5);
   for (const action of await mobileActions.all()) {
     const bounds = await action.boundingBox();
     expect(bounds).not.toBeNull();
@@ -558,7 +569,11 @@ test("contains focus and passes accessibility checks inside a linkless project d
   await page.keyboard.press("Tab");
   await expect(repositoryLink).toBeFocused();
   await page.keyboard.press("Tab");
+  await expect(linkedDialog.getByRole("link", { name: /sign-in required/i })).toBeFocused();
+  await page.keyboard.press("Tab");
   await expect(linkedClose).toBeFocused();
+  await page.keyboard.press("Shift+Tab");
+  await expect(linkedDialog.getByRole("link", { name: /sign-in required/i })).toBeFocused();
   await page.keyboard.press("Shift+Tab");
   await expect(repositoryLink).toBeFocused();
   await page.keyboard.press("Shift+Tab");
@@ -580,7 +595,7 @@ test("keeps every project action at least 44px at 375px", async ({ browser }) =>
   await page.goto("/#work");
 
   const triggers = page.locator("[data-project-dialog-trigger]:visible");
-  await expect(triggers).toHaveCount(4);
+  await expect(triggers).toHaveCount(5);
   for (const trigger of await triggers.all()) {
     const bounds = await trigger.boundingBox();
     expect(bounds).not.toBeNull();
@@ -588,7 +603,7 @@ test("keeps every project action at least 44px at 375px", async ({ browser }) =>
     expect(bounds!.height).toBeGreaterThanOrEqual(44);
   }
 
-  for (let index = 0; index < 4; index += 1) {
+  for (let index = 0; index < 5; index += 1) {
     const trigger = triggers.nth(index);
     const dialog = page.locator("[data-project-dialog]").nth(index);
     await trigger.click();
@@ -617,7 +632,7 @@ test("keeps every project action at least 44px at 375px", async ({ browser }) =>
   const staticPage = await staticContext.newPage();
   await staticPage.goto("/#work");
   const staticLinks = staticPage.locator(".project-card__links a:visible");
-  await expect(staticLinks).toHaveCount(2);
+  await expect(staticLinks).toHaveCount(6);
   for (const link of await staticLinks.all()) {
     const bounds = await link.boundingBox();
     expect(bounds).not.toBeNull();
@@ -652,8 +667,8 @@ test("suppresses project-open analytics when showModal fails", async ({
   await page.goto("/");
 
   const cards = page.locator(".project-card");
-  await expect(cards).toHaveCount(4);
-  for (let index = 0; index < 4; index += 1) {
+  await expect(cards).toHaveCount(5);
+  for (let index = 0; index < 5; index += 1) {
     const card = cards.nth(index);
     const trigger = card.locator("[data-project-dialog-trigger]");
     const dialog = page.locator("[data-project-dialog]").nth(index);
@@ -668,11 +683,8 @@ test("suppresses project-open analytics when showModal fails", async ({
     await expect(fallback.getByText("Technologies")).toBeVisible();
     await expectFallbackMatchesDialog(card, dialog);
   }
-  await expect(page.locator(".project-card__links a:visible")).toHaveCount(2);
-  await expect(page.locator(".project-card__fallback-pending:visible")).toHaveText([
-    "Public project links are pending review.",
-    "Public project links are pending review.",
-  ]);
+  await expect(page.locator(".project-card__links a:visible")).toHaveCount(6);
+  await expect(page.locator(".project-card__fallback-pending:visible")).toHaveCount(0);
   const events = await page.evaluate(
     () =>
       (
@@ -701,10 +713,10 @@ test("retains the static fallback when native dialog APIs are unavailable", asyn
   });
   await page.goto("/");
 
-  await expect(page.locator(".project-card")).toHaveCount(4);
+  await expect(page.locator(".project-card")).toHaveCount(5);
   const triggers = page.locator("[data-project-dialog-trigger]");
-  await expect(triggers).toHaveCount(4);
-  for (let index = 0; index < 4; index += 1) {
+  await expect(triggers).toHaveCount(5);
+  for (let index = 0; index < 5; index += 1) {
     const card = page.locator(".project-card").nth(index);
     const fallback = card.locator("[data-project-dialog-fallback]");
     const dialog = page.locator("[data-project-dialog]").nth(index);
@@ -730,7 +742,7 @@ test("retains the static fallback when native dialog APIs are unavailable", asyn
   }
   await expect(
     page.locator(".project-card__fallback-pending:visible"),
-  ).toHaveCount(2);
+  ).toHaveCount(0);
   expect(runtimeErrors).toEqual([]);
 });
 
@@ -750,7 +762,7 @@ for (const unavailableMethod of ["showModal", "close"] as const) {
 
     await expect(page.locator("[data-project-dialog-trigger]:visible")).toHaveCount(0);
     const cards = page.locator(".project-card");
-    for (let index = 0; index < 4; index += 1) {
+    for (let index = 0; index < 5; index += 1) {
       const card = cards.nth(index);
       const dialog = page.locator("[data-project-dialog]").nth(index);
       await expect(card.locator("h3")).toBeVisible();
@@ -761,8 +773,8 @@ for (const unavailableMethod of ["showModal", "close"] as const) {
         await expect(item).toBeVisible();
       }
     }
-    await expect(page.locator(".project-card__links a:visible")).toHaveCount(2);
-    await expect(page.locator(".project-card__fallback-pending:visible")).toHaveCount(2);
+    await expect(page.locator(".project-card__links a:visible")).toHaveCount(6);
+    await expect(page.locator(".project-card__fallback-pending:visible")).toHaveCount(0);
     expect(runtimeErrors).toEqual([]);
   });
 }
@@ -1017,7 +1029,7 @@ for (const deviceScaleFactor of [1, 2]) {
     await page.goto("/");
 
     const images = await page.locator(".project-card__visual img").all();
-    expect(images).toHaveLength(4);
+    expect(images).toHaveLength(5);
 
     for (const image of images) {
       await image.scrollIntoViewIfNeeded();
@@ -1057,7 +1069,7 @@ test("avoids original-size covers after the project grid reaches its content cap
   await page.goto("/");
 
   const images = await page.locator(".project-card__visual img").all();
-  expect(images).toHaveLength(4);
+  expect(images).toHaveLength(5);
 
   for (const image of images) {
     await image.scrollIntoViewIfNeeded();
@@ -1199,15 +1211,15 @@ test("keeps project cards readable and hides inert dialog controls without JavaS
 
   await page.goto(`${baseURL}/#work`);
 
-  await expect(page.locator(".project-card")).toHaveCount(4);
+  await expect(page.locator(".project-card")).toHaveCount(5);
   const summaries = page.locator(".project-card__body > p");
-  await expect(summaries).toHaveCount(4);
-  for (let index = 0; index < 4; index += 1) {
+  await expect(summaries).toHaveCount(5);
+  for (let index = 0; index < 5; index += 1) {
     await expect(summaries.nth(index)).toBeVisible();
   }
   const fallbackDetails = page.locator(".project-card__fallback-details");
-  await expect(fallbackDetails).toHaveCount(4);
-  for (let index = 0; index < 4; index += 1) {
+  await expect(fallbackDetails).toHaveCount(5);
+  for (let index = 0; index < 5; index += 1) {
     const card = page.locator(".project-card").nth(index);
     const dialog = page.locator("[data-project-dialog]").nth(index);
     await expect(fallbackDetails.nth(index)).toBeVisible();
@@ -1215,24 +1227,20 @@ test("keeps project cards readable and hides inert dialog controls without JavaS
     await expectFallbackMatchesDialog(card, dialog);
   }
   const pendingStates = page.locator(".project-card__fallback-pending");
-  await expect(pendingStates).toHaveCount(2);
-  await expect(pendingStates).toHaveText([
-    "Public project links are pending review.",
-    "Public project links are pending review.",
-  ]);
+  await expect(pendingStates).toHaveCount(0);
   const staticProjectLinks = page.locator(".project-card__links a");
-  await expect(staticProjectLinks).toHaveCount(2);
+  await expect(staticProjectLinks).toHaveCount(6);
   await expect(staticProjectLinks.nth(0)).toHaveAttribute(
     "href",
     "https://github.com/GabrielRGoldstein/DiscordClone",
   );
-  await expect(staticProjectLinks.nth(1)).toHaveAttribute(
+  await expect(staticProjectLinks.nth(2)).toHaveAttribute(
     "href",
     "https://github.com/GabrielRGoldstein/Python-Trading-Bot",
   );
   const triggers = page.locator("[data-project-dialog-trigger]");
-  await expect(triggers).toHaveCount(4);
-  for (let index = 0; index < 4; index += 1) {
+  await expect(triggers).toHaveCount(5);
+  for (let index = 0; index < 5; index += 1) {
     await expect(triggers.nth(index)).toBeHidden();
   }
   await expect(page.locator("dialog[open]")).toHaveCount(0);
