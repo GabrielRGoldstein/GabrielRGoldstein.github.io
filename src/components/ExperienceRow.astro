@@ -6,7 +6,6 @@ interface Props {
 }
 
 const { experience } = Astro.props;
-const detailsId = `${experience.id}-details`;
 
 function formatYear(value: string): string {
   return value.slice(0, 4);
@@ -33,37 +32,9 @@ function formatYear(value: string): string {
       ))
     }
   </div>
-
-  <div class="experience-row__content">
-    <header class="experience-row__heading">
-      <p class="experience-row__company">{experience.company}</p>
-      <h3 id={`${experience.id}-role`}>{experience.role}</h3>
-    </header>
-
-    <div class="experience-row__intro">
-      <p class="experience-row__summary">{experience.publicSummary}</p>
-      <button
-        class="experience-row__toggle"
-        type="button"
-        data-experience-toggle
-        aria-controls={detailsId}
-        hidden
-      >
-        <span data-experience-toggle-label>Show details</span>
-        <span class="visually-hidden"> for {experience.role} at {experience.company}</span>
-        <span class="experience-row__indicator" data-experience-indicator aria-hidden="true">+</span>
-      </button>
-    </div>
-
-    <div id={detailsId} class="experience-row__details" data-experience-panel>
-      <p class="experience-row__details-meta">{experience.location}</p>
-      <ul class="experience-row__highlights" aria-label={`Highlights from ${experience.company}`}>
-        {experience.highlights.map((highlight) => <li>{highlight}</li>)}
-      </ul>
-
-      <ul class="experience-row__skills" aria-label={`Skills used at ${experience.company}`}>
-        {experience.skills.map((skill) => <li>{skill}</li>)}
-      </ul>
-    </div>
-  </div>
+  <header class="experience-row__heading">
+    <p class="experience-row__company">{experience.company}</p>
+    <h3 id={`${experience.id}-role`}>{experience.role}</h3>
+  </header>
+  <p class="experience-row__summary">{experience.publicSummary}</p>
 </article>

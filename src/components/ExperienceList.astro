@@ -13,7 +13,7 @@ const { experience } = Astro.props;
   <header class="section-header">
     <div class="section-header__intro">
       <h2 id="experience-title">Experience</h2>
-      <p>Public-safe impact across systems integration, security automation, data engineering, and product work.</p>
+      <p>Selected outcomes: systems integration, security automation, data engineering, and product work.</p>
     </div>
   </header>
 
@@ -21,7 +21,3 @@ const { experience } = Astro.props;
     {experience.map((entry) => <ExperienceRow experience={entry} />)}
   </div>
 </section>
-
-<script>
-  import "../scripts/experience-accordion";
-</script>

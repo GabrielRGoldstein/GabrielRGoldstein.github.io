@@ -461,13 +461,12 @@ describe("ExperienceList", () => {
     expect(html).toContain('id="experience"');
     expect(html).toContain('aria-labelledby="experience-title"');
     expect(html).toMatch(
-      /<header class="section-header">[\s\S]*?<div class="section-header__intro">[\s\S]*?<h2 id="experience-title">Experience<\/h2>[\s\S]*?<p>Public-safe impact across systems integration, security automation, data engineering, and product work\.<\/p>/,
+      /<header class="section-header">[\s\S]*?<div class="section-header__intro">[\s\S]*?<h2 id="experience-title">Experience<\/h2>[\s\S]*?<p>Selected outcomes: systems integration, security automation, data engineering, and product work\.<\/p>/,
     );
     expect(html.match(/data-experience-id=/g)).toHaveLength(
       portfolioContent.experience.length,
     );
-    expect(html.match(/<script/g)).toHaveLength(1);
-    expect(html).toContain('<script type="module"');
+    expect(html).not.toContain('<script');
     expect(html).not.toMatch(/<script[^>]+src="https?:/);
     expect(html).not.toContain("client:");
 
@@ -475,8 +474,8 @@ describe("ExperienceList", () => {
       expect(html).toContain(`data-experience-id="${entry.id}"`);
       expect(html).toContain(entry.role);
       expect(html).toContain(entry.company);
-      expect(html).toContain(entry.location);
       expect(html).toContain(entry.publicSummary);
+      expect(html).not.toContain(entry.location);
 
       for (const period of entry.periods) {
         expect(html).toContain(`datetime="${period.start}"`);
@@ -487,17 +486,14 @@ describe("ExperienceList", () => {
         }
       }
 
-      for (const skill of entry.skills) {
-        expect(html).toContain(`>${skill}</li>`);
-      }
-
       for (const highlight of entry.highlights) {
-        expect(html).toContain(`>${highlight}</li>`);
+        if (highlight !== entry.publicSummary) expect(html).not.toContain(highlight);
       }
+      for (const skill of entry.skills) expect(html).not.toContain(`>${skill}</li>`);
     }
   });
 
-  it("renders progressive disclosure hooks without hiding static content", async () => {
+  it("renders four static outcomes without disclosure controls or orphaned relationships", async () => {
     const { default: ExperienceList } =
       await import("../components/ExperienceList.astro");
     const container = await AstroContainer.create();
@@ -505,55 +501,14 @@ describe("ExperienceList", () => {
       props: { experience: portfolioContent.experience },
     });
 
-    expect(html.match(/data-experience-toggle(?:\s|>)/g)).toHaveLength(
-      portfolioContent.experience.length,
-    );
-    expect(html.match(/data-experience-panel/g)).toHaveLength(
-      portfolioContent.experience.length,
-    );
-    expect(html.match(/<button[^>]*hidden/g)).toHaveLength(
-      portfolioContent.experience.length,
-    );
-    expect(html).not.toContain("aria-expanded=");
-
-    for (const entry of portfolioContent.experience) {
-      const panelId = `${entry.id}-details`;
-      expect(html).toContain(`aria-controls="${panelId}"`);
-      expect(html).toContain(`id="${panelId}"`);
-
-      const panelStart = html.indexOf(`id="${panelId}"`);
-      const panelEnd = html.indexOf("</div>", panelStart);
-      const panelHtml = html.slice(panelStart, panelEnd);
-      expect(panelHtml).not.toContain(" hidden");
-
-      for (const highlight of entry.highlights) {
-        expect(html).toContain(`>${highlight}</li>`);
-      }
-      for (const skill of entry.skills) {
-        expect(html).toContain(`>${skill}</li>`);
-      }
-    }
-  });
-
-  it("keeps location out of the scan line while retaining it in static details", async () => {
-    const { default: ExperienceList } =
-      await import("../components/ExperienceList.astro");
-    const entry = portfolioContent.experience[0];
-    const container = await AstroContainer.create();
-    const html = await container.renderToString(ExperienceList, {
-      props: { experience: [entry] },
-    });
-    const headingStart = html.indexOf(
-      '<header class="experience-row__heading">',
-    );
-    const headingEnd = html.indexOf("</header>", headingStart);
-    const panelStart = html.indexOf("data-experience-panel");
-    const headingHtml = html.slice(headingStart, headingEnd);
-    const panelHtml = html.slice(panelStart);
-
-    expect(headingHtml).not.toContain(entry.location);
-    expect(panelHtml).toContain(entry.location);
-    expect(panelHtml).toContain('class="experience-row__details-meta"');
+    expect(html).not.toMatch(/data-experience-(toggle|panel)|aria-(controls|expanded)|<button/);
+    expect(html.match(/class="experience-row__summary"/g)).toHaveLength(4);
+    expect(portfolioContent.experience.map((entry) => entry.publicSummary)).toEqual([
+      "Established a shared Kanban workflow that clarified task status and ownership and helped return the project to schedule.",
+      "Raised test-process automation from roughly 40% to 92.6%.",
+      "Worked with more than 15 clients and built or maintained eight or more websites.",
+      "Delivered more than 20 Power BI reports and helped cut combined project delivery time by 30%.",
+    ]);
   });
 
   it("formats experience periods as concise years while preserving exact machine dates", async () => {
@@ -741,7 +696,7 @@ describe("index page", () => {
     );
     expect(html).not.toContain("Software engineering role");
     expect(html).not.toContain('id="about"');
-    expect(html.match(/<script/g)).toHaveLength(3);
+    expect(html.match(/<script/g)).toHaveLength(2);
     expect(html).toContain('<script type="module"');
     expect(html).not.toMatch(/<script[^>]+src="https?:/);
     expect(html).not.toContain("client:");
