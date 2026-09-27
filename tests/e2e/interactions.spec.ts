@@ -8,8 +8,6 @@ import {
 } from "../support/production-origin";
 
 const experienceRows = "[data-experience-id]";
-const toggles = "[data-experience-toggle]";
-const panels = "[data-experience-panel]";
 
 async function expectFallbackMatchesDialog(card: Locator, dialog: Locator) {
   const fallback = card.locator("[data-project-dialog-fallback]");
@@ -1094,7 +1092,7 @@ test("avoids original-size covers after the project grid reaches its content cap
   await context.close();
 });
 
-test("enhances every experience role into a compact initially collapsed row", async ({
+test("shows approved Experience outcomes at the hash without disclosures", async ({
   page,
 }) => {
   const runtimeErrors: string[] = [];
@@ -1106,68 +1104,44 @@ test("enhances every experience role into a compact initially collapsed row", as
   await page.goto("/#experience");
 
   const rows = page.locator(experienceRows);
-  const buttons = page.locator(toggles);
-  const details = page.locator(panels);
-
   await expect(rows).toHaveCount(4);
-  await expect(buttons).toHaveCount(4);
-  await expect(details).toHaveCount(4);
-
-  for (let index = 0; index < 4; index += 1) {
-    await expect(buttons.nth(index)).toBeVisible();
-    await expect(buttons.nth(index)).toHaveAttribute("aria-expanded", "false");
-    await expect(buttons.nth(index)).toContainText("Show details");
-    await expect(details.nth(index)).toBeHidden();
-
-    const panelId = await buttons.nth(index).getAttribute("aria-controls");
-    expect(panelId).not.toBeNull();
-    await expect(page.locator(`#${panelId}`)).toHaveCount(1);
+  await expect(page.locator("#experience")).toBeInViewport();
+  const outcomes = [
+    "Established a shared Kanban workflow that clarified task status and ownership and helped return the project to schedule.",
+    "Raised test-process automation from roughly 40% to 92.6%.",
+    "Worked with more than 15 clients and built or maintained eight or more websites.",
+    "Delivered more than 20 Power BI reports and helped cut combined project delivery time by 30%.",
+  ];
+  for (let index = 0; index < outcomes.length; index += 1) {
+    await expect(rows.nth(index).locator(".experience-row__summary")).toHaveText(outcomes[index]);
+    await expect(rows.nth(index).locator(".experience-row__summary")).toBeVisible();
   }
+  await expect(page.locator("#experience button, [data-experience-toggle], [data-experience-panel]")).toHaveCount(0);
 
   expect(runtimeErrors).toEqual([]);
 });
 
-test("supports single-open keyboard disclosure without moving focus", async ({
+test("keeps Experience out of keyboard tab order and preserves contact résumé", async ({
   page,
 }) => {
   await page.goto("/#experience");
 
-  const buttons = page.locator(toggles);
-  const details = page.locator(panels);
-  const previousRoleButton = buttons.nth(1);
-
-  await previousRoleButton.focus();
-  await page.keyboard.press("Enter");
-
-  await expect(buttons.first()).toHaveAttribute("aria-expanded", "false");
-  await expect(details.first()).toBeHidden();
-  await expect(previousRoleButton).toHaveAttribute("aria-expanded", "true");
-  await expect(previousRoleButton).toContainText("Hide details");
-  await expect(details.nth(1)).toBeVisible();
-  await expect(previousRoleButton).toBeFocused();
-
-  await page.keyboard.press("Space");
-
-  await expect(previousRoleButton).toHaveAttribute("aria-expanded", "false");
-  await expect(previousRoleButton).toContainText("Show details");
-  await expect(details.nth(1)).toBeHidden();
-  await expect(previousRoleButton).toBeFocused();
+  const resume = page.locator('.contact-footer a[href$="gabriel-goldstein-resume.pdf"]');
+  await resume.focus();
+  await expect(resume).toBeFocused();
+  await expect(page.locator("#experience button, #experience a, #experience [tabindex]")).toHaveCount(0);
 });
 
-test("keeps mobile disclosure controls large enough without horizontal overflow", async ({
+test("keeps both Freelance periods and visible outcomes on mobile without overflow", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/#experience");
 
-  const buttons = page.locator(toggles);
-  await expect(buttons).toHaveCount(4);
-
-  for (let index = 0; index < 4; index += 1) {
-    const bounds = await buttons.nth(index).boundingBox();
-    expect(bounds).not.toBeNull();
-    expect(bounds!.height).toBeGreaterThanOrEqual(44);
-    expect(bounds!.width).toBeGreaterThanOrEqual(44);
+  await expect(page.locator(experienceRows)).toHaveCount(4);
+  await expect(page.locator(experienceRows).nth(2).locator(".experience-row__period")).toHaveCount(2);
+  for (const row of await page.locator(experienceRows).all()) {
+    await expect(row.locator(".experience-row__summary")).toBeVisible();
   }
 
   const viewportMetrics = await page.evaluate(() => ({
@@ -1180,7 +1154,7 @@ test("keeps mobile disclosure controls large enough without horizontal overflow"
   );
 });
 
-test("keeps every experience panel readable when JavaScript is unavailable", async ({
+test("keeps every Experience outcome readable when JavaScript is unavailable", async ({
   browser,
   baseURL,
 }) => {
@@ -1189,14 +1163,11 @@ test("keeps every experience panel readable when JavaScript is unavailable", asy
 
   await page.goto(`${baseURL}/#experience`);
 
-  const buttons = page.locator(toggles);
-  const details = page.locator(panels);
-  await expect(buttons).toHaveCount(4);
-  await expect(details).toHaveCount(4);
+  const outcomes = page.locator(".experience-row__summary");
+  await expect(outcomes).toHaveCount(4);
 
   for (let index = 0; index < 4; index += 1) {
-    await expect(buttons.nth(index)).toBeHidden();
-    await expect(details.nth(index)).toBeVisible();
+    await expect(outcomes.nth(index)).toBeVisible();
   }
 
   await context.close();
@@ -1258,14 +1229,11 @@ test("removes project motion when reduced motion is requested", async ({
   await card.hover();
   await page.waitForTimeout(50);
   const motion = await page.evaluate(() => {
-    const button = document.querySelector<HTMLElement>(
-      "[data-experience-toggle]",
-    );
     const card = document.querySelector<HTMLElement>(".project-card");
     const image = document.querySelector<HTMLElement>(
       ".project-card__visual img",
     );
-    const styles = button ? getComputedStyle(button) : null;
+
     const cardMatrix = card
       ? new DOMMatrixReadOnly(getComputedStyle(card).transform)
       : null;
@@ -1274,17 +1242,12 @@ test("removes project motion when reduced motion is requested", async ({
       : null;
     return {
       scrollBehavior: getComputedStyle(document.documentElement).scrollBehavior,
-      transitionSeconds: styles
-        ? Number.parseFloat(styles.transitionDuration)
-        : null,
       cardTranslationY: cardMatrix?.m42 ?? null,
       imageScaleX: imageMatrix?.m11 ?? null,
     };
   });
 
   expect(motion.scrollBehavior).toBe("auto");
-  expect(motion.transitionSeconds).not.toBeNull();
-  expect(motion.transitionSeconds!).toBeLessThanOrEqual(0.00001);
   expect(motion.cardTranslationY).toBe(0);
   expect(motion.imageScaleX).toBe(1);
 });

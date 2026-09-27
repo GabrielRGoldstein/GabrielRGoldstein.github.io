@@ -6,7 +6,7 @@
     "role": "Test and Integration Specialist",
     "location": "Colorado Springs, CO",
     "periods": [{ "start": "2026-06", "end": null }],
-    "publicSummary": "Systems integration, hardware verification, and delivery-process improvements for mission-critical programs.",
+    "publicSummary": "Established a shared Kanban workflow that clarified task status and ownership and helped return the project to schedule.",
     "skills": ["Systems Integration", "Hardware Testing", "Kanban", "Technical Documentation"],
     "highlights": [
       "Established a shared Kanban workflow that clarified task status and ownership and helped return the project to schedule.",
@@ -20,7 +20,7 @@
     "role": "Cyber Security Test Engineer",
     "location": "Colorado Springs, CO",
     "periods": [{ "start": "2024-11", "end": "2026-06" }],
-    "publicSummary": "Automated security testing and translated cyber and functional requirements into repeatable procedures.",
+    "publicSummary": "Raised test-process automation from roughly 40% to 92.6%.",
     "skills": ["PowerShell", "STIG", "RMF", "Kubernetes"],
     "highlights": [
       "Raised test-process automation from roughly 40% to 92.6%.",
@@ -37,7 +37,7 @@
       { "start": "2023-12", "end": "2024-10" },
       { "start": "2020-12", "end": "2022-06" }
     ],
-    "publicSummary": "Owned client relationships and shipped ecommerce sites, landing pages, and full-stack applications.",
+    "publicSummary": "Worked with more than 15 clients and built or maintained eight or more websites.",
     "skills": ["React", "Next.js", "JavaScript", "AWS"],
     "highlights": [
       "Worked with more than 15 clients and built or maintained eight or more websites.",
@@ -51,7 +51,7 @@
     "role": "Software Engineer",
     "location": "Chandler, AZ",
     "periods": [{ "start": "2022-06", "end": "2023-11" }],
-    "publicSummary": "Delivered data products and ETL improvements for global production and supply-chain planning.",
+    "publicSummary": "Delivered more than 20 Power BI reports and helped cut combined project delivery time by 30%.",
     "skills": ["Python", "SQL", "ETL", "Azure", "Power BI"],
     "highlights": [
       "Contributed to an initiative associated with approximately $10 million in reduced expenses.",
